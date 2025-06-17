@@ -1,0 +1,85 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=6804
+# requesting: sn givenName 
+#
+
+# Lauren Wittek + 116091935232, University of Arizona, US
+dn: cn=Lauren Wittek+dbkey=116091935232,o=University of Arizona,c=US
+sn: Wittek
+givenName: Lauren Regina
+
+# Angela Noel Murrell + 100272999356, University of Arizona, US
+dn: cn=Angela Noel Murrell+dbkey=100272999356,o=University of Arizona,c=US
+sn: Murrell
+givenName: Angela Noel
+
+# Janet Crum + 103966393360, University of Arizona, US
+dn: cn=Janet Crum+dbkey=103966393360,o=University of Arizona,c=US
+sn: Crum
+givenName: Janet
+
+# Maribeth Slebodnik + 114297165535, University of Arizona, US
+dn: cn=Maribeth Slebodnik+dbkey=114297165535,o=University of Arizona,c=US
+sn: Slebodnik
+givenName: Mary B
+
+# Joseph Adam Anaya + 107826164696, University of Arizona, US
+dn: cn=Joseph Adam Anaya+dbkey=107826164696,o=University of Arizona,c=US
+sn: Anaya
+givenName: Joseph Adam
+
+# Jerry W Flanary + 109856681528, University of Arizona, US
+dn: cn=Jerry W Flanary+dbkey=109856681528,o=University of Arizona,c=US
+sn: Flanary
+givenName: Jerry W
+
+# Ahlam A Saleh + 102368564319, University of Arizona, US
+dn: cn=Ahlam A Saleh+dbkey=102368564319,o=University of Arizona,c=US
+sn: Saleh
+givenName: Ahlam A
+
+# Pipei Guo + 112702040250, University of Arizona, US
+dn: cn=Pipei Guo+dbkey=112702040250,o=University of Arizona,c=US
+sn: Guo
+givenName: Pipei
+
+# Kathryn M Lowers + 117626509442, University of Arizona, US
+dn: cn=Kathryn M Lowers+dbkey=117626509442,o=University of Arizona,c=US
+sn: Lowers
+givenName: Kathryn M
+
+# Jean McClelland + 120838338767, University of Arizona, US
+dn: cn=Jean McClelland+dbkey=120838338767,o=University of Arizona,c=US
+sn: Mcclelland
+givenName: Deborah J
+
+# Jennifer E Lee + 116862562855, University of Arizona, US
+dn: cn=Jennifer E Lee+dbkey=116862562855,o=University of Arizona,c=US
+sn: Lee
+givenName: Jennifer E
+
+# Mikel K Bates + 108527031331, University of Arizona, US
+dn: cn=Mikel K Bates+dbkey=108527031331,o=University of Arizona,c=US
+sn: Bates
+givenName: Mikel K
+
+# Annabelle V Nu\C3\B1ez + 102389387716, University of Arizona, US
+dn:: Y249QW5uYWJlbGxlIFYgTnXDsWV6K2Ria2V5PTEwMjM4OTM4NzcxNixvPVVuaXZlcnNpdHkgb
+ 2YgQXJpem9uYSxjPVVT
+sn: Nunez
+givenName: Annabelle V
+
+# Jeanne L Pfander + 115161087692, University of Arizona, US
+dn: cn=Jeanne L Pfander+dbkey=115161087692,o=University of Arizona,c=US
+sn: Pfander
+givenName: Jeanne L
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 15
+# numEntries: 14

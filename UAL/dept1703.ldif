@@ -1,0 +1,124 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=1703
+# requesting: givenName sn 
+#
+
+# Francesco Anton Serio + 105210158186, University of Arizona, US
+dn: cn=Francesco Anton Serio+dbkey=105210158186,o=University of Arizona,c=US
+givenName: Francesco Anton
+sn: Serio
+
+# Thomas Henry Nicolai + 114928940510, University of Arizona, US
+dn: cn=Thomas Henry Nicolai+dbkey=114928940510,o=University of Arizona,c=US
+givenName: Thomas Henry
+sn: Nicolai
+
+# Stacey Jones Erdman + 112683036924, University of Arizona, US
+dn: cn=Stacey Jones Erdman+dbkey=112683036924,o=University of Arizona,c=US
+givenName: Stacey Noelle
+sn: Erdman
+
+# Dana Victoria Lema + 119550432998, University of Arizona, US
+dn: cn=Dana Victoria Lema+dbkey=119550432998,o=University of Arizona,c=US
+givenName: Dana Victoria
+sn: Lema
+
+# Nathan Wind + 113069635086, University of Arizona, US
+dn: cn=Nathan Wind+dbkey=113069635086,o=University of Arizona,c=US
+givenName: Nathan
+sn: Wind
+
+# Dru Ellen Smith + 112951426208, University of Arizona, US
+dn: cn=Dru Ellen Smith+dbkey=112951426208,o=University of Arizona,c=US
+givenName: Dru Ellen
+sn: Smith
+
+# Hannah Caproon + 110145427206, University of Arizona, US
+dn: cn=Hannah Caproon+dbkey=110145427206,o=University of Arizona,c=US
+givenName: Hannah Megan
+sn: Caproon
+
+# Elizabeth Ann Kominsky + 103899637084, University of Arizona, US
+dn: cn=Elizabeth Ann Kominsky+dbkey=103899637084,o=University of Arizona,c=US
+givenName: Elizabeth Ann
+sn: Kominsky
+
+# Daricus Larry + 104064090507, University of Arizona, US
+dn: cn=Daricus Larry+dbkey=104064090507,o=University of Arizona,c=US
+givenName: Daricus
+sn: Larry
+
+# Kacey Jaye Evilsizor + 110874213794, University of Arizona, US
+dn: cn=Kacey Jaye Evilsizor+dbkey=110874213794,o=University of Arizona,c=US
+givenName: Kacey Jaye
+sn: Evilsizor
+
+# Liz Miller + 117826454348, University of Arizona, US
+dn: cn=Liz Miller+dbkey=117826454348,o=University of Arizona,c=US
+givenName: Elizabeth
+sn: Miller
+
+# Eileen Faye DeBellis + 108228214247, University of Arizona, US
+dn: cn=Eileen Faye DeBellis+dbkey=108228214247,o=University of Arizona,c=US
+givenName: Eileen Faye
+sn: DeBellis
+
+# Cheryl S Gerken + 100953320541, University of Arizona, US
+dn: cn=Cheryl S Gerken+dbkey=100953320541,o=University of Arizona,c=US
+givenName: Cheryl Lynn
+sn: Schrader-Gerken
+
+# Sara Suzanne Filion + 104157795539, University of Arizona, US
+dn: cn=Sara Suzanne Filion+dbkey=104157795539,o=University of Arizona,c=US
+givenName: Sara Suzanne
+sn: Filion
+
+# Teresa Carolina Hazen + 109337854721, University of Arizona, US
+dn: cn=Teresa Carolina Hazen+dbkey=109337854721,o=University of Arizona,c=US
+givenName: Teresa Carolina
+sn: Hazen
+
+# Sharon L Knowlton + 106969942542, University of Arizona, US
+dn: cn=Sharon L Knowlton+dbkey=106969942542,o=University of Arizona,c=US
+givenName: Sharon L
+sn: Knowlton
+
+# Lauren Marie Washuk + 120967530388, University of Arizona, US
+dn: cn=Lauren Marie Washuk+dbkey=120967530388,o=University of Arizona,c=US
+givenName: Lauren Marie
+sn: Washuk
+
+# Logan Alexander Dick + 112136123339, University of Arizona, US
+dn: cn=Logan Alexander Dick+dbkey=112136123339,o=University of Arizona,c=US
+givenName: Logan Alexander
+sn: Dick
+
+# Cynthia M Elliott + 100766580491, University of Arizona, US
+dn: cn=Cynthia M Elliott+dbkey=100766580491,o=University of Arizona,c=US
+givenName: Cynthia M
+sn: Elliott
+
+# Mindy Sue Jones + 104514874635, University of Arizona, US
+dn: cn=Mindy Sue Jones+dbkey=104514874635,o=University of Arizona,c=US
+givenName: Melinda S
+sn: Jones
+
+# Michael C Mayer + 108838574734, University of Arizona, US
+dn: cn=Michael C Mayer+dbkey=108838574734,o=University of Arizona,c=US
+givenName: Michael C
+sn: Mayer
+
+# Lynne A Carmody + 104332468886, University of Arizona, US
+dn: cn=Lynne A Carmody+dbkey=104332468886,o=University of Arizona,c=US
+givenName: Lynne A
+sn: Carmody
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 23
+# numEntries: 22

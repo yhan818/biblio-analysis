@@ -1,0 +1,13 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=1709
+# requesting: givenName sn 
+#
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 1

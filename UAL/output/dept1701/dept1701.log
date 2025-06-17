@@ -1,0 +1,310 @@
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:22 Harriett Green  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:22 Tara Radniecki  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:23 Celeste Reyes  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:23 Roberta Chong  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:23 David Borycz  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:23 Tiffany Calderon  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:24 Yingxuan Liu  Author affiliation: University of Arizona 
+
+structure(list(id = "https://openalex.org/A5012904439", display_name = "Yingxuan Liu", 
+    display_name_alternatives = list(c("Yingxuan Liu", "Bob Liu"
+    )), relevance_score = 284.03067, ids = list(c(openalex = "https://openalex.org/A5012904439", 
+    orcid = "https://orcid.org/0000-0003-0485-935X")), orcid = "https://orcid.org/0000-0003-0485-935X", 
+    works_count = 1L, cited_by_count = 1L, counts_by_year = list(
+        structure(list(year = c(2023L, 2021L), works_count = 0:1, 
+            cited_by_count = 1:0), class = "data.frame", row.names = c(NA, 
+        -2L))), affiliation_display_name = "University of Arizona", 
+    affiliation_id = "https://openalex.org/I138006243", affiliation_ror = "https://ror.org/03m2x1q45", 
+    affiliation_country_code = "US", affiliation_type = "education", 
+    affiliation_lineage = list("https://openalex.org/I138006243, https://openalex.org/I3132585960"), 
+    affiliations_other = list(character(0)), x_concepts = list(
+        structure(list(id = c("https://openalex.org/C15744967", 
+        "https://openalex.org/C33923547", "https://openalex.org/C36289849", 
+        "https://openalex.org/C41008148", "https://openalex.org/C56739046", 
+        "https://openalex.org/C58640448", "https://openalex.org/C62520636", 
+        "https://openalex.org/C77088390", "https://openalex.org/C105795698", 
+        "https://openalex.org/C110354214", "https://openalex.org/C119857082", 
+        "https://openalex.org/C121332964", "https://openalex.org/C122637931", 
+        "https://openalex.org/C127413603", "https://openalex.org/C144024400", 
+        "https://openalex.org/C145420912", "https://openalex.org/C161191863", 
+        "https://openalex.org/C162324750", "https://openalex.org/C177212765", 
+        "https://openalex.org/C187736073", "https://openalex.org/C205649164", 
+        "https://openalex.org/C2776291640", "https://openalex.org/C2778755073", 
+        "https://openalex.org/C2779318504", "https://openalex.org/C2983956754"
+        ), wikidata = c("https://www.wikidata.org/wiki/Q9418", 
+        "https://www.wikidata.org/wiki/Q395", "https://www.wikidata.org/wiki/Q34749", 
+        "https://www.wikidata.org/wiki/Q21198", "https://www.wikidata.org/wiki/Q192060", 
+        "https://www.wikidata.org/wiki/Q42515", "https://www.wikidata.org/wiki/Q944", 
+        "https://www.wikidata.org/wiki/Q8513", "https://www.wikidata.org/wiki/Q12483", 
+        "https://www.wikidata.org/wiki/Q6314146", "https://www.wikidata.org/wiki/Q2539", 
+        "https://www.wikidata.org/wiki/Q413", "https://www.wikidata.org/wiki/Q118084", 
+        "https://www.wikidata.org/wiki/Q11023", "https://www.wikidata.org/wiki/Q21201", 
+        "https://www.wikidata.org/wiki/Q853077", "https://www.wikidata.org/wiki/Q199655", 
+        "https://www.wikidata.org/wiki/Q8134", "https://www.wikidata.org/wiki/Q627335", 
+        "https://www.wikidata.org/wiki/Q2920921", "https://www.wikidata.org/wiki/Q1071", 
+        "https://www.wikidata.org/wiki/Q2912517", "https://www.wikidata.org/wiki/Q10858537", 
+        "https://www.wikidata.org/wiki/Q1438035", "https://www.wikidata.org/wiki/Q856234"
+        ), display_name = c("Psychology", "Mathematics", "Social science", 
+        "Computer science", "Knowledge management", "Cartography", 
+        "Quantum mechanics", "Database", "Statistics", "Engineering management", 
+        "Machine learning", "Physics", "Unit (ring theory)", 
+        "Engineering", "Sociology", "Mathematics education", 
+        "Library science", "Economics", "Workflow", "Management", 
+        "Geography", "Value (mathematics)", "Scale (ratio)", 
+        "Research design", "Academic library"), level = c(0L, 
+        0L, 1L, 0L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 0L, 2L, 0L, 0L, 
+        1L, 1L, 0L, 2L, 1L, 0L, 2L, 2L, 2L, 2L), score = c(100, 
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 
+        100, 100)), class = "data.frame", row.names = c(NA, -25L
+        ))), works_api_url = "https://api.openalex.org/works?filter=author.id:A5012904439"), row.names = c(NA, 
+-1L), class = c("tbl_df", "tbl", "data.frame"))
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:24 Jennifer Church-Duran  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:24 Adrian Cota  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:25 Hasan Sanli  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:25 Susan Fasciani  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:25 Mary Simons  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:26 Kenya Johnson  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:27 Monica Romero  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:27 Shan Sutton  Author affiliation: University of Arizona 
+
+structure(list(id = "https://openalex.org/A5061280794", display_name = "Shan Sutton", 
+    display_name_alternatives = list(c("Shan C. Sutton", "Shan Sutton", 
+    "S Sutton", "S. C. Sutton")), relevance_score = 1762.9816, 
+    ids = list(c(openalex = "https://openalex.org/A5061280794")), 
+    orcid = NA, works_count = 54L, cited_by_count = 131L, counts_by_year = list(
+        structure(list(year = 2024:2012, works_count = c(0L, 
+        0L, 0L, 0L, 1L, 1L, 1L, 0L, 2L, 2L, 3L, 4L, 2L), cited_by_count = c(3L, 
+        7L, 10L, 12L, 20L, 17L, 14L, 24L, 19L, 8L, 9L, 3L, 0L
+        )), class = "data.frame", row.names = c(NA, -13L))), 
+    affiliation_display_name = "University of Arizona", affiliation_id = "https://openalex.org/I138006243", 
+    affiliation_ror = "https://ror.org/03m2x1q45", affiliation_country_code = "US", 
+    affiliation_type = "education", affiliation_lineage = "https://openalex.org/I138006243, https://openalex.org/I3132585960", 
+    affiliations_other = list(c("https://openalex.org/I2800384119", 
+    "https://openalex.org/I131249849", "https://openalex.org/I119942576"
+    )), x_concepts = list(structure(list(id = c("https://openalex.org/C41008148", 
+    "https://openalex.org/C142362112", "https://openalex.org/C17744445", 
+    "https://openalex.org/C95457728", "https://openalex.org/C199539241", 
+    "https://openalex.org/C161191863", "https://openalex.org/C153349607", 
+    "https://openalex.org/C136764020", "https://openalex.org/C144024400", 
+    "https://openalex.org/C162324750", "https://openalex.org/C127413603", 
+    "https://openalex.org/C144133560", "https://openalex.org/C15744967", 
+    "https://openalex.org/C33923547", "https://openalex.org/C52119013", 
+    "https://openalex.org/C121332964", "https://openalex.org/C124952713", 
+    "https://openalex.org/C138885662"), wikidata = c("https://www.wikidata.org/wiki/Q21198", 
+    "https://www.wikidata.org/wiki/Q735", "https://www.wikidata.org/wiki/Q36442", 
+    "https://www.wikidata.org/wiki/Q309", "https://www.wikidata.org/wiki/Q7748", 
+    "https://www.wikidata.org/wiki/Q199655", "https://www.wikidata.org/wiki/Q36649", 
+    "https://www.wikidata.org/wiki/Q466", "https://www.wikidata.org/wiki/Q21201", 
+    "https://www.wikidata.org/wiki/Q8134", "https://www.wikidata.org/wiki/Q11023", 
+    "https://www.wikidata.org/wiki/Q4830453", "https://www.wikidata.org/wiki/Q9418", 
+    "https://www.wikidata.org/wiki/Q395", "https://www.wikidata.org/wiki/Q50637", 
+    "https://www.wikidata.org/wiki/Q413", "https://www.wikidata.org/wiki/Q8242", 
+    "https://www.wikidata.org/wiki/Q5891"), display_name = c("Computer science", 
+    "Art", "Political science", "History", "Law", "Library science", 
+    "Visual arts", "World Wide Web", "Sociology", "Economics", 
+    "Engineering", "Business", "Psychology", "Mathematics", "Art history", 
+    "Physics", "Literature", "Philosophy"), level = c(0L, 0L, 
+    0L, 0L, 1L, 1L, 1L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 
+    0L), score = c(55.6, 51.9, 48.1, 35.2, 35.2, 29.6, 27.8, 
+    25.9, 24.1, 24.1, 22.2, 22.2, 20.4, 20.4, 20.4, 20.4, 20.4, 
+    20.4)), class = "data.frame", row.names = c(NA, -18L))), 
+    works_api_url = "https://api.openalex.org/works?filter=author.id:A5061280794"), row.names = c(NA, 
+-1L), class = c("tbl_df", "tbl", "data.frame"))
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:28 Ella Peterson  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:28 Michael Brewer  Author affiliation: University of Arizona 
+
+structure(list(id = c("https://openalex.org/A5009411264", "https://openalex.org/A5047553232", 
+"https://openalex.org/A5081779788"), display_name = c("M. Henry", 
+"Michael Brewer", "Michael Brewer Ma and Mlis"), display_name_alternatives = list(
+    c("Michael Henry", "M. B. Henry", "M. Henry", "Michael B. Henry", 
+    "Michael Brewer Henry"), c("Michael M. Brewer", "Michael Brewer"
+    ), "Michael Brewer Ma and Mlis"), relevance_score = c(2564.4656, 
+960.25366, 322.02515), ids = list(c(openalex = "https://openalex.org/A5009411264", 
+orcid = "https://orcid.org/0000-0002-0608-9339"), c(openalex = "https://openalex.org/A5047553232"), 
+    c(openalex = "https://openalex.org/A5081779788")), orcid = c("https://orcid.org/0000-0002-0608-9339", 
+NA, NA), works_count = c(73L, 10L, 1L), cited_by_count = c(898L, 
+42L, 4L), counts_by_year = list(structure(list(year = 2024:2012, 
+    works_count = c(1L, 4L, 1L, 2L, 1L, 4L, 2L, 2L, 1L, 0L, 3L, 
+    5L, 5L), cited_by_count = c(8L, 54L, 39L, 37L, 42L, 31L, 
+    30L, 32L, 26L, 26L, 22L, 21L, 17L)), class = "data.frame", row.names = c(NA, 
+-13L)), structure(list(year = 2021:2012, works_count = c(0L, 
+0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L), cited_by_count = c(1L, 2L, 
+5L, 2L, 2L, 3L, 10L, 2L, 4L, 1L)), class = "data.frame", row.names = c(NA, 
+-10L)), structure(list(year = 2015L, works_count = 0L, cited_by_count = 2L), class = "data.frame", row.names = c(NA, 
+-1L))), affiliation_display_name = c("Healthwise", "University of Arizona", 
+"University of Arizona"), affiliation_id = c("https://openalex.org/I4210128108", 
+"https://openalex.org/I138006243", "https://openalex.org/I138006243"
+), affiliation_ror = c("https://ror.org/0379w2016", "https://ror.org/03m2x1q45", 
+"https://ror.org/03m2x1q45"), affiliation_country_code = c("US", 
+"US", "US"), affiliation_type = c("nonprofit", "education", "education"
+), affiliation_lineage = list("https://openalex.org/I4210128108", 
+    "https://openalex.org/I138006243, https://openalex.org/I3132585960", 
+    "https://openalex.org/I138006243, https://openalex.org/I3132585960"), 
+    affiliations_other = list(c("https://openalex.org/I78577930", 
+    "https://openalex.org/I1327486517", "https://openalex.org/I114493937", 
+    "https://openalex.org/I4210104856", "https://openalex.org/I4210125289", 
+    "https://openalex.org/I138006243", "https://openalex.org/I4210163596", 
+    "https://openalex.org/I27837315", "https://openalex.org/I196272386"
+    ), "https://openalex.org/I4210166658", character(0)), x_concepts = list(
+        structure(list(id = c("https://openalex.org/C41008148", 
+        "https://openalex.org/C121332964", "https://openalex.org/C127413603", 
+        "https://openalex.org/C62520636", "https://openalex.org/C119599485", 
+        "https://openalex.org/C24326235", "https://openalex.org/C76155785", 
+        "https://openalex.org/C192562407", "https://openalex.org/C49040817", 
+        "https://openalex.org/C120665830", "https://openalex.org/C33923547", 
+        "https://openalex.org/C761482", "https://openalex.org/C86803240", 
+        "https://openalex.org/C165801399", "https://openalex.org/C6260449", 
+        "https://openalex.org/C97355855", "https://openalex.org/C111919701", 
+        "https://openalex.org/C21922175", "https://openalex.org/C71924100", 
+        "https://openalex.org/C163258240", "https://openalex.org/C172385210", 
+        "https://openalex.org/C185592680", "https://openalex.org/C15744967", 
+        "https://openalex.org/C31258907", "https://openalex.org/C46362747"
+        ), wikidata = c("https://www.wikidata.org/wiki/Q21198", 
+        "https://www.wikidata.org/wiki/Q413", "https://www.wikidata.org/wiki/Q11023", 
+        "https://www.wikidata.org/wiki/Q944", "https://www.wikidata.org/wiki/Q43035", 
+        "https://www.wikidata.org/wiki/Q126095", "https://www.wikidata.org/wiki/Q418", 
+        "https://www.wikidata.org/wiki/Q228736", "https://www.wikidata.org/wiki/Q193091", 
+        "https://www.wikidata.org/wiki/Q14620", "https://www.wikidata.org/wiki/Q395", 
+        "https://www.wikidata.org/wiki/Q118093", "https://www.wikidata.org/wiki/Q420", 
+        "https://www.wikidata.org/wiki/Q25428", "https://www.wikidata.org/wiki/Q41364", 
+        "https://www.wikidata.org/wiki/Q11473", "https://www.wikidata.org/wiki/Q9135", 
+        "https://www.wikidata.org/wiki/Q3105497", "https://www.wikidata.org/wiki/Q11190", 
+        "https://www.wikidata.org/wiki/Q25342", "https://www.wikidata.org/wiki/Q5339", 
+        "https://www.wikidata.org/wiki/Q2329", "https://www.wikidata.org/wiki/Q9418", 
+        "https://www.wikidata.org/wiki/Q1301371", "https://www.wikidata.org/wiki/Q173431"
+        ), display_name = c("Computer science", "Physics", "Engineering", 
+        "Quantum mechanics", "Electrical engineering", "Electronic engineering", 
+        "Telecommunications", "Materials science", "Optoelectronics", 
+        "Optics", "Mathematics", "Transmission (telecommunications)", 
+        "Biology", "Voltage", "Wavelength", "Thermodynamics", 
+        "Operating system", "Gigabit", "Medicine", "Power (physics)", 
+        "Transistor", "Chemistry", "Psychology", "Computer network", 
+        "CMOS"), level = c(0L, 0L, 0L, 1L, 1L, 1L, 1L, 0L, 1L, 
+        1L, 0L, 2L, 0L, 2L, 2L, 1L, 1L, 2L, 0L, 2L, 3L, 0L, 0L, 
+        1L, 2L), score = c(84.9, 84.9, 80.8, 75.3, 75.3, 72.6, 
+        63, 61.6, 57.5, 49.3, 35.6, 32.9, 31.5, 30.1, 28.8, 28.8, 
+        28.8, 27.4, 27.4, 26, 26, 24.7, 23.3, 23.3, 23.3)), class = "data.frame", row.names = c(NA, 
+        -25L)), structure(list(id = c("https://openalex.org/C41008148", 
+        "https://openalex.org/C17744445", "https://openalex.org/C95457728", 
+        "https://openalex.org/C138885662", "https://openalex.org/C142362112", 
+        "https://openalex.org/C161191863", "https://openalex.org/C41895202", 
+        "https://openalex.org/C74916050", "https://openalex.org/C121894898", 
+        "https://openalex.org/C199539241", "https://openalex.org/C62520636", 
+        "https://openalex.org/C121332964", "https://openalex.org/C127413603", 
+        "https://openalex.org/C136764020", "https://openalex.org/C144133560", 
+        "https://openalex.org/C199360897", "https://openalex.org/C205649164", 
+        "https://openalex.org/C3368049", "https://openalex.org/C97355855", 
+        "https://openalex.org/C111919701", "https://openalex.org/C2777382242"
+        ), wikidata = c("https://www.wikidata.org/wiki/Q21198", 
+        "https://www.wikidata.org/wiki/Q36442", "https://www.wikidata.org/wiki/Q309", 
+        "https://www.wikidata.org/wiki/Q5891", "https://www.wikidata.org/wiki/Q735", 
+        "https://www.wikidata.org/wiki/Q199655", "https://www.wikidata.org/wiki/Q8162", 
+        "https://www.wikidata.org/wiki/Q841090", "https://www.wikidata.org/wiki/Q23526", 
+        "https://www.wikidata.org/wiki/Q7748", "https://www.wikidata.org/wiki/Q944", 
+        "https://www.wikidata.org/wiki/Q413", "https://www.wikidata.org/wiki/Q11023", 
+        "https://www.wikidata.org/wiki/Q466", "https://www.wikidata.org/wiki/Q4830453", 
+        "https://www.wikidata.org/wiki/Q9143", "https://www.wikidata.org/wiki/Q1071", 
+        "https://www.wikidata.org/wiki/Q156864", "https://www.wikidata.org/wiki/Q11473", 
+        "https://www.wikidata.org/wiki/Q9135", "https://www.wikidata.org/wiki/Q6017816"
+        ), display_name = c("Computer science", "Political science", 
+        "History", "Philosophy", "Art", "Library science", "Linguistics", 
+        "Classics", "Slavic languages", "Law", "Quantum mechanics", 
+        "Physics", "Engineering", "World Wide Web", "Business", 
+        "Programming language", "Geography", "Slavic studies", 
+        "Thermodynamics", "Operating system", "Index (typography)"
+        ), level = c(0L, 0L, 0L, 0L, 0L, 1L, 1L, 1L, 2L, 1L, 
+        1L, 0L, 0L, 1L, 0L, 1L, 0L, 3L, 1L, 1L, 2L), score = c(100, 
+        70, 60, 60, 60, 60, 50, 50, 50, 50, 40, 40, 40, 40, 40, 
+        40, 40, 30, 30, 30, 30)), class = "data.frame", row.names = c(NA, 
+        -21L)), structure(list(id = c("https://openalex.org/C3368049", 
+        "https://openalex.org/C9652623", "https://openalex.org/C15744967", 
+        "https://openalex.org/C17744445", "https://openalex.org/C19417346", 
+        "https://openalex.org/C33923547", "https://openalex.org/C41008148", 
+        "https://openalex.org/C41895202", "https://openalex.org/C74916050", 
+        "https://openalex.org/C95457728", "https://openalex.org/C121894898", 
+        "https://openalex.org/C138885662", "https://openalex.org/C142362112", 
+        "https://openalex.org/C144024400", "https://openalex.org/C161191863", 
+        "https://openalex.org/C202444582"), wikidata = c("https://www.wikidata.org/wiki/Q156864", 
+        "https://www.wikidata.org/wiki/Q190109", "https://www.wikidata.org/wiki/Q9418", 
+        "https://www.wikidata.org/wiki/Q36442", "https://www.wikidata.org/wiki/Q7922", 
+        "https://www.wikidata.org/wiki/Q395", "https://www.wikidata.org/wiki/Q21198", 
+        "https://www.wikidata.org/wiki/Q8162", "https://www.wikidata.org/wiki/Q841090", 
+        "https://www.wikidata.org/wiki/Q309", "https://www.wikidata.org/wiki/Q23526", 
+        "https://www.wikidata.org/wiki/Q5891", "https://www.wikidata.org/wiki/Q735", 
+        "https://www.wikidata.org/wiki/Q21201", "https://www.wikidata.org/wiki/Q199655", 
+        "https://www.wikidata.org/wiki/Q837863"), display_name = c("Slavic studies", 
+        "Field (mathematics)", "Psychology", "Political science", 
+        "Pedagogy", "Mathematics", "Computer science", "Linguistics", 
+        "Classics", "History", "Slavic languages", "Philosophy", 
+        "Art", "Sociology", "Library science", "Pure mathematics"
+        ), level = c(3L, 2L, 0L, 0L, 1L, 0L, 0L, 1L, 1L, 0L, 
+        2L, 0L, 0L, 0L, 1L, 1L), score = c(100, 100, 100, 100, 
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 
+        100)), class = "data.frame", row.names = c(NA, -16L))), 
+    works_api_url = c("https://api.openalex.org/works?filter=author.id:A5009411264", 
+    "https://api.openalex.org/works?filter=author.id:A5047553232", 
+    "https://api.openalex.org/works?filter=author.id:A5081779788"
+    )), row.names = c(NA, -3L), class = c("tbl_df", "tbl", "data.frame"
+))
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:29 Lidia Barcelo  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:29 Marty Taylor  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:29 Hayri Yildirim  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!
+
+***** get_dept_authors_names() calling search_author():  2024-03-29 21:19:30 Aengus Anderson  Author affiliation: University of Arizona 
+
+get_dept_authors_names(): search_author(author_name, affiliation_name) return NULL !!!

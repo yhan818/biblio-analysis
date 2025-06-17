@@ -1,0 +1,207 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=0788
+# requesting: sn 
+#
+
+# Becky Perry + 102839505482, University of Arizona, US
+dn: cn=Becky Perry+dbkey=102839505482,o=University of Arizona,c=US
+sn: Perry
+
+# Lea Marie Martinez + 113895734898, University of Arizona, US
+dn: cn=Lea Marie Martinez+dbkey=113895734898,o=University of Arizona,c=US
+sn: Martinez
+
+# Stacy Adams + 105285359468, University of Arizona, US
+dn: cn=Stacy Adams+dbkey=105285359468,o=University of Arizona,c=US
+sn: Adams
+
+# Eddie Latham-Jones + 103873018069, University of Arizona, US
+dn: cn=Eddie Latham-Jones+dbkey=103873018069,o=University of Arizona,c=US
+sn: Latham-Jones
+
+# Cammie Diaz + 103231112451, University of Arizona, US
+dn: cn=Cammie Diaz+dbkey=103231112451,o=University of Arizona,c=US
+sn: Diaz
+
+# Robert Nahf + 105674168162, University of Arizona, US
+dn: cn=Robert Nahf+dbkey=105674168162,o=University of Arizona,c=US
+sn: Nahf
+
+# Patrice Joan Redman + 120255922327, University of Arizona, US
+dn: cn=Patrice Joan Redman+dbkey=120255922327,o=University of Arizona,c=US
+sn: Redman
+
+# Lise Alschuler + 110891561291, University of Arizona, US
+dn: cn=Lise Alschuler+dbkey=110891561291,o=University of Arizona,c=US
+sn: Alschuler
+
+# Deborah Phyllis Coryell + 119984738029, University of Arizona, US
+dn: cn=Deborah Phyllis Coryell+dbkey=119984738029,o=University of Arizona,c=US
+sn: Coryell
+
+# Christina White + 113997162795, University of Arizona, US
+dn: cn=Christina White+dbkey=113997162795,o=University of Arizona,c=US
+sn: White
+
+# Bobbi E Munguia + 116019283714, University of Arizona, US
+dn: cn=Bobbi E Munguia+dbkey=116019283714,o=University of Arizona,c=US
+sn: Munguia
+
+# Janice Curtis + 112040392513, University of Arizona, US
+dn: cn=Janice Curtis+dbkey=112040392513,o=University of Arizona,c=US
+sn: Curtis
+
+# Andrew S Lane + 108671903331, University of Arizona, US
+dn: cn=Andrew S Lane+dbkey=108671903331,o=University of Arizona,c=US
+sn: Lane
+
+# Jessica Pacheco + 117562012140, University of Arizona, US
+dn: cn=Jessica Pacheco+dbkey=117562012140,o=University of Arizona,c=US
+sn: Pacheco
+
+# Cole Andrew Babbitt + 116180340453, University of Arizona, US
+dn: cn=Cole Andrew Babbitt+dbkey=116180340453,o=University of Arizona,c=US
+sn: Babbitt
+
+# Savannah Katherine Stevens + 115111881962, University of Arizona, US
+dn: cn=Savannah Katherine Stevens+dbkey=115111881962,o=University of Arizona,c
+ =US
+sn: Stevens
+
+# Melissa J Garlej + 119073776148, University of Arizona, US
+dn: cn=Melissa J Garlej+dbkey=119073776148,o=University of Arizona,c=US
+sn: Garlej
+
+# Esther M Sternberg + 111997339547, University of Arizona, US
+dn: cn=Esther M Sternberg+dbkey=111997339547,o=University of Arizona,c=US
+sn: Sternberg
+
+# Morgan Mariah Gasho + 102446172764, University of Arizona, US
+dn: cn=Morgan Mariah Gasho+dbkey=102446172764,o=University of Arizona,c=US
+sn: Gasho
+
+# Robert L Crocker + 102777575557, University of Arizona, US
+dn: cn=Robert L Crocker+dbkey=102777575557,o=University of Arizona,c=US
+sn: Crocker
+
+# Lorna Brett Motz + 109680230597, University of Arizona, US
+dn: cn=Lorna Brett Motz+dbkey=109680230597,o=University of Arizona,c=US
+sn: Motz
+
+# Scott D. Gimple + 106158298699, University of Arizona, US
+dn: cn=Scott D. Gimple+dbkey=106158298699,o=University of Arizona,c=US
+sn: Gimple
+
+# James Lloyd Kimbrough + 102239825798, University of Arizona, US
+dn: cn=James Lloyd Kimbrough+dbkey=102239825798,o=University of Arizona,c=US
+sn: Kimbrough
+
+# Amy S Williams + 121027152663, University of Arizona, US
+dn: cn=Amy S Williams+dbkey=121027152663,o=University of Arizona,c=US
+sn: Williams
+
+# Rosalyn Elise DePalo + 120196415474, University of Arizona, US
+dn: cn=Rosalyn Elise DePalo+dbkey=120196415474,o=University of Arizona,c=US
+sn: DePalo
+
+# Karen L Mihina + 117570624261, University of Arizona, US
+dn: cn=Karen L Mihina+dbkey=117570624261,o=University of Arizona,c=US
+sn: Mihina
+
+# Kathryn M Durban + 107820373073, University of Arizona, US
+dn: cn=Kathryn M Durban+dbkey=107820373073,o=University of Arizona,c=US
+sn: Durban
+
+# Ann Marie Chiasson + 104427192408, University of Arizona, US
+dn: cn=Ann Marie Chiasson+dbkey=104427192408,o=University of Arizona,c=US
+sn: Chiasson
+
+# Norma G Hewlett + 119865188372, University of Arizona, US
+dn: cn=Norma G Hewlett+dbkey=119865188372,o=University of Arizona,c=US
+sn: Hewlett
+
+# Keith B LaBaw + 118195317322, University of Arizona, US
+dn: cn=Keith B LaBaw+dbkey=118195317322,o=University of Arizona,c=US
+sn: LaBaw
+
+# Randy J Horwitz + 102694377926, University of Arizona, US
+dn: cn=Randy J Horwitz+dbkey=102694377926,o=University of Arizona,c=US
+sn: Horwitz
+
+# Audrey J Brooks + 100803373354, University of Arizona, US
+dn: cn=Audrey J Brooks+dbkey=100803373354,o=University of Arizona,c=US
+sn: Brooks
+
+# Victoria Maizes + 118362378411, University of Arizona, US
+dn: cn=Victoria Maizes+dbkey=118362378411,o=University of Arizona,c=US
+sn: Maizes
+
+# Cheryl Tanya Errante + 103188661849, University of Arizona, US
+dn: cn=Cheryl Tanya Errante+dbkey=103188661849,o=University of Arizona,c=US
+sn: Errante
+
+# Cesar A Bustamante + 100977585255, University of Arizona, US
+dn: cn=Cesar A Bustamante+dbkey=100977585255,o=University of Arizona,c=US
+sn: Bustamante
+
+# Andrew T Weil + 100821714811, University of Arizona, US
+dn: cn=Andrew T Weil+dbkey=100821714811,o=University of Arizona,c=US
+sn: Weil
+
+# Jacqueline C Gomez + 102965079726, University of Arizona, US
+dn: cn=Jacqueline C Gomez+dbkey=102965079726,o=University of Arizona,c=US
+sn: Gomez
+
+# Stephanie C Feder + 109853732160, University of Arizona, US
+dn: cn=Stephanie C Feder+dbkey=109853732160,o=University of Arizona,c=US
+sn: Feder
+
+# Kayla G Espinoza + 119366679629, University of Arizona, US
+dn: cn=Kayla G Espinoza+dbkey=119366679629,o=University of Arizona,c=US
+sn: Espinoza
+
+# Paula J Cook + 114069218672, University of Arizona, US
+dn: cn=Paula J Cook+dbkey=114069218672,o=University of Arizona,c=US
+sn: Cook
+
+# Kevin S Ryan + 106455347951, University of Arizona, US
+dn: cn=Kevin S Ryan+dbkey=106455347951,o=University of Arizona,c=US
+sn: Ryan
+
+# Molly K Burke + 101963195028, University of Arizona, US
+dn: cn=Molly K Burke+dbkey=101963195028,o=University of Arizona,c=US
+sn: Burke
+
+# Patricia Lebensohn + 100698771102, University of Arizona, US
+dn: cn=Patricia Lebensohn+dbkey=100698771102,o=University of Arizona,c=US
+sn: Lebensohn
+
+# John D Lawrence + 107564557855, University of Arizona, US
+dn: cn=John D Lawrence+dbkey=107564557855,o=University of Arizona,c=US
+sn: Lawrence
+
+# Rhonda R Hallquist + 108288429059, University of Arizona, US
+dn: cn=Rhonda R Hallquist+dbkey=108288429059,o=University of Arizona,c=US
+sn: Hallquist
+
+# Amy R Som + 100627013888, University of Arizona, US
+dn: cn=Amy R Som+dbkey=100627013888,o=University of Arizona,c=US
+sn: Som
+
+# Gale Radford + 103117321361, University of Arizona, US
+dn: cn=Gale Radford+dbkey=103117321361,o=University of Arizona,c=US
+sn: Radford
+
+# Matt Stoner + 120216778987, University of Arizona, US
+dn: cn=Matt Stoner+dbkey=120216778987,o=University of Arizona,c=US
+sn: Stoner
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 49
+# numEntries: 48

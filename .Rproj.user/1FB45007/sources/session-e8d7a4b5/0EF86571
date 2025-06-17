@@ -1,0 +1,26 @@
+{
+    "id": "0EF86571",
+    "path": "~/Documents/openalexR-test/collaboration.R",
+    "project_path": "collaboration.R",
+    "type": "r_source",
+    "hash": "765803932",
+    "contents": "",
+    "dirty": false,
+    "created": 1742882531200.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "470,41",
+        "scrollLine": "444"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1750146644,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1750146644850,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,34 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=0712
+# requesting: sn 
+#
+
+# Susan A Maley + 115695301144, University of Arizona, US
+dn: cn=Susan A Maley+dbkey=115695301144,o=University of Arizona,c=US
+sn: Maley
+
+# Margaret Proffitt + 121374660403, University of Arizona, US
+dn: cn=Margaret Proffitt+dbkey=121374660403,o=University of Arizona,c=US
+sn: Proffitt
+
+# Edgar Garcia + 114712872975, University of Arizona, US
+dn: cn=Edgar Garcia+dbkey=114712872975,o=University of Arizona,c=US
+sn: Garcia
+
+# Rebecca Perry Tardiff + 110683994817, University of Arizona, US
+dn: cn=Rebecca Perry Tardiff+dbkey=110683994817,o=University of Arizona,c=US
+sn: Tardiff
+
+# Lisa M O'Neill + 113657596153, University of Arizona, US
+dn: cn=Lisa M O'Neill+dbkey=113657596153,o=University of Arizona,c=US
+sn: O'Neill
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 6
+# numEntries: 5

@@ -1,0 +1,55 @@
+How to Get Dept/Unit Authors Works
+
+Author: Yan Han
+Date: 2024-02-04
+
+1. Code: 
+See Python code: matching_LDAP_authors_name.py (Step 1)
+See R code at: openalexR-authors.R (Step 2 and 3)
+
+
+2. Steps
+
+######### Step 1 :  Get unit/dept/college authors ######################
+######### LDAP search
+#LDAP query against ldap.arizona.edu (public, no account required), e.g.
+# Via linux terminal: ldapsearch -H ldap://ldap.arizona.edu -D "" -b "o=University of Arizona,c=US" -w -x 'departmentNumber=1705' givenName sn
+
+# To find Dept HR code: log into apps.iam.arizona.edu to search person >> OrgSearch (partent org, child orgs) 
+# Example: https://apps.iam.arizona.edu/orgs/ua_orgs/view/1705
+
+# Department of Medicine at College of Medicine (UMC-Tucson): code : 0713
+# 1. Get LDAP data by running 
+#    > "ldapsearch -H ldap://ldap.arizona.edu -D "" -b "o=University of Arizona,c=US" -w -x 'departmentNumber=0713' sn > dept0713.ldif
+# 2. Convert the LDAP data to CSV file and then compare it with Funk's CSV (XLSV converted to CSV), which generates two CSV files: 
+#   {dept}.csv = dept LDAP ; {dept}_common.csv = common entries between the {dept}.csv and Funk's CSV
+#   This is by Using "matching_LDAP_authors_names.py" to convert LDIF (LDAP data interchange format) to CSV format. 
+#   > "Python matching_LDAP_authors_names.py" to enter dept name such as "dept0713". 
+
+
+######### step2: get dept author name and filtering 
+dept_authors_names <- get_dept_authors_names(dept_name, affiliation_name)
+
+Note: When matching Banner authors, many authors in OpenAlex are affiliated with University of Arizona. So it is necessary to match 
+the foillowing: 
+
+  UArizona <- c("https://openalex.org/I138006243", "https://ror.org/03m2x1q45", "University of Arizona", "I138006243")
+  
+  author_from_names <- oa_fetch(entity = "author", search = author_name)
+
+######### step 3: get authors works based on the names and affiliation
+An author's work is a dataframe of dataframes. It is not possible to output all the data using one Excel's sheet. 
+You might want to exclude certain fields (e.g. "concepts", "related_works") depending on specific needs. 
+For example, author (field "display_name")  info is a dataframe. It can be a list of multiple authors (containing ID, name etc) 
+
+
+output_dept_author_works_by_year(dept_name, dept_authors_names, year)
+
+#################################################################
+
+3. Examples:
+
+dept_name <- "dept0788"
+dept_authors_names <- list()
+dept_authors_names <- get_dept_authors_names(dept_name, affiliation_name)
+output_dept_author_works_by_year(dept_name, dept_authors_names, year)

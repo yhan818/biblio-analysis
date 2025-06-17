@@ -1,0 +1,75 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=0747
+# requesting: sn 
+#
+
+# Stacy Ormsby + 117274787946, University of Arizona, US
+dn: cn=Stacy Ormsby+dbkey=117274787946,o=University of Arizona,c=US
+sn: Ormsby
+
+# Guadalupe Carr + 111022619100, University of Arizona, US
+dn: cn=Guadalupe Carr+dbkey=111022619100,o=University of Arizona,c=US
+sn: Carr
+
+# Heather N Habecker + 114947575238, University of Arizona, US
+dn: cn=Heather N Habecker+dbkey=114947575238,o=University of Arizona,c=US
+sn: Habecker
+
+# Davin Vidigal Rosenberg + 116191222884, University of Arizona, US
+dn: cn=Davin Vidigal Rosenberg+dbkey=116191222884,o=University of Arizona,c=US
+sn: Vidigal Rosenberg
+
+# Victoria Segura + 101751281773, University of Arizona, US
+dn: cn=Victoria Segura+dbkey=101751281773,o=University of Arizona,c=US
+sn: Segura
+
+# Brenna Alejandra Chabolla Stauffer + 110141677371, University of Arizona, US
+dn: cn=Brenna Alejandra Chabolla Stauffer+dbkey=110141677371,o=University of A
+ rizona,c=US
+sn: Chabolla Stauffer
+
+# Christina Kalel + 113608666893, University of Arizona, US
+dn: cn=Christina Kalel+dbkey=113608666893,o=University of Arizona,c=US
+sn: Kalel
+
+# Desiree M Collins + 103269157260, University of Arizona, US
+dn: cn=Desiree M Collins+dbkey=103269157260,o=University of Arizona,c=US
+sn: Collins
+
+# Eva Sanchez + 105242397653, University of Arizona, US
+dn: cn=Eva Sanchez+dbkey=105242397653,o=University of Arizona,c=US
+sn: Sanchez
+
+# Annette M Gallardo + 112129705576, University of Arizona, US
+dn: cn=Annette M Gallardo+dbkey=112129705576,o=University of Arizona,c=US
+sn: Gallardo
+
+# Nicole Bousquet + 114099537728, University of Arizona, US
+dn: cn=Nicole Bousquet+dbkey=114099537728,o=University of Arizona,c=US
+sn: Bousquet
+
+# Conrad J Clemens + 112008588420, University of Arizona, US
+dn: cn=Conrad J Clemens+dbkey=112008588420,o=University of Arizona,c=US
+sn: Clemens
+
+# Carrie M Stusse + 117629189382, University of Arizona, US
+dn: cn=Carrie M Stusse+dbkey=117629189382,o=University of Arizona,c=US
+sn: Stusse
+
+# Bruce M Coull + 116312138867, University of Arizona, US
+dn: cn=Bruce M Coull+dbkey=116312138867,o=University of Arizona,c=US
+sn: Coull
+
+# Kevin F Moynahan + 116238948256, University of Arizona, US
+dn: cn=Kevin F Moynahan+dbkey=116238948256,o=University of Arizona,c=US
+sn: Moynahan
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 16
+# numEntries: 15

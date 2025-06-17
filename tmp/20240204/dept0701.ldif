@@ -1,0 +1,195 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=0701
+# requesting: sn 
+#
+
+# Alejandro Roman + 104929306778, University of Arizona, US
+dn: cn=Alejandro Roman+dbkey=104929306778,o=University of Arizona,c=US
+sn: Roman
+
+# Danielle Madrid-Sharff + 105244849838, University of Arizona, US
+dn: cn=Danielle Madrid-Sharff+dbkey=105244849838,o=University of Arizona,c=US
+sn: Madrid-Sharff
+
+# Esther M Sotelo + 107032834878, University of Arizona, US
+dn: cn=Esther M Sotelo+dbkey=107032834878,o=University of Arizona,c=US
+sn: Sotelo
+
+# Jameshia N Granberry + 115471966564, University of Arizona, US
+dn: cn=Jameshia N Granberry+dbkey=115471966564,o=University of Arizona,c=US
+sn: Granberry
+
+# Taylor Terca + 117610545486, University of Arizona, US
+dn: cn=Taylor Terca+dbkey=117610545486,o=University of Arizona,c=US
+sn: Terca
+
+# Abigail Lee Morris Kelso + 121432757556, University of Arizona, US
+dn: cn=Abigail Lee Morris Kelso+dbkey=121432757556,o=University of Arizona,c=U
+ S
+sn: Kelso
+
+# Sean Michael O'Sullivan + 109945644610, University of Arizona, US
+dn: cn=Sean Michael O'Sullivan+dbkey=109945644610,o=University of Arizona,c=US
+sn: O'Sullivan
+
+# David A. Bruzzese + 115135456606, University of Arizona, US
+dn: cn=David A. Bruzzese+dbkey=115135456606,o=University of Arizona,c=US
+sn: Bruzzese
+
+# Alisa Petersen + 113691561449, University of Arizona, US
+dn: cn=Alisa Petersen+dbkey=113691561449,o=University of Arizona,c=US
+sn: Petersen
+
+# Jason A Wertheim + 103439993489, University of Arizona, US
+dn: cn=Jason A Wertheim+dbkey=103439993489,o=University of Arizona,c=US
+sn: Wertheim
+
+# Jose Luis Munoz + 110832178805, University of Arizona, US
+dn: cn=Jose Luis Munoz+dbkey=110832178805,o=University of Arizona,c=US
+sn: Munoz
+
+# Michael M I Abecassis + 108322588908, University of Arizona, US
+dn: cn=Michael M I Abecassis+dbkey=108322588908,o=University of Arizona,c=US
+sn: Abecassis
+
+# Cathy Mia Gonzales + 103648374063, University of Arizona, US
+dn: cn=Cathy Mia Gonzales+dbkey=103648374063,o=University of Arizona,c=US
+sn: Gonzales
+
+# Clarissa Esperanza Moreno-Lopez + 120000158048, University of Arizona, US
+dn: cn=Clarissa Esperanza Moreno-Lopez+dbkey=120000158048,o=University of Ariz
+ ona,c=US
+sn: Moreno-Lopez
+
+# Lili Martinez + 120114768081, University of Arizona, US
+dn: cn=Lili Martinez+dbkey=120114768081,o=University of Arizona,c=US
+sn: Martinez
+
+# Auralia B Walls + 107391814634, University of Arizona, US
+dn: cn=Auralia B Walls+dbkey=107391814634,o=University of Arizona,c=US
+sn: Walls
+
+# Tracy J Rios + 115141506632, University of Arizona, US
+dn: cn=Tracy J Rios+dbkey=115141506632,o=University of Arizona,c=US
+sn: Rios
+
+# Jerie LaRae Schulz + 116858402273, University of Arizona, US
+dn: cn=Jerie LaRae Schulz+dbkey=116858402273,o=University of Arizona,c=US
+sn: Schulz
+
+# Aja Brianne Haymore + 106086955045, University of Arizona, US
+dn: cn=Aja Brianne Haymore+dbkey=106086955045,o=University of Arizona,c=US
+sn: Haymore
+
+# Virginia Zazueta Blackman + 118708756548, University of Arizona, US
+dn: cn=Virginia Zazueta Blackman+dbkey=118708756548,o=University of Arizona,c=
+ US
+sn: Zazueta-Blackman
+
+# Angela Maria Martinez + 103008898899, University of Arizona, US
+dn: cn=Angela Maria Martinez+dbkey=103008898899,o=University of Arizona,c=US
+sn: Martinez
+
+# Justin Nathaniel Haag + 116591751928, University of Arizona, US
+dn: cn=Justin Nathaniel Haag+dbkey=116591751928,o=University of Arizona,c=US
+sn: Haag
+
+# Francisco Javier Gonzalez + 111330123772, University of Arizona, US
+dn: cn=Francisco Javier Gonzalez+dbkey=111330123772,o=University of Arizona,c=
+ US
+sn: Gonzalez
+
+# Anna C Christensen + 110276713984, University of Arizona, US
+dn: cn=Anna C Christensen+dbkey=110276713984,o=University of Arizona,c=US
+sn: Christensen
+
+# Lisa M Granados + 105375098254, University of Arizona, US
+dn: cn=Lisa M Granados+dbkey=105375098254,o=University of Arizona,c=US
+sn: Granados
+
+# Casandra M Sanchez + 109612542966, University of Arizona, US
+dn: cn=Casandra M Sanchez+dbkey=109612542966,o=University of Arizona,c=US
+sn: Sanchez
+
+# Fay M Johnson + 116666466863, University of Arizona, US
+dn: cn=Fay M Johnson+dbkey=116666466863,o=University of Arizona,c=US
+sn: Johnson
+
+# Richard Chavez + 109750026576, University of Arizona, US
+dn: cn=Richard Chavez+dbkey=109750026576,o=University of Arizona,c=US
+sn: Chavez
+
+# Steven T Froehlich + 120445965332, University of Arizona, US
+dn: cn=Steven T Froehlich+dbkey=120445965332,o=University of Arizona,c=US
+sn: Froehlich
+
+# Gracialinda G Colmenero + 117980719275, University of Arizona, US
+dn: cn=Gracialinda G Colmenero+dbkey=117980719275,o=University of Arizona,c=US
+sn: Colmenero
+
+# Keith A Joiner + 111182798261, University of Arizona, US
+dn: cn=Keith A Joiner+dbkey=111182798261,o=University of Arizona,c=US
+sn: Joiner
+
+# Kristen E Lynch + 121044837350, University of Arizona, US
+dn: cn=Kristen E Lynch+dbkey=121044837350,o=University of Arizona,c=US
+sn: Lynch
+
+# Jason C Marr + 116359282064, University of Arizona, US
+dn: cn=Jason C Marr+dbkey=116359282064,o=University of Arizona,c=US
+sn: Marr
+
+# Sonia Nieves + 115509905748, University of Arizona, US
+dn: cn=Sonia Nieves+dbkey=115509905748,o=University of Arizona,c=US
+sn: Nieves
+
+# Lori Stratton + 116623921730, University of Arizona, US
+dn: cn=Lori Stratton+dbkey=116623921730,o=University of Arizona,c=US
+sn: Stratton
+
+# Dulantha Dahanayaka Yapa + 103429916485, University of Arizona, US
+dn: cn=Dulantha Dahanayaka Yapa+dbkey=103429916485,o=University of Arizona,c=U
+ S
+sn: Dahanayaka Yapa
+
+# Lisa Powers Fahey + 113577326839, University of Arizona, US
+dn: cn=Lisa Powers Fahey+dbkey=113577326839,o=University of Arizona,c=US
+sn: Fahey
+
+# Anne E Cress + 119757622223, University of Arizona, US
+dn: cn=Anne E Cress+dbkey=119757622223,o=University of Arizona,c=US
+sn: Cress
+
+# Todd K Boltz + 107580014682, University of Arizona, US
+dn: cn=Todd K Boltz+dbkey=107580014682,o=University of Arizona,c=US
+sn: Boltz
+
+# Loren Drake + 119100395931, University of Arizona, US
+dn: cn=Loren Drake+dbkey=119100395931,o=University of Arizona,c=US
+sn: Drake
+
+# Christa L Hamilton + 118097974647, University of Arizona, US
+dn: cn=Christa L Hamilton+dbkey=118097974647,o=University of Arizona,c=US
+sn: Hamilton
+
+# Ross A Dubois + 117006050148, University of Arizona, US
+dn: cn=Ross A Dubois+dbkey=117006050148,o=University of Arizona,c=US
+sn: Dubois
+
+# Daniel J Carty + 107812015777, University of Arizona, US
+dn: cn=Daniel J Carty+dbkey=107812015777,o=University of Arizona,c=US
+sn: Carty
+
+# Christina M Mena + 114055807325, University of Arizona, US
+dn: cn=Christina M Mena+dbkey=114055807325,o=University of Arizona,c=US
+sn: Mena
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 45
+# numEntries: 44

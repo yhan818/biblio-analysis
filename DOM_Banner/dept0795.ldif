@@ -1,0 +1,55 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=0795
+# requesting: sn 
+#
+
+# Brigette Rubi + 104428950475, University of Arizona, US
+dn: cn=Brigette Rubi+dbkey=104428950475,o=University of Arizona,c=US
+sn: Rubi
+
+# Daniel Powell + 110333670882, University of Arizona, US
+dn: cn=Daniel Powell+dbkey=110333670882,o=University of Arizona,c=US
+sn: Powell
+
+# Malisa D Grantham + 107300731257, University of Arizona, US
+dn: cn=Malisa D Grantham+dbkey=107300731257,o=University of Arizona,c=US
+sn: Grantham
+
+# Lourdes Lewis + 106620982439, University of Arizona, US
+dn: cn=Lourdes Lewis+dbkey=106620982439,o=University of Arizona,c=US
+sn: Lewis
+
+# Christine Davis Butkiewicz + 109961152101, University of Arizona, US
+dn: cn=Christine Davis Butkiewicz+dbkey=109961152101,o=University of Arizona,c
+ =US
+sn: Butkiewicz
+
+# Lisa Shubitz + 117150072796, University of Arizona, US
+dn: cn=Lisa Shubitz+dbkey=117150072796,o=University of Arizona,c=US
+sn: Shubitz
+
+# M. Alejandra Mandel + 114852097165, University of Arizona, US
+dn: cn=M. Alejandra Mandel+dbkey=114852097165,o=University of Arizona,c=US
+sn: Mandel
+
+# Lisa Higgins + 106971489241, University of Arizona, US
+dn: cn=Lisa Higgins+dbkey=106971489241,o=University of Arizona,c=US
+sn: Higgins
+
+# Hien T Trinh + 119607267269, University of Arizona, US
+dn: cn=Hien T Trinh+dbkey=119607267269,o=University of Arizona,c=US
+sn: Trinh
+
+# Tao Peng + 105206663194, University of Arizona, US
+dn: cn=Tao Peng+dbkey=105206663194,o=University of Arizona,c=US
+sn: Peng
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 11
+# numEntries: 10

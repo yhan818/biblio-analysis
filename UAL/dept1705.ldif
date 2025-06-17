@@ -1,0 +1,84 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=1705
+# requesting: sn cn 
+#
+
+# Heather Gayle Froehlich + 107105618728, University of Arizona, US
+dn: cn=Heather Gayle Froehlich+dbkey=107105618728,o=University of Arizona,c=US
+sn: Froehlich
+cn: Heather Gayle Froehlich
+
+# Megan Finn Senseney + 102919525811, University of Arizona, US
+dn: cn=Megan Finn Senseney+dbkey=102919525811,o=University of Arizona,c=US
+sn: Senseney
+cn: Megan Finn Senseney
+
+# Ellen Dubinsky + 112791075612, University of Arizona, US
+dn: cn=Ellen Dubinsky+dbkey=112791075612,o=University of Arizona,c=US
+sn: Dubinsky
+cn: Ellen Dubinsky
+
+# Fernando Rios + 120833353993, University of Arizona, US
+dn: cn=Fernando Rios+dbkey=120833353993,o=University of Arizona,c=US
+sn: Rios
+cn: Fernando Rios
+
+# Tori Wilcox + 101092493384, University of Arizona, US
+dn: cn=Tori Wilcox+dbkey=101092493384,o=University of Arizona,c=US
+sn: Wilcox
+cn: Tori Wilcox
+
+# Anthony R Sanchez + 105268958907, University of Arizona, US
+dn: cn=Anthony R Sanchez+dbkey=105268958907,o=University of Arizona,c=US
+sn: Sanchez
+cn: Anthony R Sanchez
+
+# Kimberly A Chapman + 112130605498, University of Arizona, US
+dn: cn=Kimberly A Chapman+dbkey=112130605498,o=University of Arizona,c=US
+sn: Chapman
+cn: Kimberly A Chapman
+
+# Jeffrey C Oliver + 118028990313, University of Arizona, US
+dn: cn=Jeffrey C Oliver+dbkey=118028990313,o=University of Arizona,c=US
+sn: Oliver
+cn: Jeffrey C Oliver
+
+# Alana V Varner + 104586387089, University of Arizona, US
+dn: cn=Alana V Varner+dbkey=104586387089,o=University of Arizona,c=US
+sn: Varner
+cn: Alana V Varner
+
+# Elizabeth Kline + 100748731305, University of Arizona, US
+dn: cn=Elizabeth Kline+dbkey=100748731305,o=University of Arizona,c=US
+sn: Kline
+cn: Elizabeth Kline
+
+# Jim Martin + 103480516467, University of Arizona, US
+dn: cn=Jim Martin+dbkey=103480516467,o=University of Arizona,c=US
+sn: Martin
+cn: Jim Martin
+
+# Yan Han + 113307601058, University of Arizona, US
+dn: cn=Yan Han+dbkey=113307601058,o=University of Arizona,c=US
+sn: Han
+cn: Yan Han
+
+# Cheryl Casey + 106666107732, University of Arizona, US
+dn: cn=Cheryl Casey+dbkey=106666107732,o=University of Arizona,c=US
+sn: Casey
+cn: Cheryl Casey
+
+# Niamh A Wallace + 100228770775, University of Arizona, US
+dn: cn=Niamh A Wallace+dbkey=100228770775,o=University of Arizona,c=US
+sn: Wallace
+cn: Niamh A Wallace
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 15
+# numEntries: 14

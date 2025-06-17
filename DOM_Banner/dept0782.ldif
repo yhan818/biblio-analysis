@@ -1,0 +1,100 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=0782
+# requesting: sn 
+#
+
+# Shannon S Carmona + 111538356276, University of Arizona, US
+dn: cn=Shannon S Carmona+dbkey=111538356276,o=University of Arizona,c=US
+sn: Carmona
+
+# Claudio Cheuquen Oviedo + 107662435524, University of Arizona, US
+dn: cn=Claudio Cheuquen Oviedo+dbkey=107662435524,o=University of Arizona,c=US
+sn: Cheuquen Oviedo
+
+# Anesa Rae Ann Castillo + 114500359226, University of Arizona, US
+dn: cn=Anesa Rae Ann Castillo+dbkey=114500359226,o=University of Arizona,c=US
+sn: Castillo
+
+# David Christopher Neiling + 119148227692, University of Arizona, US
+dn: cn=David Christopher Neiling+dbkey=119148227692,o=University of Arizona,c=
+ US
+sn: Neiling
+
+# Katy Tomlinson + 111505206976, University of Arizona, US
+dn: cn=Katy Tomlinson+dbkey=111505206976,o=University of Arizona,c=US
+sn: Tomlinson
+
+# Bryson Lee Southard + 105027077254, University of Arizona, US
+dn: cn=Bryson Lee Southard+dbkey=105027077254,o=University of Arizona,c=US
+sn: Southard
+
+# Amanda Labagnara + 113560181348, University of Arizona, US
+dn: cn=Amanda Labagnara+dbkey=113560181348,o=University of Arizona,c=US
+sn: Labagnara
+
+# Selma Ajanovic + 119117345652, University of Arizona, US
+dn: cn=Selma Ajanovic+dbkey=119117345652,o=University of Arizona,c=US
+sn: Ajanovic
+
+# Elise Ramirez Smith + 116778237772, University of Arizona, US
+dn: cn=Elise Ramirez Smith+dbkey=116778237772,o=University of Arizona,c=US
+sn: Smith
+
+# Camille Chavez + 115231197310, University of Arizona, US
+dn: cn=Camille Chavez+dbkey=115231197310,o=University of Arizona,c=US
+sn: Chavez
+
+# Jeffrey J Murchison + 110426473380, University of Arizona, US
+dn: cn=Jeffrey J Murchison+dbkey=110426473380,o=University of Arizona,c=US
+sn: Murchison
+
+# Jessica R Le duc + 114226533587, University of Arizona, US
+dn: cn=Jessica R Le duc+dbkey=114226533587,o=University of Arizona,c=US
+sn: Le duc
+
+# Christina Lee Bastian + 102747723203, University of Arizona, US
+dn: cn=Christina Lee Bastian+dbkey=102747723203,o=University of Arizona,c=US
+sn: Bastian
+
+# Yamne Victoria Callejas + 115210773450, University of Arizona, US
+dn: cn=Yamne Victoria Callejas+dbkey=115210773450,o=University of Arizona,c=US
+sn: Callejas
+
+# Patricia Harrison-Monroe + 111039085948, University of Arizona, US
+dn: cn=Patricia Harrison-Monroe+dbkey=111039085948,o=University of Arizona,c=U
+ S
+sn: Harrison-Monroe
+
+# Mona Lopez + 105238678256, University of Arizona, US
+dn: cn=Mona Lopez+dbkey=105238678256,o=University of Arizona,c=US
+sn: Lopez
+
+# Tejal M Parikh + 113442277992, University of Arizona, US
+dn: cn=Tejal M Parikh+dbkey=113442277992,o=University of Arizona,c=US
+sn: Parikh
+
+# Larissa M Gronenberg + 119268169260, University of Arizona, US
+dn: cn=Larissa M Gronenberg+dbkey=119268169260,o=University of Arizona,c=US
+sn: Gronenberg
+
+# Sherri Kay McClellan + 119000340569, University of Arizona, US
+dn: cn=Sherri Kay McClellan+dbkey=119000340569,o=University of Arizona,c=US
+sn: McClellan
+
+# Derek D Honeyman + 105209274053, University of Arizona, US
+dn: cn=Derek D Honeyman+dbkey=105209274053,o=University of Arizona,c=US
+sn: Honeyman
+
+# Mark A Romero + 110579423747, University of Arizona, US
+dn: cn=Mark A Romero+dbkey=110579423747,o=University of Arizona,c=US
+sn: Romero
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 22
+# numEntries: 21

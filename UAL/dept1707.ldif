@@ -1,0 +1,104 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=1707
+# requesting: givenName sn 
+#
+
+# Hana Noel Lipke + 119567570432, University of Arizona, US
+dn: cn=Hana Noel Lipke+dbkey=119567570432,o=University of Arizona,c=US
+givenName: Hana Noel
+sn: Lipke
+
+# Shelley Peper + 117944330496, University of Arizona, US
+dn: cn=Shelley Peper+dbkey=117944330496,o=University of Arizona,c=US
+givenName: Shelley
+sn: Peper
+
+# Nicole Hennig + 112460226909, University of Arizona, US
+dn: cn=Nicole Hennig+dbkey=112460226909,o=University of Arizona,c=US
+givenName: Gail
+sn: Hennig
+
+# Lara Miller + 120112157215, University of Arizona, US
+dn: cn=Lara Miller+dbkey=120112157215,o=University of Arizona,c=US
+givenName: Lara
+sn: Miller
+
+# Paula C Johnson + 118440972133, University of Arizona, US
+dn: cn=Paula C Johnson+dbkey=118440972133,o=University of Arizona,c=US
+givenName: Paula
+sn: Johnson
+
+# Beth E Reese + 115757093137, University of Arizona, US
+dn: cn=Beth E Reese+dbkey=115757093137,o=University of Arizona,c=US
+givenName: Beth E
+sn: Reese
+
+# Michelle Halla + 114747091291, University of Arizona, US
+dn: cn=Michelle Halla+dbkey=114747091291,o=University of Arizona,c=US
+givenName: Michelle
+sn: Halla
+
+# Niko Paulo Sanchez + 106917177411, University of Arizona, US
+dn: cn=Niko Paulo Sanchez+dbkey=106917177411,o=University of Arizona,c=US
+givenName: Nikolas Paulo
+sn: Sanchez
+
+# Jeremiah Paschke-Wood + 102849570522, University of Arizona, US
+dn: cn=Jeremiah Paschke-Wood+dbkey=102849570522,o=University of Arizona,c=US
+givenName: Jeremiah
+sn: Paschke-wood
+
+# Ping Situ + 112132998203, University of Arizona, US
+dn: cn=Ping Situ+dbkey=112132998203,o=University of Arizona,c=US
+givenName: Ping
+sn: Situ
+
+# Mona Aki Nakamura + 101987074260, University of Arizona, US
+dn: cn=Mona Aki Nakamura+dbkey=101987074260,o=University of Arizona,c=US
+givenName: Mona Aki
+sn: Nakamura
+
+# Jennifer T Nichols + 117630445240, University of Arizona, US
+dn: cn=Jennifer T Nichols+dbkey=117630445240,o=University of Arizona,c=US
+givenName: Jennifer T
+sn: Nichols
+
+# Rachel P Castro + 110244601835, University of Arizona, US
+dn: cn=Rachel P Castro+dbkey=110244601835,o=University of Arizona,c=US
+givenName: Rachel P
+sn: Castro
+
+# Mary E Feeney + 112180710651, University of Arizona, US
+dn: cn=Mary E Feeney+dbkey=112180710651,o=University of Arizona,c=US
+givenName: Mary E
+sn: Feeney
+
+# Yvonne D Mery + 120333521931, University of Arizona, US
+dn: cn=Yvonne D Mery+dbkey=120333521931,o=University of Arizona,c=US
+givenName: Yvonne D
+sn: Mery
+
+# Robin T Vickery + 104523026172, University of Arizona, US
+dn: cn=Robin T Vickery+dbkey=104523026172,o=University of Arizona,c=US
+givenName: Robin T
+sn: Vickery
+
+# Nicole F Pagowsky + 116873919928, University of Arizona, US
+dn: cn=Nicole F Pagowsky+dbkey=116873919928,o=University of Arizona,c=US
+givenName: Nicole F
+sn: Pagowsky
+
+# Leslie A Sult + 105032606856, University of Arizona, US
+dn: cn=Leslie A Sult+dbkey=105032606856,o=University of Arizona,c=US
+givenName: Leslie A
+sn: Sult
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 19
+# numEntries: 18

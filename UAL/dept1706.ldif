@@ -1,0 +1,110 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=1706
+# requesting: givenName sn 
+#
+
+# Irisbeltsi Enriquez-Gutierrez + 117295533370, University of Arizona, US
+dn: cn=Irisbeltsi Enriquez-Gutierrez+dbkey=117295533370,o=University of Arizon
+ a,c=US
+givenName: Irisbeltsi
+sn: Enriquez-Gutierrez
+
+# Elise Mae Etrheim + 118938599330, University of Arizona, US
+dn: cn=Elise Mae Etrheim+dbkey=118938599330,o=University of Arizona,c=US
+givenName: Elise Mae
+sn: Etrheim
+
+# Richard Whitmer + 104547710230, University of Arizona, US
+dn: cn=Richard Whitmer+dbkey=104547710230,o=University of Arizona,c=US
+givenName: Richard Lane
+sn: Whitmer
+
+# Fleur Van der woude + 110110794548, University of Arizona, US
+dn: cn=Fleur Van der woude+dbkey=110110794548,o=University of Arizona,c=US
+givenName: Fleur
+sn: Van der woude
+
+# Randi L Johnson + 111941410242, University of Arizona, US
+dn: cn=Randi L Johnson+dbkey=111941410242,o=University of Arizona,c=US
+givenName: Randi L
+sn: Johnson
+
+# Maggie Tealey Dwenger + 108194109699, University of Arizona, US
+dn: cn=Maggie Tealey Dwenger+dbkey=108194109699,o=University of Arizona,c=US
+givenName: Maggie Tealey
+sn: Dwenger
+
+# SJ Hussman + 100181713470, University of Arizona, US
+dn: cn=SJ Hussman+dbkey=100181713470,o=University of Arizona,c=US
+givenName: Stephen John
+sn: Hussman
+
+# Trent S Purdy + 114810123251, University of Arizona, US
+dn: cn=Trent S Purdy+dbkey=114810123251,o=University of Arizona,c=US
+givenName: Trent S
+sn: Purdy
+
+# Bianca Finley Alper + 113301315902, University of Arizona, US
+dn: cn=Bianca Finley Alper+dbkey=113301315902,o=University of Arizona,c=US
+givenName: Bianca Finley
+sn: Alper
+
+# Alba N Fernandez-Keys + 109720061145, University of Arizona, US
+dn: cn=Alba N Fernandez-Keys+dbkey=109720061145,o=University of Arizona,c=US
+givenName: Alba N
+sn: Fernandez-Keys
+
+# Veronica Reyes + 100001456218, University of Arizona, US
+dn: cn=Veronica Reyes+dbkey=100001456218,o=University of Arizona,c=US
+givenName: Veronica
+sn: Reyes-Escudero
+
+# Amanda D Howard + 117096351685, University of Arizona, US
+dn: cn=Amanda D Howard+dbkey=117096351685,o=University of Arizona,c=US
+givenName: Amanda D
+sn: Howard
+
+# Lorenia Diaz + 102881279491, University of Arizona, US
+dn: cn=Lorenia Diaz+dbkey=102881279491,o=University of Arizona,c=US
+givenName: Lorenia
+sn: Diaz
+
+# Patricia A Ballesteros + 110750807541, University of Arizona, US
+dn: cn=Patricia A Ballesteros+dbkey=110750807541,o=University of Arizona,c=US
+givenName: Patricia A
+sn: Ballesteros
+
+# Michelle Nicole Boyer + 106517708223, University of Arizona, US
+dn: cn=Michelle Nicole Boyer+dbkey=106517708223,o=University of Arizona,c=US
+givenName: Michelle Nicole
+sn: Boyer-Kelly
+
+# John Roger Myers + 121240892626, University of Arizona, US
+dn: cn=John Roger Myers+dbkey=121240892626,o=University of Arizona,c=US
+givenName: J Roger
+sn: Myers
+
+# Lisa E Duncan + 103930931692, University of Arizona, US
+dn: cn=Lisa E Duncan+dbkey=103930931692,o=University of Arizona,c=US
+givenName: Lisa E
+sn: Duncan
+
+# Erika B Castano + 104986057726, University of Arizona, US
+dn: cn=Erika B Castano+dbkey=104986057726,o=University of Arizona,c=US
+givenName: Erika B
+sn: Castano
+
+# Joseph R Diaz + 110319146503, University of Arizona, US
+dn: cn=Joseph R Diaz+dbkey=110319146503,o=University of Arizona,c=US
+givenName: Joseph R
+sn: Diaz
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 20
+# numEntries: 19

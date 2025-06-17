@@ -1,0 +1,26 @@
+{
+    "id": "1240EF02",
+    "path": "~/Documents/openalexR-test/institution_publications.R",
+    "project_path": "institution_publications.R",
+    "type": "r_source",
+    "hash": "2561482634",
+    "contents": "",
+    "dirty": false,
+    "created": 1750136464954.0,
+    "source_on_save": false,
+    "relative_order": 6,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "87,37",
+        "scrollLine": "51"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1750140137,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1750140138002,
+    "read_only": false,
+    "read_only_alternatives": []
+}

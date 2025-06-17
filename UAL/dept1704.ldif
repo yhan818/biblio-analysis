@@ -1,0 +1,200 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=1704
+# requesting: givenName sn 
+#
+
+# Mohammad A Hassibi + 109400673706, University of Arizona, US
+dn: cn=Mohammad A Hassibi+dbkey=109400673706,o=University of Arizona,c=US
+givenName: Mohammad Amir
+sn: Hassibi
+
+# Osiel Castro + 100805743560, University of Arizona, US
+dn: cn=Osiel Castro+dbkey=100805743560,o=University of Arizona,c=US
+givenName: Heidy
+sn: Castro
+
+# Lauren Williams + 115603042802, University of Arizona, US
+dn: cn=Lauren Williams+dbkey=115603042802,o=University of Arizona,c=US
+givenName: Lauren
+sn: Williams
+
+# Bradley Alexander Comden + 101484865930, University of Arizona, US
+dn: cn=Bradley Alexander Comden+dbkey=101484865930,o=University of Arizona,c=U
+ S
+givenName: Bradley Alexander
+sn: Comden
+
+# Mak Jones + 117526901082, University of Arizona, US
+dn: cn=Mak Jones+dbkey=117526901082,o=University of Arizona,c=US
+givenName: Makensie Marie
+sn: Jones
+
+# Sydney Aguirre Miranda + 119220791322, University of Arizona, US
+dn: cn=Sydney Aguirre Miranda+dbkey=119220791322,o=University of Arizona,c=US
+givenName: Sydney
+sn: Aguirre Miranda
+
+# Samantha Noel Stevens + 100209364396, University of Arizona, US
+dn: cn=Samantha Noel Stevens+dbkey=100209364396,o=University of Arizona,c=US
+givenName: Samantha Noel
+sn: Stevens
+
+# Deanna Siragusa + 112428541764, University of Arizona, US
+dn: cn=Deanna Siragusa+dbkey=112428541764,o=University of Arizona,c=US
+givenName: Deanna
+sn: Siragusa
+
+# Elizabeth Gress + 110794013565, University of Arizona, US
+dn: cn=Elizabeth Gress+dbkey=110794013565,o=University of Arizona,c=US
+givenName: Elizabeth
+sn: Gress
+
+# Ava Rachelle Christensen + 114381201631, University of Arizona, US
+dn: cn=Ava Rachelle Christensen+dbkey=114381201631,o=University of Arizona,c=U
+ S
+givenName: Ava Rachelle
+sn: Christensen
+
+# Ami Rebecca Jones + 107479878249, University of Arizona, US
+dn: cn=Ami Rebecca Jones+dbkey=107479878249,o=University of Arizona,c=US
+givenName: Ami Rebecca
+sn: Jones
+
+# Matthew D'Apice + 120467224672, University of Arizona, US
+dn: cn=Matthew D'Apice+dbkey=120467224672,o=University of Arizona,c=US
+givenName: Matthew
+sn: D'Apice
+
+# Violeta Christina Keifer + 114363714848, University of Arizona, US
+dn: cn=Violeta Christina Keifer+dbkey=114363714848,o=University of Arizona,c=U
+ S
+givenName: Violeta Christina
+sn: Keifer
+
+# Jesus Villalobos + 109972822241, University of Arizona, US
+dn: cn=Jesus Villalobos+dbkey=109972822241,o=University of Arizona,c=US
+givenName: Jesus
+sn: Villalobos
+
+# Olivia N Postal + 119376735630, University of Arizona, US
+dn: cn=Olivia N Postal+dbkey=119376735630,o=University of Arizona,c=US
+givenName: Olivia N
+sn: Postal
+
+# Chris Nicholson Miller + 109237642223, University of Arizona, US
+dn: cn=Chris Nicholson Miller+dbkey=109237642223,o=University of Arizona,c=US
+givenName: Christine Marie Nicholson
+sn: Miller
+
+# Anthony Foggiano + 115160818811, University of Arizona, US
+dn: cn=Anthony Foggiano+dbkey=115160818811,o=University of Arizona,c=US
+givenName: Anthony
+sn: Foggiano
+
+# Akila Shanal Mathis-Adams + 101625032935, University of Arizona, US
+dn: cn=Akila Shanal Mathis-Adams+dbkey=101625032935,o=University of Arizona,c=
+ US
+givenName: Akila Shanal
+sn: Mathis-Adams
+
+# elissa mondschein + 103310311687, University of Arizona, US
+dn: cn=elissa mondschein+dbkey=103310311687,o=University of Arizona,c=US
+givenName: Elissa
+sn: Mondschein
+
+# Tory Middlebrooks + 118300232256, University of Arizona, US
+dn: cn=Tory Middlebrooks+dbkey=118300232256,o=University of Arizona,c=US
+givenName: Tory Conwell Merryweather
+sn: Middlebrooks
+
+# Lucy Moffa Provost + 118488151390, University of Arizona, US
+dn: cn=Lucy Moffa Provost+dbkey=118488151390,o=University of Arizona,c=US
+givenName: Lucy Moffa
+sn: Provost
+
+# Genesis Florendo + 103930798542, University of Arizona, US
+dn: cn=Genesis Florendo+dbkey=103930798542,o=University of Arizona,c=US
+givenName: Genesis Matthew Perez
+sn: Florendo
+
+# Devin Michael Johnson + 101597963021, University of Arizona, US
+dn: cn=Devin Michael Johnson+dbkey=101597963021,o=University of Arizona,c=US
+givenName: Devin Michael
+sn: Johnson
+
+# Peter Samuel Lawrence Schwarz + 117909426088, University of Arizona, US
+dn: cn=Peter Samuel Lawrence Schwarz+dbkey=117909426088,o=University of Arizon
+ a,c=US
+givenName: Peter Samuel Lawrence
+sn: Schwarz
+
+# Mona Lee Ammon + 119345260175, University of Arizona, US
+dn: cn=Mona Lee Ammon+dbkey=119345260175,o=University of Arizona,c=US
+givenName: Mona L
+sn: Ammon
+
+# John Miller-Wells + 104200271971, University of Arizona, US
+dn: cn=John Miller-Wells+dbkey=104200271971,o=University of Arizona,c=US
+givenName: John C
+sn: Miller-Wells
+
+# Michelle Monroe-Menjugas + 105086411354, University of Arizona, US
+dn: cn=Michelle Monroe-Menjugas+dbkey=105086411354,o=University of Arizona,c=U
+ S
+givenName: Michelle
+sn: Monroe-Menjugas
+
+# Katie C Young + 113173561805, University of Arizona, US
+dn: cn=Katie C Young+dbkey=113173561805,o=University of Arizona,c=US
+givenName: Katherine C
+sn: Young
+
+# Charles W Wommack + 119107137999, University of Arizona, US
+dn: cn=Charles W Wommack+dbkey=119107137999,o=University of Arizona,c=US
+givenName: Charles W
+sn: Wommack
+
+# Ellen S Knight + 106882329012, University of Arizona, US
+dn: cn=Ellen S Knight+dbkey=106882329012,o=University of Arizona,c=US
+givenName: Ellen S
+sn: Knight
+
+# Scott Cossel + 117924188627, University of Arizona, US
+dn: cn=Scott Cossel+dbkey=117924188627,o=University of Arizona,c=US
+givenName: Scott
+sn: Cossel
+
+# Laura O Davalos + 110253520778, University of Arizona, US
+dn: cn=Laura O Davalos+dbkey=110253520778,o=University of Arizona,c=US
+givenName: Laura O
+sn: Davalos
+
+# Robyn K Huff-Eibl + 113152578571, University of Arizona, US
+dn: cn=Robyn K Huff-Eibl+dbkey=113152578571,o=University of Arizona,c=US
+givenName: Robyn K
+sn: Huff-Eibl
+
+# Bethany J Bones + 100320257508, University of Arizona, US
+dn: cn=Bethany J Bones+dbkey=100320257508,o=University of Arizona,c=US
+givenName: Bethany J
+sn: Bones
+
+# charley R Dejolie + 105101718450, University of Arizona, US
+dn: cn=charley R Dejolie+dbkey=105101718450,o=University of Arizona,c=US
+givenName: Charley R
+sn: Dejolie
+
+# Linda M Dols + 104797799584, University of Arizona, US
+dn: cn=Linda M Dols+dbkey=104797799584,o=University of Arizona,c=US
+givenName: Linda M
+sn: Dols
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 37
+# numEntries: 36

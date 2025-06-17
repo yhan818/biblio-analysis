@@ -1,0 +1,124 @@
+# extended LDIF
+#
+# LDAPv3
+# base <o=University of Arizona,c=US> with scope subtree
+# filter: departmentNumber=1701
+# requesting: givenName sn 
+#
+
+# Amanda M Gutierrez + 106684519808, University of Arizona, US
+dn: cn=Amanda M Gutierrez+dbkey=106684519808,o=University of Arizona,c=US
+givenName: Amanda M
+sn: Gutierrez
+
+# Harriett Green + 117182940880, University of Arizona, US
+dn: cn=Harriett Green+dbkey=117182940880,o=University of Arizona,c=US
+givenName: Harriett
+sn: Green
+
+# Tara Marie Radniecki + 120859313134, University of Arizona, US
+dn: cn=Tara Marie Radniecki+dbkey=120859313134,o=University of Arizona,c=US
+givenName: Tara Marie
+sn: Radniecki
+
+# Celeste Reyes + 102345731156, University of Arizona, US
+dn: cn=Celeste Reyes+dbkey=102345731156,o=University of Arizona,c=US
+givenName: Celeste
+sn: Reyes
+
+# Bobbie Chong + 113968268278, University of Arizona, US
+dn: cn=Bobbie Chong+dbkey=113968268278,o=University of Arizona,c=US
+givenName: Roberta
+sn: Chong
+
+# David Borycz + 103638865256, University of Arizona, US
+dn: cn=David Borycz+dbkey=103638865256,o=University of Arizona,c=US
+givenName: David
+sn: Borycz
+
+# Tiffany Calderon + 104526617966, University of Arizona, US
+dn: cn=Tiffany Calderon+dbkey=104526617966,o=University of Arizona,c=US
+givenName: Tiffany
+sn: Calderon
+
+# Bob Liu + 106987488981, University of Arizona, US
+dn: cn=Bob Liu+dbkey=106987488981,o=University of Arizona,c=US
+givenName: Yingxuan
+sn: Liu
+
+# Jennifer Church-Duran + 121452432389, University of Arizona, US
+dn: cn=Jennifer Church-Duran+dbkey=121452432389,o=University of Arizona,c=US
+givenName: Jennifer
+sn: Church-Duran
+
+# Adrian Emanuel Cota + 100133080780, University of Arizona, US
+dn: cn=Adrian Emanuel Cota+dbkey=100133080780,o=University of Arizona,c=US
+givenName: Adrian Emanuel
+sn: Cota
+
+# Hasan Sanli + 103311679648, University of Arizona, US
+dn: cn=Hasan Sanli+dbkey=103311679648,o=University of Arizona,c=US
+givenName: Hasan
+sn: Sanli
+
+# Susan Marie Fasciani + 120556496179, University of Arizona, US
+dn: cn=Susan Marie Fasciani+dbkey=120556496179,o=University of Arizona,c=US
+givenName: Susan Marie
+sn: Fasciani
+
+# Mary T Simons + 121375440294, University of Arizona, US
+dn: cn=Mary T Simons+dbkey=121375440294,o=University of Arizona,c=US
+givenName: Mary T
+sn: Simons
+
+# Kenya Johnson + 115315001197, University of Arizona, US
+dn: cn=Kenya Johnson+dbkey=115315001197,o=University of Arizona,c=US
+givenName: Kenya Dayan
+sn: Johnson
+
+# Monica Romero + 103200232451, University of Arizona, US
+dn: cn=Monica Romero+dbkey=103200232451,o=University of Arizona,c=US
+givenName: Monica
+sn: Romero
+
+# Shan C Sutton + 109845620180, University of Arizona, US
+dn: cn=Shan C Sutton+dbkey=109845620180,o=University of Arizona,c=US
+givenName: Shan C
+sn: Sutton
+
+# Ella M Peterson + 115823516538, University of Arizona, US
+dn: cn=Ella M Peterson+dbkey=115823516538,o=University of Arizona,c=US
+givenName: Ella M
+sn: Peterson
+
+# Michael M Brewer + 114802562357, University of Arizona, US
+dn: cn=Michael M Brewer+dbkey=114802562357,o=University of Arizona,c=US
+givenName: Michael M
+sn: Brewer
+
+# Lidia M Barcelo + 116202844665, University of Arizona, US
+dn: cn=Lidia M Barcelo+dbkey=116202844665,o=University of Arizona,c=US
+givenName: Lidia M
+sn: Barcelo
+
+# Marty A Taylor + 115455627984, University of Arizona, US
+dn: cn=Marty A Taylor+dbkey=115455627984,o=University of Arizona,c=US
+givenName: Marty A
+sn: Taylor
+
+# Hayri Yildirim + 110455053587, University of Arizona, US
+dn: cn=Hayri Yildirim+dbkey=110455053587,o=University of Arizona,c=US
+givenName: Hayri
+sn: Yildirim
+
+# Aengus Anderson + 103469744481, University of Arizona, US
+dn: cn=Aengus Anderson+dbkey=103469744481,o=University of Arizona,c=US
+givenName: David A
+sn: Anderson
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 23
+# numEntries: 22
