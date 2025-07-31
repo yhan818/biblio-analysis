@@ -28,7 +28,7 @@ getwd()
 
 source("my_functions.R")
 
-works_published_2024 <- readRDS("../works_published_2024.rds")
+works_published_2024 <- readRDS("../works_published_2024_v202507.rds")
 
 works_published_2022 <- readRDS("../works_published_2022.rds")
 
@@ -37,7 +37,7 @@ works_published_2021 <- readRDS("../works_published_2021.rds")
 works_published_2020 <- readRDS("../works_published_2020.rds")
 
 
-works_published <- works_published_2024
+works_published <- works_published_2022
 
 ##### Steps:
 ##### Step 1: filter by type = article 
@@ -50,13 +50,8 @@ works_published_type_nonarticles <- works_published %>% filter(type != "article"
 # works_published_type_article_authors <- works_published_type_article %>% select(id, doi, title, publication_date, so, host_organization, author, type, referenced_works, topics)
 
 ##### Step 2: Identify multi-author papers
-works_published_type_articles_authors <- works_published_type_articles %>%
-  mutate(
-    author_count = map_int(author, nrow), # Get the number of rows in each nested df
-    has_multiple_authors = author_count > 1 # Check if there are multiple rows
-  )
 
-# 2025-06-15: works change field name "author" to "authorship". 
+# 2025-06-15: works change field name "author" to "authorships". 
 # "institution_country_code" changed to affiliation > country_code"
 works_published_type_articles_authors <- works_published_type_articles %>%
   mutate(
@@ -82,6 +77,13 @@ works_published_type_articles_authors_nonus <- works_published_type_articles_aut
   ) %>% 
   filter(nonus_author)
 
+#############################################
+# 2.1 b:  this is for old data structure before v202507
+works_published_type_articles_authors <- works_published_type_articles %>%
+  mutate(
+    author_count = map_int(author, nrow), # Get the number of rows in each nested df
+    has_multiple_authors = author_count > 1 # Check if there are multiple rows
+  )
 
 works_published_type_articles_authors_nonus <- works_published_type_articles_authors %>%
   mutate(
@@ -97,6 +99,9 @@ works_published_type_articles_authors_nonus <- works_published_type_articles_aut
     })
   ) %>% 
   filter(nonus_author)
+
+#####################################################
+
 
 ### Step 3.2: US authors only (collaboration within US institutions). For future use. 
 works_published_type_authors_us 
@@ -465,9 +470,9 @@ tryCatch({
 # 
 # 2024: UA (API: 6,225, Web: 6,224. output in Excel: 6199)
 #       UA-AU: API: 247; web 263; 10/263 do not have authorship data. Excel output has limitations (special chars, etc ) For example, Fourâ€dimensionalâ€STEM analysis 
-#      one example: https://api.openalex.org/works/W4396615866  (one author: 2 affiliations Anne Medling Australia and U of Toledo, USA)
-#      https://api.openalex.org/works/W4396696608 (D. R. Russell. one author two affiliations. )
-#      https://api.openalex.org/works/W4395070473 (Mike Martin. One author 5 affiliations)
+#      one example: https://api.openalex.org/works/W4396615866  (one author: 2 affiliations Anne Medling Australia and U of Toledo, USA; verified with the original artile). 
+#      https://api.openalex.org/works/W4396696608 (D. R. Russell. one author two affiliations; verified with the original article. )
+#      https://api.openalex.org/works/W4395070473 (Mike Martin. One author 5 affiliations; verified the original article. The author's 5 affiliations are with the article)
 #      https://openalex.org/W4403824371  
 
 # Testing the difference

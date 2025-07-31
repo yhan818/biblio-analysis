@@ -1,6 +1,6 @@
 ############# Institution authors publication analysis and Collection Management ##########
-######## Author: Yan Han with help of ChatGPT 4
-######## Updated: Dec 14, 2024
+######## Author: Yan Han with help of Gemini 2.5 Pro and GPT 4
+######## Updated: July 22, 2025
 ######## Updated: Fixed NA issue with host_organization
 ##### Search an institution authors' publication using openAlex data ####
 # OpenAlex R Documentation: https://github.com/ropensci/openalexR
@@ -35,6 +35,8 @@ gc()
 options("max.print" = 100000)
 
 options (openalexR.mailto="yhan@arizona.edu")
+PATH = "/home/yhan/Documents/biblio-analysis"
+setwd(PATH)
 getwd()
 print(here())
 
@@ -73,39 +75,38 @@ print(here())
 # Note: When we query OpenAlex, we use the ROR ID (not the institution ID) to retrieve an institution’s data. This is because the ROR ID is the stable, 
 # universal standard for institutional identification, ensuring our findings are both reproducible and interoperable with the wider scholarly data ecosystem and stability in a long term
 
-
-# Typically only some seconds
 works_count <-oa_fetch(
   entity="works",
   # institutions.id = "i138006243", # University of Arizona openAlex institution id
   
   #institutions.ror=c("03efmqc40"), # ASU
-  #institutions.ror=c("05hs6h993"), # MSU 
+  #institutions.ror=c("05x2bcf33"), # Carnegie Mellon University (CMU)
+  #institutions.ror=c("05hs6h993"), # Michigan State University (MSU) 
   institutions.ror=c("03m2x1q45"), # University of Arizona
   #institutions.ror=c("00cvxb145"), # University of Washington
   
   from_publication_date ="2024-01-01",
   to_publication_date = "2024-12-31",
-  type = "article",  # comment out this line to include other types 
+  # type = "article",  # comment out this line to include other types 
   count_only = TRUE
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
-
-works_published_2021 <-oa_fetch(
+works_published_2024 <-oa_fetch(
   entity="works",
   
   # institutions.ror=c("03efmqc40"),  # ASU
    institutions.ror=c("03m2x1q45"), # UArizona
   
   #institutions.ror=c("00cvxb145"), # University of Washington
-  type = "article", 
-  from_publication_date ="2021-01-01",
-  to_publication_date = "2021-12-31",
+  # type = "article", 
+  from_publication_date ="2024-01-01",
+  to_publication_date = "2024-12-31",
   
 )
 
 # SHALL get all works, then filter them if needed. 
+# 2024-07: Works_published: openAlex changed its author df to "authorship". 
 # 2023: All works: 9,384 without type =journal (2024-09) 
 # 2023: All works: 10,559 (2025-01) 
 # 2023: journal only: 6,903 using primary_location.source.type = "journal" as a filter (not including type="repository")
@@ -139,7 +140,7 @@ works_published_2022 <-oa_fetch(
 saveRDS(works_published_2021, "../works_published_2021.rds")
 saveRDS(works_published_2022, "../msu_works_published_2022.rds")
 saveRDS(works_published_2023, "../msu_works_published_2023.rds")
-saveRDS(works_published_2024, "../msu_works_published_2024.rds")
+saveRDS(works_published_2024, "../works_published_2024_v202507.rds")
 
 # Load data 
 works_published_2019 <- readRDS("../works_published_2019.rds")
@@ -160,7 +161,7 @@ works_published_2023 <- readRDS("../uw_works_published_2023.rds")
 # to filter "journal" works only. I feel it shall not be this restrict. (other works like grey literature are good too)
 works_published <- works_published_2023
 
-works_published_2024 <- readRDS("../uw_works_published_2024.rds")
+works_published_2024 <- readRDS("../works_published_2024_v202507.rds")
 works_published <- works_published_2024
 
 ####################################################
