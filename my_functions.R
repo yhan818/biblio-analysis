@@ -8,6 +8,49 @@ library(dplyr)
 library(rlang)
 
 ##########################################
+
+
+#' Check if all DataFrames in a list have the same structure.
+#' This function compares the column names and column data types of all
+#' DataFrames in a list to ensure they are identical.
+#'
+#' @param df_list A list of data.frames.
+#' @return A logical value: TRUE if all structures match, FALSE otherwise.
+check_df_structure <- function(df_list) {
+  # Return FALSE if the list is empty or has only one element
+  if (length(df_list) < 2) {
+    warning("List must contain at least two data frames to compare.")
+    return(FALSE)
+  }
+  
+  # --- 1. Get the structure of the first data.frame as a reference ---
+  first_df_names <- names(df_list[[1]])
+  first_df_types <- sapply(df_list[[1]], class)
+  
+  # --- 2. Loop through the rest of the data.frames and compare ---
+  for (i in 2:length(df_list)) {
+    current_df <- df_list[[i]]
+    
+    # Get structure of the current data.frame
+    current_df_names <- names(current_df)
+    current_df_types <- sapply(current_df, class)
+    
+    # Compare names and types to the first data.frame
+    # identical() is a strict comparison
+    if (!identical(first_df_names, current_df_names) || 
+        !identical(first_df_types, current_df_types)) {
+      
+      # If there's a mismatch, print a message and return FALSE
+      message(paste("Mismatch found at data.frame index:", i))
+      return(FALSE)
+    }
+  }
+  
+  # --- 3. If the loop completes, all structures match ---
+  return(TRUE)
+}
+
+
 ############# Search Functions #######################
 ### Search if a publisher is in a DF
 # Output the publisher 

@@ -77,12 +77,12 @@ print(here())
 
 works_count <-oa_fetch(
   entity="works",
-  # institutions.id = "i138006243", # University of Arizona openAlex institution id
+  institutions.ror=c("03m2x1q45"), # UArizona
   
+  #institutions.id = "i138006243", # University of Arizona openAlex id
   #institutions.ror=c("03efmqc40"), # ASU
   #institutions.ror=c("05x2bcf33"), # Carnegie Mellon University (CMU)
   #institutions.ror=c("05hs6h993"), # Michigan State University (MSU) 
-  institutions.ror=c("03m2x1q45"), # University of Arizona
   #institutions.ror=c("00cvxb145"), # University of Washington
   
   from_publication_date ="2024-01-01",
@@ -153,16 +153,40 @@ works_published_2021 <- readRDS("../works_published_2021.rds")
 #works_published_2021_journal <- readRDS("../works_published_journal_2021.rds")
 works_published <- works_published_2021
 
-works_published_2022 <- readRDS("../uw_works_published_2022.rds")
+works_published_2022 <- readRDS("../works_published_2022.rds")
 works_published <- works_published_2022
 
 
-works_published_2023 <- readRDS("../uw_works_published_2023.rds")
+works_published_2023 <- readRDS("../works_published_2023.rds")
 # to filter "journal" works only. I feel it shall not be this restrict. (other works like grey literature are good too)
 works_published <- works_published_2023
 
-works_published_2024 <- readRDS("../works_published_2024_v202507.rds")
+# By 2025-07, there is a data structure change such as "author" changed to "authorships"
+works_published_2024 <- readRDS("../works_published_2024.rds")
 works_published <- works_published_2024
+
+
+#####################################################
+# Combine desired multiple-years data for further analysis
+# compare df structure first before combine. 
+
+# If not df col name and type are NOT 100% match, go back to fix the issue first. 
+# See how the dates are currently stored
+class(works_published_2020$publication_date)
+class(works_published_2021$publication_date)
+
+# Convert the column to the Date type
+works_published_2021$publication_date <- as.character(works_published_2021$publication_date)
+
+# compare df again before binding rows
+matching_list <- list(works_published_2020, works_published_2021, works_published_2022, works_published_2023, works_published_2024) 
+all_df_match <-check_df_structure(matching_list)
+print(paste("Do all DataFrames in matching_list have the same structure?", all_df_match))
+
+
+works_published_2022_2024 <- bind_rows(works_published_2022, works_published_2023, works_published_2024)
+
+works_published <- works_published_2022_2024
 
 ####################################################
 ##### 2. Checking and verifying data
@@ -501,6 +525,22 @@ works_cited_2022 <- readRDS("../works_cited_2022.rds")
 works_cited_2023 <- readRDS("../works_cited_2023.rds")
 
 works_cited_2024 <- readRDS("../works_cited_2024.rds")
+
+
+
+# compare df again before binding rows
+matching_list <- list(works_cited_2022, works_cited_2023, works_cited_2024) 
+all_df_match <-check_df_structure(matching_list)
+print(paste("Do all DataFrames in matching_list have the same structure?", all_df_match))
+
+
+works_cited_2022_2024 <- bind_rows(works_cited_2022, works_cited_2023, works_cited_2024)
+saveRDS(works_cited_2022_2024, "../works_cited_2022_2024.rds")
+works_cited <- works_cited_2022_2024
+
+
+
+
 
 # One is primary.source.type = journal, the other (works_cited_2) contains everything
 # For year 2022, 325,520 : 345,813. 
@@ -862,6 +902,27 @@ tryCatch({
   message("Combination failed: ", e)
   print(e)
 })
+
+# Within a specific publisher, how many articles from the past 5 years (2020-2024), the 5-10 years (2016-2019), and the past 10 years (-2015)
+
+# --- Filter for the years and then count the rows ---
+count_2020_2024 <- works_cited_type_articles_tf %>%
+  filter(publication_year >= 2020 & publication_year <= 2024) %>%
+  summarise(count = n())
+
+count_2016_2019 <- works_cited_type_articles_tf %>%
+  filter(publication_year >= 2016 & publication_year <= 2019) %>%
+  summarise(count = n())
+
+count_until_2015 <- works_cited_type_articles_tf %>%
+  filter(publication_year <= 2015) %>%
+  summarise(count = n())
+
+# --- View the result ---
+print(count_2020_2024)
+print(count_2016_2019)
+print(count_until_2015)
+
 
 #### 2025-04: Springer Nature: there are two publishers "Springer Nature" and "Springer Nature (Netherland) :
 # 2022: MSU: 3,648; UArizona: 2,686 ; U Washington: 6,950; 
