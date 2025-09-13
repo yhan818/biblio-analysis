@@ -188,6 +188,8 @@ works_published_2022_2024 <- bind_rows(works_published_2022, works_published_202
 
 works_published <- works_published_2022_2024
 
+works_publisher <- works_published_2022
+
 ####################################################
 ##### 2. Checking and verifying data
 ##### 2.1 Route 1: Getting citation data from $referenced_works
@@ -538,8 +540,8 @@ works_cited_2022_2024 <- bind_rows(works_cited_2022, works_cited_2023, works_cit
 saveRDS(works_cited_2022_2024, "../works_cited_2022_2024.rds")
 works_cited <- works_cited_2022_2024
 
-
-
+# If tested individual years to see if the similar citaion patterns are
+works_cited <- works_cited_2023
 
 
 # One is primary.source.type = journal, the other (works_cited_2) contains everything
@@ -904,26 +906,31 @@ tryCatch({
 })
 
 # Within a specific publisher, how many articles from the past 5 years (2020-2024), the 5-10 years (2016-2019), and the past 10 years (-2015)
+source("my_functions.R")
+final_percentages <- count_works_by_year_category(works_cited_type_articles_tf)
 
-# --- Filter for the years and then count the rows ---
-count_2020_2024 <- works_cited_type_articles_tf %>%
-  filter(publication_year >= 2020 & publication_year <= 2024) %>%
-  summarise(count = n())
+### 2025-09: Citation pattern (numbers: topics)
+# 2022-2024 works published in TF: 609, total citations: 20,088
+# 2022-2024 works published cited TF articles:  
+# 2020-2024: 3,659  (18%)
+# 2016-2019: 4,639  (23%)
+# xxxx-2015: 11,790 (59%)
+# 2022-2024 works published cited TF nonarticles: 
 
-count_2016_2019 <- works_cited_type_articles_tf %>%
-  filter(publication_year >= 2016 & publication_year <= 2019) %>%
-  summarise(count = n())
+# 2022 works published cited TF articles: 7,134
+# 2020-2024: 920   (13%)
+# 2016-2019: 1,735 (24%)
+# xxxx-2015: 4,479 (63%)
+# 2022 works published cited TF nonarticles: 
 
-count_until_2015 <- works_cited_type_articles_tf %>%
-  filter(publication_year <= 2015) %>%
-  summarise(count = n())
-
-# --- View the result ---
-print(count_2020_2024)
-print(count_2016_2019)
-print(count_until_2015)
+# 2023 works published cited TF articles: 6,937
+# 2020-2024 1284     19%
+# 2016-2019 1629     23%
+#     -2015 4024     58%
+# 2023 works published cited TF nonarticles: 857
 
 
+###########################################################################
 #### 2025-04: Springer Nature: there are two publishers "Springer Nature" and "Springer Nature (Netherland) :
 # 2022: MSU: 3,648; UArizona: 2,686 ; U Washington: 6,950; 
 # 2023: MSU: 3,694; UArizona: 3,118; U Washington: 8,189; 
@@ -933,9 +940,8 @@ publisher_str <- "Springer Nature"
 
 # Since there are two publishers: use "grepl"
 #works_cited_type_articles_sn <- works_cited_type_articles %>%  filter(tolower(host_organization) == tolower(publisher_str))
-rm(works_cited_type_articles_sn)
 works_cited_type_articles_sn <- works_cited_type_articles %>%
-  filter(grepl(publisher_str, host_organization_name, ignore.case = TRUE))
+  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
 
 works_cited_type_nonarticles_sn <- works_cited_type_nonarticles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
@@ -975,11 +981,24 @@ if (exists(actual_df) && is.data.frame(get(actual_df))) {
   }
 }
 
+# Within a specific publisher, how many articles from the past 5 years (2020-2024), the 5-10 years (2016-2019), and the past 10 years (-2015)
+final_percentages <- count_works_by_year_category(works_cited_type_articles_sn)
+
+### 2025-09: Citation pattern (numbers: topics)
+# 2022-2024 published in SN:  total citations: 
+# 2022-2024 works published cited SN articles:  
 
 
+# 2022 works published cited SN articles: 
+
+
+# 2023 works published cited SN articles: 3,118 
+# 2020-2024  781     25%
+# 2016-2019  732     23%
+#     -2015 1605     51%
+# 2023 works published cited SN nonarticles: 2,640
 
 #saveRDS(works_cited_type_articles_sn_22_23_24, "./citations/uw_works_cited_type_articles_sn_22_23_24.rds")
-#source("my_functions.R")
 #works_cited_type_articles_sn_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_sn_22_23_24, 1)
 
 
@@ -1014,6 +1033,26 @@ works_cited_type_articles_nature_22_23_24 <- bind_rows(works_cited_type_articles
 #saveRDS(works_cited_type_articles_nature_22_23_24, "./citations/uw_works_cited_type_articles_nature_22_23_24.rds")
 #works_cited_type_articles_nature_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_nature_22_23_24, 1)
 #write_df_to_excel(works_cited_type_articles_nature_yr22_23_24)
+
+count_works_by_year_category(works_cited_type_articles_nature)
+
+### 2025-09: Citation pattern (numbers: topics)
+# 2022-2024 published in Nature:  total citations: 
+# 2022-2024 works published cited Nature articles:  
+# 2020-2024: (18%)
+# 2016-2019:   (23%)
+# xxxx-2015:  (59%)
+
+# 2022 works published cited SN articles: 
+# 2020-2024:    (13%)
+# 2016-2019:  (24%)
+# xxxx-2015:  (63%)
+
+# 2023 works published cited Nature articles:  
+# 2020-2024: 781 (25%)
+# 2016-2019: 732 (23%)
+# xxxx-2015: 1,605 (52%)
+# 2023 works published cited SN nonarticles: 2,640
 
 actual_df <- "works_cited_type_articles_nature_22_23_24" 
 

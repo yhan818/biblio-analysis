@@ -987,3 +987,54 @@ write_df_to_excel2 <- function(df, file_path_prefix = "citations/", max_chars = 
     print(e)
   })
 }
+
+#####
+# count works by year category (for the past 5 years, 2020-2024, 2016-2019, and 2015)
+
+count_works_by_year_category <- function(works_df) {
+  # Capture the variable name for use in messages
+  df_name <- deparse(substitute(works_df))
+  
+  # 1. Check if the input is actually a data frame
+  if (!is.data.frame(works_df)) {
+    stop(paste("Error:", df_name, "is not a data frame."))
+  }
+  
+  # 2. Check if the data frame has any rows
+  if (nrow(works_df) == 0) {
+    stop(paste("Error:", df_name, "is empty and has 0 rows."))
+  }
+  
+  # 3. Check for the required 'publication_year' column (this was already here)
+  if (!"publication_year" %in% names(works_df)) {
+    stop("Error: The data frame must contain a 'publication_year' column.")
+  }
+  
+  category_order <- c("2020-2024", "2016-2019", "    -2015", "Other")
+  
+  results_df <- works_df %>%
+    mutate(
+      year_category = case_when(
+        publication_year >= 2020 & publication_year <= 2024 ~ "2020-2024",
+        publication_year >= 2016 & publication_year <= 2019 ~ "2016-2019",
+        publication_year <= 2015                      ~ "    -2015",
+        TRUE                                          ~ "Other"
+      ),
+      year_category = factor(year_category, levels = category_order)
+    ) %>%
+    count(year_category) %>%
+    mutate(
+      percent = (n / sum(n)) * 100,
+      percent = paste0(round(percent, 0), "%")
+    )
+  
+  results_df$year_category <- paste0("# ", results_df$year_category)
+  
+  print(paste("--- Full Summary for:", df_name, "---"))
+  print(as.data.frame(results_df), row.names = FALSE)
+  
+  final_output <- results_df %>%
+    select(year_category, percent)
+  
+  return(final_output)
+}
