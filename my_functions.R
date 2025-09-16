@@ -177,8 +177,6 @@ work_cited<-"https://openalex.org/W1494075612"
 #find_org_works(work_cited, works_published_2022)
 
 
-
-
 ##### Handling works "topic": OpenAlex's new topic has a hierarchical structure:
 ### domain-field-subfield-topic system (https://docs.google.com/document/d/1bDopkhuGieQ4F8gGNj7sEc8WSE8mvLZS/edit)
 ### Example: https://api.openalex.org/works/W2944198613 (search for primary_topic: )

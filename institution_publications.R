@@ -909,6 +909,24 @@ tryCatch({
 source("my_functions.R")
 final_percentages <- count_works_by_year_category(works_cited_type_articles_tf)
 
+# topics and sorted them 
+primary_topics <- extract_topics_by_level(works_cited_type_articles_tf)
+primary_topics_counts <- primary_topics %>%
+  count(level_1, sort = TRUE)
+
+second_topics <-extract_topics_by_level(works_cited_type_articles_tf, 2)
+second_topics_counts <- second_topics %>%
+  count(level_2, sort = TRUE)
+
+# The names "Primary Topics" and "Second Topics" will become the sheet names
+list_of_dfs <- list(
+  "Primary Topics" = primary_topics_counts,
+  "Second Topics" = second_topics_counts
+)
+
+# Write the entire list to a single Excel file
+write_xlsx(list_of_dfs, "all_topic_counts.xlsx")
+
 ### 2025-09: Citation pattern (numbers: topics)
 # 2022-2024 works published in TF: 609, total citations: 20,088
 # 2022-2024 works published cited TF articles:  
@@ -920,7 +938,7 @@ final_percentages <- count_works_by_year_category(works_cited_type_articles_tf)
 # 2022 works published cited TF articles: 7,134
 # 2020-2024: 920   (13%)
 # 2016-2019: 1,735 (24%)
-# xxxx-2015: 4,479 (63%)
+#     -2015: 4,479 (63%)
 # 2022 works published cited TF nonarticles: 
 
 # 2023 works published cited TF articles: 6,937
@@ -1017,8 +1035,7 @@ final_percentages <- count_works_by_year_category(works_cited_type_articles_sn)
 publisher_str <- "Nature Portfolio" 
 
 works_cited_type_articles_nature <- works_cited_type_articles %>%
-  filter(tolower(host_organization_name) == tolower(publisher_str))
-
+  filter(tolower(host_organization) == tolower(publisher_str))
 
 works_cited_type_articles_nature_22 <- works_cited_type_articles_nature
 
@@ -1033,26 +1050,21 @@ works_cited_type_articles_nature_22_23_24 <- bind_rows(works_cited_type_articles
 #saveRDS(works_cited_type_articles_nature_22_23_24, "./citations/uw_works_cited_type_articles_nature_22_23_24.rds")
 #works_cited_type_articles_nature_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_nature_22_23_24, 1)
 #write_df_to_excel(works_cited_type_articles_nature_yr22_23_24)
-
+source("my_functions.R")
 count_works_by_year_category(works_cited_type_articles_nature)
 
 ### 2025-09: Citation pattern (numbers: topics)
 # 2022-2024 published in Nature:  total citations: 
 # 2022-2024 works published cited Nature articles:  
-# 2020-2024: (18%)
-# 2016-2019:   (23%)
-# xxxx-2015:  (59%)
 
-# 2022 works published cited SN articles: 
-# 2020-2024:    (13%)
-# 2016-2019:  (24%)
-# xxxx-2015:  (63%)
+# 2022 works published cited Nature articles: 
+
 
 # 2023 works published cited Nature articles:  
-# 2020-2024: 781 (25%)
-# 2016-2019: 732 (23%)
-# xxxx-2015: 1,605 (52%)
-# 2023 works published cited SN nonarticles: 2,640
+# 2020-2024 4297     31%
+# 2016-2019 4381     32%
+#     -2015 5045     37%
+# 2023 works published cited Nature nonarticles: 2,640
 
 actual_df <- "works_cited_type_articles_nature_22_23_24" 
 
@@ -1268,6 +1280,22 @@ works_cited_type_articles_elsevier_22_23_24 <- readRDS("../../works_cited_type_a
 works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
 write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
 
+
+
+final_percentages <- count_works_by_year_category(works_cited_type_articles_elsevier)
+
+
+# 2022-2024: 
+
+# 2023: total published: 4120; total cited: 52921
+# 2023: "--- Full Summary for: works_cited_type_articles_elsevier ---"
+# year_category     n percent
+# 2020-2024 11228     21%
+# 2016-2019 12377     23%
+#     -2015 29316     55%
+# nonarticles: 11785
+
+
 # Combine Excel Files
 excel_files <- c("citations/works_cited_type_articles_elsevier_yr22_23_24.xlsx", "citations/elsevier_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
@@ -1306,6 +1334,25 @@ works_cited_type_articles_wiley_24 <- works_cited_type_articles_wiley
 works_cited_type_articles_wiley_22_23_24 <- bind_rows(works_cited_type_articles_wiley_22, 
                                                       works_cited_type_articles_wiley_23, 
                                                       works_cited_type_articles_wiley_24)
+
+final_percentages <- count_works_by_year_category(works_cited_type_articles_wiley)
+
+# 2023: Total published: 1739; Total cited articles: 26363
+# 2023: "--- Full Summary for: works_cited_type_articles_wiley ---"
+# year_category     n percent
+# 2020-2024  5567     21%
+# 2016-2019  5998     23%
+#     -2015 14798     56%
+
+# topics and sorted them 
+primary_topics <- extract_topics_by_level(works_cited_type_articles_wiley)
+primary_topics_counts <- primary_topics %>%
+  count(level_1, sort = TRUE)
+
+second_topics <-extract_topics_by_level(works_cited_type_articles_wiley, 2)
+second_topics_counts <- second_topics %>%
+  count(level_2, sort = TRUE)
+
 
 saveRDS(works_cited_type_articles_wiley_22_23_24, "./citations/works_cited_type_articles_wiley_22_23_24.rds")
 
