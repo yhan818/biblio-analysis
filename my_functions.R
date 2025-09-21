@@ -317,55 +317,10 @@ extract_topics_by_level_pre_2025_04 <- function(data, level = 1) {
 # Usage example:
 #rank_top_cited_journals(publisher_nature, "so", 10)  # Top 10 cited journals
 
-rank_top_cited_journals2 <- function(data, journal_col, top_n = 30, output_dir = "citations") {
-  if (!is.data.frame(data)) {
-    stop("Input 'data' must be a data.frame or tibble.")
-  }
-  if (!is.character(journal_col) || length(journal_col) != 1) {
-    stop("Input 'journal_col' must be a single string.")
-  }
-  if (!(journal_col %in% names(data))) {
-    stop("journal_col is not found")
-  }
-  
-  top_cited_journals <- data %>%
-    group_by(!!sym(journal_col)) %>%
-    summarise(citation_count = n(), .groups = "drop") %>%
-    arrange(desc(citation_count)) %>%
-    rename("Journal Title" = !!sym(journal_col))
-  
-  # Print all rows if top_n is NULL or larger than number of rows
-  if (is.null(top_n) || top_n >= nrow(top_cited_journals)) {
-    print(as.data.frame(top_cited_journals))  # Convert to data.frame and print all
-  } else {
-    # Print only the requested top_n journals.
-    print(head(as.data.frame(top_cited_journals), top_n))
-    top_cited_journals <- top_cited_journals %>%
-      slice(1:top_n) #keep top_n for writing to file
-  }
-  
-  # --- File Output ---
-  # Get the name of the input data frame
-  df_name <- deparse(substitute(data))
-  
-  # Create the output file path
-  if (!dir.exists(output_dir)) {
-    dir.create(output_dir, recursive = TRUE)
-  }
-  output_file <- file.path(output_dir, paste0(df_name, "_top_cited_journals.xlsx"))
-  
-  # Write to Excel
-  tryCatch({
-    write_xlsx(list("Top Cited Journals" = as.data.frame(top_cited_journals)), output_file)
-    message(paste("Successfully wrote top cited journals to:", output_file))
-  }, error = function(e) {
-    message(paste("Error writing to Excel:", e))
-    print(e)  # Print the full error object
-  })
-  
-  return(top_cited_journals)
-}
-
+################### Analyze top journals for each publisher ############
+# Function to rank top cited journals
+# Usage example:
+#rank_top_cited_journals(publisher_nature, "so", "issn_l", "host_organization", 30)  # Top 10 cited journals
 
 rank_top_cited_journals <- function(data,
                                     journal_col, # e.g., "so"
@@ -448,7 +403,7 @@ rank_top_cited_journals <- function(data,
     dir.create(output_dir, recursive = TRUE)
   }
   # Modified filename to indicate enriched content
-  output_file <- file.path(output_dir, paste0(df_name, "_top_cited_j.xlsx"))
+  output_file <- file.path(output_dir, paste0(df_name, "_top_cited_journals.xlsx"))
   
   # Write to Excel using the (potentially sliced) enriched data frame
   tryCatch({

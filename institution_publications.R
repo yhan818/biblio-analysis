@@ -1,6 +1,6 @@
 ############# Institution authors publication analysis and Collection Management ##########
 ######## Author: Yan Han with help of Gemini 2.5 Pro and GPT 4
-######## Updated: July 22, 2025
+######## Updated: Sep 22, 2025
 ######## Updated: Fixed NA issue with host_organization
 ##### Search an institution authors' publication using openAlex data ####
 # OpenAlex R Documentation: https://github.com/ropensci/openalexR
@@ -26,19 +26,19 @@ library(openxlsx)
 library(readxl)
 library(writexl)
 
-source("my_functions.R")
-
 # free unused obj to manage memory
 rm(list=ls())
 gc()
 
 options("max.print" = 100000)
-
 options (openalexR.mailto="yhan@arizona.edu")
 PATH = "/home/yhan/Documents/biblio-analysis"
 setwd(PATH)
 getwd()
 print(here())
+
+
+source("my_functions.R")
 
 ##### General comments:
 ### OpenAlex data structure has been gone through sevearl changes from 2023- 2025. Therefore,
@@ -70,9 +70,8 @@ print(here())
 # https://openalex.org/works?page=1&filter=authorships.institutions.lineage:i138006243,publication_year:2020,type:types/article&view=list,report,api
 ### 2020: same result; # articles : 7689
 
-
 # OpenAlex internal id or ROR ID:
-# Note: When we query OpenAlex, we use the ROR ID (not the institution ID) to retrieve an institution’s data. This is because the ROR ID is the stable, 
+# Note: When we query OpenAlex, we use the ROR ID (not the institution ID) to retrieve an institution’s data. This is because the ROR ID is stable, 
 # universal standard for institutional identification, ensuring our findings are both reproducible and interoperable with the wider scholarly data ecosystem and stability in a long term
 
 works_count <-oa_fetch(
@@ -116,7 +115,6 @@ works_published_2023 <-oa_fetch(
   
   # institutions.ror=c("03efmqc40"),  # ASU
   # institutions.ror=c("03m2x1q45"), # UArizona
-  
   #institutions.ror=c("00cvxb145"), # University of Washington
   
   from_publication_date ="2023-01-01",
@@ -140,7 +138,7 @@ works_published_2022 <-oa_fetch(
 saveRDS(works_published_2021, "../works_published_2021.rds")
 saveRDS(works_published_2022, "../msu_works_published_2022.rds")
 saveRDS(works_published_2023, "../msu_works_published_2023.rds")
-saveRDS(works_published_2024, "../works_published_2024_v202507.rds")
+saveRDS(works_published_2024, "../works_published_2024_v202509.rds")
 
 # Load data 
 works_published_2019 <- readRDS("../works_published_2019.rds")
@@ -188,7 +186,7 @@ works_published_2022_2024 <- bind_rows(works_published_2022, works_published_202
 
 works_published <- works_published_2022_2024
 
-works_publisher <- works_published_2022
+works_published <- works_published_2024
 
 ####################################################
 ##### 2. Checking and verifying data
@@ -529,7 +527,6 @@ works_cited_2023 <- readRDS("../works_cited_2023.rds")
 works_cited_2024 <- readRDS("../works_cited_2024.rds")
 
 
-
 # compare df again before binding rows
 matching_list <- list(works_cited_2022, works_cited_2023, works_cited_2024) 
 all_df_match <-check_df_structure(matching_list)
@@ -539,10 +536,6 @@ print(paste("Do all DataFrames in matching_list have the same structure?", all_d
 works_cited_2022_2024 <- bind_rows(works_cited_2022, works_cited_2023, works_cited_2024)
 saveRDS(works_cited_2022_2024, "../works_cited_2022_2024.rds")
 works_cited <- works_cited_2022_2024
-
-# If tested individual years to see if the similar citaion patterns are
-works_cited <- works_cited_2023
-
 
 # One is primary.source.type = journal, the other (works_cited_2) contains everything
 # For year 2022, 325,520 : 345,813. 
@@ -631,9 +624,7 @@ head(matching_rows$id)
 #########################################################################################
 ### Step 2: Separate works_cited using criteria such as "type", "ISSN" or other criteria
 # First getting all the works_cited by year data
-works_cited <- works_cited_2021 %>%
-  mutate(authored_year = 2021) %>%
-  select(authored_year, everything())  # This moves UA_authored_year to first position
+works_cited <- works_cited_2024
 
 works_cited <- works_cited_2022 %>%
   mutate(authored_year = 2022) %>%
@@ -677,6 +668,121 @@ works_cited_source_nonissn_nonarticles <- works_cited_source_nonissn[works_cited
 
 #######################################################################
 ### Step 3: Getting analysis for publisher
+
+
+
+# 3.1 Standarize publishers' name (e.g. IOP vs. Institute of Physics) 
+# . Calculate both counts in a single summary step ---
+
+# Filter first, then get the separate counts ---
+separate_counts <- works_cited_type_articles %>%
+  # Step 1: Remove all rows where host_organization is NA
+  filter(!is.na(host_organization)) %>%
+  # Step 2: Now safely perform the counts on the clean data
+  summarise(
+    iop_count = sum(str_detect(host_organization, regex("iop", ignore_case = TRUE))),
+    institute_of_physics_count = sum(str_detect(host_organization, regex("institute of physics", ignore_case = TRUE)))
+  )
+
+# --- 3. Print the result ---
+print(separate_counts)
+
+# --- Standardize names and count the final totals in one pipeline ---
+final_publisher_counts <- works_cited_type_articles %>%
+  mutate(
+    publisher = case_when(
+      # Rule for IOP
+      str_detect(host_organization, regex("iop|institute of physics", ignore_case = TRUE)) ~ "IOP Publishing",
+      # Rule for Elsevier
+      str_detect(host_organization, regex("elsevier", ignore_case = TRUE)) ~ "Elsevier",
+      # If no rule matches, keep the original name
+      TRUE ~ host_organization
+    )
+  ) %>%
+  # Now, count the new, clean 'publisher' column
+  count(publisher, sort = TRUE)
+
+# --- 3. Print the final result ---
+print(final_publisher_counts)
+
+
+# Group by 'host_organization' and count the number of articles for each publisher
+publisher_ranking <- works_cited_type_articles %>% 
+  group_by(host_organization) %>%
+  summarise(article_count = n()) %>%
+  arrange(desc(article_count))
+
+
+# Calculate the total number of articles across all publishers
+total_article_count <- sum(publisher_ranking$article_count)
+
+# Calculate the percentage for each publisher relative to the total article count
+publisher_ranking <- publisher_ranking %>%
+  mutate(percentage = (article_count / total_article_count) * 100)
+
+library(ggplot2)
+top_20_publishers <- publisher_ranking %>% slice(1:20)
+top_20_publishers$percentage <- (top_20_publishers$article_count / total_article_count) * 100
+top_20_publishers$host_organization <- substr(top_20_publishers$host_organization, 1, 10)
+
+# top 50
+top_50_publishers <- publisher_ranking %>% slice(1:50)
+top_50_publishers$percentage <- (top_50_publishers$article_count / total_article_count) * 100
+top_50_publishers$host_organization <- substr(top_50_publishers$host_organization, 1, 10)
+
+# top 100
+top_100_publishers <- publisher_ranking %>% slice(1:100)
+top_100_publishers$percentage <- (top_100_publishers$article_count / total_article_count) * 100
+top_100_publishers$host_organization <- substr(top_100_publishers$host_organization, 1, 10)
+
+
+# Bar plot for top 20 publishers
+ggplot(top_20_publishers, aes(x = reorder(host_organization, -article_count), y = article_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  # Real number (article count) inside the bar
+  geom_text(aes(label = article_count), vjust = 0.5, hjust = 1.2, size = 2.5, color = "white") +  
+  # Adjust hjust and color for positioning inside
+  # Percentage outside the bar
+  geom_text(aes(label = sprintf("(%.1f%%)", percentage)), vjust = 0.5, hjust = -0.2, size = 3) +  
+  # Adjust hjust for positioning outside
+  coord_flip() +  # Flip the axis for better readability
+  labs(x = "Publisher", y = "Number of Articles", title = "2024 UA Top 20 Publishers (Number of Articles Cited)") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 7))  # Reduce font size of publisher names
+
+# Calculate the percentage of the top 20, top 50, and top 100 publishers over the total
+total_article_count <- sum(publisher_ranking$article_count) # Total articles in all publishers
+top_20_total_count <- sum(top_20_publishers$article_count)  
+top_50_total_count <- sum(top_50_publishers$article_count)  
+top_100_total_count <- sum(top_100_publishers$article_count)  
+
+# Calculate the percentage for year 2019, 2020, 2021, 2022, 2023
+# Top  20: ~74-76%
+# Top  50: ~90%
+# Top 100: ~95%
+top_20_percentage_of_total <- (top_20_total_count / total_article_count) * 100
+top_50_percentage_of_total <- (top_50_total_count / total_article_count) * 100
+top_100_percentage_of_total <-(top_100_total_count/ total_article_count) * 100
+
+print(paste("Top 20 publishers represent",  round(top_20_percentage_of_total, 0), "% of the total articles."))
+print(paste("Top 50 publishers represent",  round(top_50_percentage_of_total, 0), "% of the total articles."))
+print(paste("Top 100 publishers represent", round(top_100_percentage_of_total, 0), "% of the total articles."))
+
+view(publisher_ranking)
+# View the top 50 publishers.  
+# Top 10: Elsevier (20%), Wiley (9%), Oxford University Press (7%), IOP (5%), Springer(5%), Nature,
+# IOP Publishing, Lippincott Williams & Wilkins, Taylor & Francis, SAGE Publishing (2%)
+
+
+### Step : Final output to Excel
+
+df <- works_cited_type_articles_nature_sn_yr22_23_24
+required_columns <- c("source_display_name", "issn_l", "host_organization_name")
+columns_exist <- required_columns %in% colnames(df)
+
+if (all(columns_exist)) {  print("All required columns exist in the data frame.")
+} else {  cat("MISSING columns.", "\n") }
+
 
 # publisher: host_organization
 unique_publishers <- unique(works_cited_type_articles$host_organization)
@@ -1098,6 +1204,61 @@ if (exists(actual_df) && is.data.frame(get(actual_df))) {
     print(paste("Error: Object '", actual_df, "' exists but is not a data frame. Skipping operations.", sep=""))
   }
 }
+
+
+
+########### 2025-09-21
+publisher_str <- "IOP Publishing"
+
+# American Institute of Physics is NOT IOP
+publisher_str <- "American Institute of Physics" 
+
+publisher_str <- "Institute of Physics" 
+
+
+works_cited_type_articles_iop <- works_cited_type_articles %>%
+  filter(tolower(host_organization) == tolower(publisher_str))
+
+works_cited_type_articles_iop_22 <- works_cited_type_articles_iop
+
+works_cited_type_articles_iop_23 <- works_cited_type_articles_iop
+
+works_cited_type_articles_iop_24 <- works_cited_type_articles_iop
+
+works_cited_type_articles_iop_22_23_24 <- bind_rows(works_cited_type_articles_iop_22, 
+                                                       works_cited_type_articles_iop_23, 
+                                                       works_cited_type_articles_iop_24)
+
+# save or load  
+saveRDS(works_cited_type_articles_iop_22_23_24, "./citations/works_cited_type_articles_iop_22_23_24.rds")
+
+works_cited_type_articles_iop_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_iop_22_23_24, 1)
+write_df_to_excel(works_cited_type_articles_iop_yr22_23_24)
+
+rank_top_cited_journals(works_cited_type_articles_iop_22_23_24, "so", "issn_l", "host_organization", 2000)
+
+# Combine Excel Files
+excel_files <- c("citations/works_cited_type_articles_iop_yr22_23_24.xlsx", "citations/iop_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+tryCatch({
+  wb <- createWorkbook()
+  for (i in seq_along(excel_files)) {
+    df <- read.xlsx(excel_files[i])
+    sheet_name <- gsub("citations/(.*)\\.xlsx", "\\1", excel_files[i]) # Extract sheet name from file name
+    sheet_name <-substr(sheet_name, 1, 31)  # Truncate to 31 chars for worksheet
+    addWorksheet(wb, sheetName = sheet_name)
+    writeData(wb, sheet = sheet_name, x = df)
+  }
+  saveWorkbook(wb, "citations/works_cited_type_articles_iop_22_23_24_v1.xlsx", overwrite = TRUE)
+  message("!!! Combination successful!")
+}, error = function(e) {
+  message("Combination failed: ", e)
+  print(e)
+})
+
+
+count_works_by_year_category(works_cited_type_articles_iop_yr22_23_24)
+
+
 
 
 
@@ -1545,82 +1706,8 @@ print(unique_journals)
 search_string <- "https://openalex.org/W2070851128"
 search_references(search_string, works_published)
 
-# Group by 'host_organization' and count the number of articles for each publisher
-publisher_ranking <- works_cited_source_issn %>%
-  group_by(host_organization) %>%
-  summarise(article_count = n()) %>%
-  arrange(desc(article_count))
 
-# Calculate the total number of articles across all publishers
-total_article_count <- sum(publisher_ranking$article_count)
-
-# Calculate the percentage for each publisher relative to the total article count
-publisher_ranking <- publisher_ranking %>%
-  mutate(percentage = (article_count / total_article_count) * 100)
-
-library(ggplot2)
-top_20_publishers <- publisher_ranking %>% slice(1:20)
-top_20_publishers$percentage <- (top_20_publishers$article_count / total_article_count) * 100
-top_20_publishers$host_organization <- substr(top_20_publishers$host_organization, 1, 10)
-
-# top 50
-top_50_publishers <- publisher_ranking %>% slice(1:50)
-top_50_publishers$percentage <- (top_50_publishers$article_count / total_article_count) * 100
-top_50_publishers$host_organization <- substr(top_50_publishers$host_organization, 1, 10)
-
-# top 100
-top_100_publishers <- publisher_ranking %>% slice(1:100)
-top_100_publishers$percentage <- (top_100_publishers$article_count / total_article_count) * 100
-top_100_publishers$host_organization <- substr(top_100_publishers$host_organization, 1, 10)
-
-
-# Bar plot for top 20 publishers
-ggplot(top_20_publishers, aes(x = reorder(host_organization, -article_count), y = article_count)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  # Real number (article count) inside the bar
-  geom_text(aes(label = article_count), vjust = 0.5, hjust = 1.2, size = 2.5, color = "white") +  
-  # Adjust hjust and color for positioning inside
-  # Percentage outside the bar
-  geom_text(aes(label = sprintf("(%.1f%%)", percentage)), vjust = 0.5, hjust = -0.2, size = 3) +  
-  # Adjust hjust for positioning outside
-  coord_flip() +  # Flip the axis for better readability
-  labs(x = "Publisher", y = "Number of Articles", title = "2022 UA Top 20 Publishers (Number of Articles Cited)") +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 7))  # Reduce font size of publisher names
-
-# Calculate the percentage of the top 20, top 50, and top 100 publishers over the total
-total_article_count <- sum(publisher_ranking$article_count) # Total articles in all publishers
-top_20_total_count <- sum(top_20_publishers$article_count)  
-top_50_total_count <- sum(top_50_publishers$article_count)  
-top_100_total_count <- sum(top_100_publishers$article_count)  
-
-# Calculate the percentage for year 2019, 2020, 2021, 2022, 2023
-# Top  20: ~74-76%
-# Top  50: ~90%
-# Top 100: ~95%
-top_20_percentage_of_total <- (top_20_total_count / total_article_count) * 100
-top_50_percentage_of_total <- (top_50_total_count / total_article_count) * 100
-top_100_percentage_of_total <-(top_100_total_count/ total_article_count) * 100
-
-print(paste("Top 20 publishers represent",  round(top_20_percentage_of_total, 0), "% of the total articles."))
-print(paste("Top 50 publishers represent",  round(top_50_percentage_of_total, 0), "% of the total articles."))
-print(paste("Top 100 publishers represent", round(top_100_percentage_of_total, 0), "% of the total articles."))
-
-view(publisher_ranking)
-# View the top 50 publishers.  
-# Top 10: Elsevier (20%), Wiley (9%), Oxford University Press (7%), ICP (5%), Springer(5%), Nature,
-# IOP Publishing, Lippincott Williams & Wilkins, Taylor & Francis, SAGE Publishing (2%)
-
-
-### Step 5: Final output to Excel
-
-df <- works_cited_type_articles_nature_sn_yr22_23_24
-required_columns <- c("source_display_name", "issn_l", "host_organization_name")
-columns_exist <- required_columns %in% colnames(df)
-
-if (all(columns_exist)) {  print("All required columns exist in the data frame.")
-} else {  cat("MISSING columns.", "\n") }
-
+#
 
 # 1. top cited journals
 
