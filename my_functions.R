@@ -185,8 +185,64 @@ work_cited<-"https://openalex.org/W1494075612"
 # Default: level = 1, it is primary 
 #         level = 2, it is secondry. Most works have 1 to 3 topic-subfield-field-domains, and do not have 4th topic. 
 
+# Load necessary libraries
+library(tidyverse)
+# Load necessary libraries
+library(tidyverse)
 
 extract_topics_by_level <- function(data, level = 1) {
+  # --- Input Validation ---
+  if (!is.data.frame(data)) {
+    stop("'data' must be a data frame.")
+  }
+  if (!("topics" %in% names(data)) || !("id" %in% names(data))) {
+    stop("The data frame must contain 'id' and 'topics' columns.")
+  }
+  
+  # --- Data Extraction and Transformation ---
+  topics_wide <- data %>%
+    select(id, topics) %>%
+    filter(!sapply(topics, is.null) & sapply(topics, nrow) > 0) %>%
+    mutate(topics = map(topics, ~ rename(.x, entity_id = id))) %>%
+    unnest(topics) %>%
+    filter(i == level) %>%
+    
+    # Pivot the data (we removed the factor line from here)
+    pivot_wider(
+      id_cols = id,
+      names_from = name,
+      values_from = display_name,
+      values_fn = ~paste(unique(.x), collapse = "; ")
+    )
+  
+  if (nrow(topics_wide) == 0) {
+    warning(paste("No topics found for level", level))
+    data$domain <- NA_character_
+    data$field <- NA_character_
+    data$subfield <- NA_character_
+    data$topic <- NA_character_
+    return(data)
+  }
+  
+  # --- Final Join & Reordering ---
+  topics_wide <- topics_wide %>%
+    rename_with(~ paste0(., "_L", level), .cols = -id)
+  
+  final_data <- data %>%
+    left_join(topics_wide, by = "id")
+  
+  # THIS IS THE NEW LOGIC THAT ENFORCES THE ORDER:
+  # 1. Define the desired column order
+  ordered_col_names <- paste(c("domain", "field", "subfield", "topic"), "_L", level, sep = "")
+  
+  # 2. Relocate those columns to the end of the data frame in that specific order
+  final_data <- final_data %>%
+    relocate(any_of(ordered_col_names), .after = last_col()) # this appends 
+  
+  return(final_data)
+}
+
+extract_topics_by_level_reverse_order <- function(data, level = 1) {
   # --- Input Validation ---
   if (!is.data.frame(data)) {
     stop("'data' must be a data frame.")

@@ -486,9 +486,7 @@ works_cited <- works_cited2
 
 ## Save works_cited files
 saveRDS(works_cited, "../works_cited_2020.rds")
-saveRDS(works_cited, "../works_cited_2021.rds")
-
-
+saveRDS(works_cited, "../works_cited_2024_v202509.rds")
 
 
 #######################################################################################
@@ -674,7 +672,7 @@ works_cited_source_nonissn_nonarticles <- works_cited_source_nonissn[works_cited
 # 3.1 Standarize publishers' name (e.g. IOP vs. Institute of Physics) 
 # . Calculate both counts in a single summary step ---
 
-# Filter first, then get the separate counts ---
+# Filter first, then get the separate counts ---, there is "American Institute of Physics!!!!
 separate_counts <- works_cited_type_articles %>%
   # Step 1: Remove all rows where host_organization is NA
   filter(!is.na(host_organization)) %>%
@@ -683,27 +681,16 @@ separate_counts <- works_cited_type_articles %>%
     iop_count = sum(str_detect(host_organization, regex("iop", ignore_case = TRUE))),
     institute_of_physics_count = sum(str_detect(host_organization, regex("institute of physics", ignore_case = TRUE)))
   )
-
-# --- 3. Print the result ---
 print(separate_counts)
 
-# --- Standardize names and count the final totals in one pipeline ---
-final_publisher_counts <- works_cited_type_articles %>%
-  mutate(
-    publisher = case_when(
-      # Rule for IOP
-      str_detect(host_organization, regex("iop|institute of physics", ignore_case = TRUE)) ~ "IOP Publishing",
-      # Rule for Elsevier
-      str_detect(host_organization, regex("elsevier", ignore_case = TRUE)) ~ "Elsevier",
-      # If no rule matches, keep the original name
-      TRUE ~ host_organization
-    )
-  ) %>%
-  # Now, count the new, clean 'publisher' column
-  count(publisher, sort = TRUE)
-
-# --- 3. Print the final result ---
-print(final_publisher_counts)
+# Find all distinct organization names that contain "Institute of Physics"
+physics_institutes <- works_cited_type_articles %>%
+  filter(!is.na(host_organization)) %>%
+  # Filter for rows containing the specific phrase
+  filter(str_detect(host_organization, regex("institute of physics", ignore_case = TRUE))) %>%
+  # Get the unique values from the filtered rows
+  distinct(host_organization)
+print(physics_institutes)
 
 
 # Group by 'host_organization' and count the number of articles for each publisher
@@ -712,6 +699,7 @@ publisher_ranking <- works_cited_type_articles %>%
   summarise(article_count = n()) %>%
   arrange(desc(article_count))
 
+print(publisher_ranking, n=50)
 
 # Calculate the total number of articles across all publishers
 total_article_count <- sum(publisher_ranking$article_count)
@@ -770,8 +758,8 @@ print(paste("Top 100 publishers represent", round(top_100_percentage_of_total, 0
 
 view(publisher_ranking)
 # View the top 50 publishers.  
-# Top 10: Elsevier (20%), Wiley (9%), Oxford University Press (7%), IOP (5%), Springer(5%), Nature,
-# IOP Publishing, Lippincott Williams & Wilkins, Taylor & Francis, SAGE Publishing (2%)
+# Top 10: Elsevier (20%), Wiley (9%), Oxford University Press (7%), IOP (5%) and IOP publishing (5%), Springer(5%), Nature,
+# Lippincott Williams & Wilkins, Taylor & Francis, SAGE Publishing (2%)
 
 
 ### Step : Final output to Excel
@@ -1156,7 +1144,6 @@ works_cited_type_articles_nature_22_23_24 <- bind_rows(works_cited_type_articles
 #saveRDS(works_cited_type_articles_nature_22_23_24, "./citations/uw_works_cited_type_articles_nature_22_23_24.rds")
 #works_cited_type_articles_nature_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_nature_22_23_24, 1)
 #write_df_to_excel(works_cited_type_articles_nature_yr22_23_24)
-source("my_functions.R")
 count_works_by_year_category(works_cited_type_articles_nature)
 
 ### 2025-09: Citation pattern (numbers: topics)
@@ -1208,22 +1195,53 @@ if (exists(actual_df) && is.data.frame(get(actual_df))) {
 
 
 ########### 2025-09-21
-publisher_str <- "IOP Publishing"
+### Publisher Institute of Physics has two names in "host_organization". 
+publisher_str <- "Institute of Physics" 
+publisher_str2 <- "IOP Publishing"
 
 # American Institute of Physics is NOT IOP
-publisher_str <- "American Institute of Physics" 
-
-publisher_str <- "Institute of Physics" 
-
+# publisher_str <- "American Institute of Physics" 
 
 works_cited_type_articles_iop <- works_cited_type_articles %>%
   filter(tolower(host_organization) == tolower(publisher_str))
 
-works_cited_type_articles_iop_22 <- works_cited_type_articles_iop
+works_cited_type_articles_iop2 <- works_cited_type_articles %>%
+  filter(tolower(host_organization) == tolower(publisher_str2))
 
-works_cited_type_articles_iop_23 <- works_cited_type_articles_iop
+## Testing if there are dup between IOP and Institue of Physics. There are NONE
+dedup_df <-distinct(works_cited_type_articles_iop)
+dedup_df2 <-distinct(works_cited_type_articles_iop2)
 
-works_cited_type_articles_iop_24 <- works_cited_type_articles_iop
+# Find common works by using its ID
+# Get a vector of only the ID values that are in both data frames
+# no common work!! verified year 2022, 2023
+common_works_vec <- intersect(dedup_df, dedup_df2)
+
+common_works_vec <- intersect(works_cited_type_articles_iop$id, works_cited_type_articles_iop2$id)
+common_works_vec <- intersect(works_cited_type_articles_iop$title, works_cited_type_articles_iop2$title)
+
+common_works_vec_alt <- unique(works_cited_type_articles_iop$id[works_cited_type_articles_iop$id %in% works_cited_type_articles_iop2$id])
+# Find common works by using its title
+# Create clean VECTORS of the titles from each data frame ---
+clean_titles_1 <- works_cited_type_articles_iop$title %>%
+  str_to_lower() %>%
+  str_remove_all("[[:punct:]]") %>%
+  str_squish()
+
+clean_titles_2 <- works_cited_type_articles_iop2$title %>%
+  str_to_lower() %>%
+  str_remove_all("[[:punct:]]") %>%
+  str_squish()
+# Find the intersection of the two clean title vectors ---
+common_titles <- intersect(clean_titles_1, clean_titles_2)
+
+
+# Need to bind rows from both "IOP publishing" and "Institute of Physics". 
+works_cited_type_articles_iop_22 <- bind_rows(works_cited_type_articles_iop, works_cited_type_articles_iop2)
+
+works_cited_type_articles_iop_23 <- bind_rows(works_cited_type_articles_iop, works_cited_type_articles_iop2)
+
+works_cited_type_articles_iop_24 <- bind_rows(works_cited_type_articles_iop, works_cited_type_articles_iop2)
 
 works_cited_type_articles_iop_22_23_24 <- bind_rows(works_cited_type_articles_iop_22, 
                                                        works_cited_type_articles_iop_23, 
@@ -1231,6 +1249,12 @@ works_cited_type_articles_iop_22_23_24 <- bind_rows(works_cited_type_articles_io
 
 # save or load  
 saveRDS(works_cited_type_articles_iop_22_23_24, "./citations/works_cited_type_articles_iop_22_23_24.rds")
+
+#  Test extract_topic
+source("my_functions.R")
+test_data <- head(works_cited_type_articles, 2)
+processed_data <- extract_topics_by_level(test_data, 1)
+#####
 
 works_cited_type_articles_iop_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_iop_22_23_24, 1)
 write_df_to_excel(works_cited_type_articles_iop_yr22_23_24)
@@ -1248,7 +1272,7 @@ tryCatch({
     addWorksheet(wb, sheetName = sheet_name)
     writeData(wb, sheet = sheet_name, x = df)
   }
-  saveWorkbook(wb, "citations/works_cited_type_articles_iop_22_23_24_v1.xlsx", overwrite = TRUE)
+  saveWorkbook(wb, "citations/works_cited_type_articles_iop_yr22_23_24_v2.xlsx", overwrite = TRUE)
   message("!!! Combination successful!")
 }, error = function(e) {
   message("Combination failed: ", e)
@@ -1256,7 +1280,7 @@ tryCatch({
 })
 
 
-count_works_by_year_category(works_cited_type_articles_iop_yr22_23_24)
+count_works_by_year_category(works_cited_type_articles_iop_22_23_24)
 
 
 
