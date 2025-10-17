@@ -48,12 +48,14 @@ source("my_functions.R")
 # SECTION 1: Works published
 ######################################################################################
 
-##### 1. Getting data. (retrieved 2024-09-02)
+##### 1. Getting data
 # Retrieving all publications association with UArizona's ROR (Research Organization Registry) ID.
 # UA works_published per year is ~9,000. For running 2 years data, need better computer or crashed R studio.
-# Year 2023: 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
-# Year 2022: 8,825 (2025-02-24) <<< 8,833 (2024-10-18) <<< 8,674 (2024-09-09)
-# Year 2021: 9,336 (7,048 type-journal articles and reviews)
+# After DataCite integration 92 M records on 2025-09, it does NOT show a significant number UA publications added 
+# Year 2024:  7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
+# Year 2023: 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
+# Year 2022:  8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
+# Year 2021:  9,336 (7,048 type-journal articles and reviews)
 # Year 2020: 
 # Year 2019: 8,847 
 # 2023-current: 14,660 works : 5 min to get UAworks with 3 GB mem, 264 mins to pull 372,000 reference's data with 8.6 GB  
@@ -138,7 +140,7 @@ works_published_2022 <-oa_fetch(
 saveRDS(works_published_2021, "../works_published_2021.rds")
 saveRDS(works_published_2022, "../msu_works_published_2022.rds")
 saveRDS(works_published_2023, "../msu_works_published_2023.rds")
-saveRDS(works_published_2024, "../works_published_2024_v202509.rds")
+saveRDS(works_published_2024, "../works_published_2024_v202510.rds")
 
 # Load data 
 works_published_2019 <- readRDS("../works_published_2019.rds")
@@ -622,7 +624,7 @@ head(matching_rows$id)
 #########################################################################################
 ### Step 2: Separate works_cited using criteria such as "type", "ISSN" or other criteria
 # First getting all the works_cited by year data
-works_cited <- works_cited_2024
+works_cited <- works_cited_2022
 
 works_cited <- works_cited_2022 %>%
   mutate(authored_year = 2022) %>%
@@ -669,7 +671,7 @@ works_cited_source_nonissn_nonarticles <- works_cited_source_nonissn[works_cited
 
 
 
-# 3.1 Standarize publishers' name (e.g. IOP vs. Institute of Physics) 
+# 3.1 Standardize publishers' name (e.g. IOP vs. Institute of Physics) 
 # . Calculate both counts in a single summary step ---
 
 # Filter first, then get the separate counts ---, there is "American Institute of Physics!!!!
@@ -814,7 +816,7 @@ publisher_NA <- publisher_NA %>%
 
 ### old code: 2024-12
 publisher_microbiology <- works_cited_source_issn[grepl(publisher_name, works_cited_source_issn$host_organization, ignore.case = TRUE), ]
-publisher_springer <- works_cited_source_issn[tolower(works_cited_source_issn$host_organization_name) == tolower("Springer Science+Business Media"), ]
+
 publisher_plos <- works_cited_source_issn[grepl("Public Library of Science", works_cited_source_issn$host_organization_name, ignore.case = TRUE), ]
 publisher_aaas <- works_cited_source_issn[grepl("American Association for the Advancement of Science", works_cited_source_issn$host_organization_name, ignore.case = TRUE), ]
 publisher_ua  <- works_cited_source_issn[grepl("University of Arizona",       works_cited_source_issn$host_organization, ignore.case = TRUE), ]
@@ -912,6 +914,100 @@ tryCatch({
   message("Combination failed: ", e)
   print(e)
 })
+
+
+
+#### 2025-10: Elsevier
+
+publisher_str <- "Elsevier"
+
+# testing to see if any publisher containing a string e.g, "Physics" 
+temp_publishers <- works_cited_type_articles %>%
+  filter(!is.na(host_organization)) %>%
+  # Filter for rows containing the specific phrase
+  filter(str_detect(host_organization, regex("KeAi", ignore_case = TRUE))) %>%
+  distinct(host_organization)
+
+# Only see Elsevier's child publishers in the host_organization. 
+works_cited_type_articles_kai <- works_cited_type_articles %>%
+  filter(grepl("Academic Press", host_organization, ignore.case = TRUE))
+
+# Only see "Elsevier" in the host_organization. 
+works_cited_type_articles_elsevier <- works_cited_type_articles %>%
+  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+
+works_cited_type_nonarticles_elsevier <- works_cited_type_nonarticles %>%
+  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+
+works_published_elsevier <- works_published %>%
+  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_elsevier_22 <- works_cited_type_articles_elsevier
+
+works_cited_type_articles_elsevier_23 <- works_cited_type_articles_elsevier
+
+works_cited_type_articles_elsevier_24 <- works_cited_type_articles_elsevier
+
+
+works_cited_type_articles_elsevier_22_23_24 <- bind_rows(works_cited_type_articles_elsevier_22, 
+                                                         works_cited_type_articles_elsevier_23, 
+                                                         works_cited_type_articles_elsevier_24)
+
+saveRDS(works_cited_type_articles_elsevier_22_23_24, "../works_cited_type_articles_elsevier_22_23_24.rds")
+
+works_cited_type_articles_elsevier_22_23_24 <- readRDS("../works_cited_type_articles_elsevier_22_23_24.rds")
+
+works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
+write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
+
+
+final_percentages <- count_works_by_year_category(works_cited_type_articles_elsevier)
+# This will count every unique value in the 'domain_L1' column
+df <- works_cited_type_articles_elsevier_yr22_23_24
+domain_counts <- df %>%
+  count(domain_L1, sort = TRUE)
+
+print(domain_counts)
+
+
+# 2022-2024: 
+
+# 2022 Citation data: "--- Full Summary: works_cited_type_articles_elsevier ---"
+# Total: 51,979
+# year_category     n percent
+# 2020-2024  8279     16%
+# 2015-2019 15757     30%
+#     -2014 27943     54%
+
+# 2023: total published: 4120; total cited: 52921
+# 2023: "--- Full Summary: works_cited_type_articles_elsevier ---"
+#year_category     n percent
+# 2020-2024 11228     21%
+# 2015-2019 14859     28%
+#     -2014 26834     51%
+# nonarticles: 11,785
+# published: 1,358
+
+
+# Combine Excel Files
+excel_files <- c("citations/works_cited_type_articles_elsevier_yr22_23_24.xlsx", "citations/elsevier_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+tryCatch({
+  wb <- createWorkbook()
+  for (i in seq_along(excel_files)) {
+    df <- read.xlsx(excel_files[i])
+    sheet_name <- gsub("citations/(.*)\\.xlsx", "\\1", excel_files[i]) # Extract sheet name from file name
+    sheet_name <-substr(sheet_name, 1, 31)  # Truncate to 31 chars for worksheet
+    addWorksheet(wb, sheetName = sheet_name)
+    writeData(wb, sheet = sheet_name, x = df)
+  }
+  saveWorkbook(wb, "citations/works_cited_type_articles_elsevier_22_23_24_v1.xlsx", overwrite = TRUE)
+  message("!!! Combination successful!")
+}, error = function(e) {
+  message("Combination failed: ", e)
+  print(e)
+})
+
+### Analyze domains (4 total) and Fields (26 totals)
 
 ###############################################
 ##### 2025-04: Emerald
@@ -1049,11 +1145,16 @@ write_xlsx(list_of_dfs, "all_topic_counts.xlsx")
 # 2024: MSU: 2,792; UArizona: 2,550; U Washington: 6,787
 
 publisher_str <- "Springer Nature"
+publisher_str <- "Springer Science+Business Media"
 
 # Since there are two publishers: use "grepl"
 #works_cited_type_articles_sn <- works_cited_type_articles %>%  filter(tolower(host_organization) == tolower(publisher_str))
 works_cited_type_articles_sn <- works_cited_type_articles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_sn <- works_cited_type_articles %>%
+  filter(grepl("Springer", host_organization, ignore.case = TRUE))
+
 
 works_cited_type_nonarticles_sn <- works_cited_type_nonarticles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
@@ -1434,70 +1535,6 @@ tryCatch({
 
 
 
-
-#### 2025-04: Elsevier
-
-
-publisher_str <- "Elsevier"
-works_cited_type_articles_elsevier <- works_cited_type_articles %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
-
-works_cited_type_nonarticles_elsevier <- works_cited_type_nonarticles %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
-
-works_published_elsevier <- works_published %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
-
-works_cited_type_articles_elsevier_22 <- works_cited_type_articles_elsevier
-
-works_cited_type_articles_elsevier_23 <- works_cited_type_articles_elsevier
-
-works_cited_type_articles_elsevier_24 <- works_cited_type_articles_elsevier
-
-works_cited_type_articles_elsevier_22_23_24 <- bind_rows(works_cited_type_articles_elsevier_22, 
-                                                      works_cited_type_articles_elsevier_23, 
-                                                      works_cited_type_articles_elsevier_24)
-
-saveRDS(works_cited_type_articles_elsevier_22_23_24, "./citations/works_cited_type_articles_elsevier_22_23_24.rds")
-
-works_cited_type_articles_elsevier_22_23_24 <- readRDS("../../works_cited_type_articles_elsevier_22_23_24.rds")
-
-works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
-write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
-
-
-
-final_percentages <- count_works_by_year_category(works_cited_type_articles_elsevier)
-
-
-# 2022-2024: 
-
-# 2023: total published: 4120; total cited: 52921
-# 2023: "--- Full Summary for: works_cited_type_articles_elsevier ---"
-# year_category     n percent
-# 2020-2024 11228     21%
-# 2016-2019 12377     23%
-#     -2015 29316     55%
-# nonarticles: 11785
-
-
-# Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_elsevier_yr22_23_24.xlsx", "citations/elsevier_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
-tryCatch({
-  wb <- createWorkbook()
-  for (i in seq_along(excel_files)) {
-    df <- read.xlsx(excel_files[i])
-    sheet_name <- gsub("citations/(.*)\\.xlsx", "\\1", excel_files[i]) # Extract sheet name from file name
-    sheet_name <-substr(sheet_name, 1, 31)  # Truncate to 31 chars for worksheet
-    addWorksheet(wb, sheetName = sheet_name)
-    writeData(wb, sheet = sheet_name, x = df)
-  }
-  saveWorkbook(wb, "citations/works_cited_type_articles_elsevier_22_23_24_v1.xlsx", overwrite = TRUE)
-  message("!!! Combination successful!")
-}, error = function(e) {
-  message("Combination failed: ", e)
-  print(e)
-})
 
 #### 2025-04: Wiley
 publisher_str <- "Wiley"

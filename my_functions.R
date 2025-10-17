@@ -1019,14 +1019,14 @@ count_works_by_year_category <- function(works_df) {
     stop("Error: The data frame must contain a 'publication_year' column.")
   }
   
-  category_order <- c("2020-2024", "2016-2019", "    -2015", "Other")
+  category_order <- c("2020-2024", "2015-2019", "    -2014", "Other")
   
   results_df <- works_df %>%
     mutate(
       year_category = case_when(
         publication_year >= 2020 & publication_year <= 2024 ~ "2020-2024",
-        publication_year >= 2016 & publication_year <= 2019 ~ "2016-2019",
-        publication_year <= 2015                      ~ "    -2015",
+        publication_year >= 2015 & publication_year <= 2019 ~ "2015-2019",
+        publication_year <= 2014                      ~ "    -2014",
         TRUE                                          ~ "Other"
       ),
       year_category = factor(year_category, levels = category_order)
