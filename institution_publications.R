@@ -52,9 +52,9 @@ source("my_functions.R")
 # Retrieving all publications association with UArizona's ROR (Research Organization Registry) ID.
 # UA works_published per year is ~9,000. For running 2 years data, need better computer or crashed R studio.
 # After DataCite integration 92 M records on 2025-09, it does NOT show a significant number UA publications added 
-# Year 2024:  7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
-# Year 2023: 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
-# Year 2022:  8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
+# Year 2024:  7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
+# Year 2023: 10,625 (2025-11), <<< 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
+# Year 2022:  8,871 (2025-11), <<< 8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
 # Year 2021:  9,336 (7,048 type-journal articles and reviews)
 # Year 2020: 
 # Year 2019: 8,847 
@@ -86,8 +86,8 @@ works_count <-oa_fetch(
   #institutions.ror=c("05hs6h993"), # Michigan State University (MSU) 
   #institutions.ror=c("00cvxb145"), # University of Washington
   
-  from_publication_date ="2024-01-01",
-  to_publication_date = "2024-12-31",
+  from_publication_date ="2021-01-01",
+  to_publication_date = "2021-12-31",
   # type = "article",  # comment out this line to include other types 
   count_only = TRUE
 )
@@ -929,8 +929,26 @@ temp_publishers <- works_cited_type_articles %>%
   distinct(host_organization)
 
 # Only see Elsevier's child publishers in the host_organization. 
-works_cited_type_articles_kai <- works_cited_type_articles %>%
+works_cited_type_articles_c1 <- works_cited_type_articles %>%
   filter(grepl("Academic Press", host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_c2 <- works_cited_type_articles %>%
+  filter(grepl("Churchill Livingstone", host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_c3 <- works_cited_type_articles %>%
+  filter(grepl("KeAi", host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_c4 <- works_cited_type_articles %>%
+  filter(grepl("Saunders", host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_c5 <- works_cited_type_articles %>%
+  filter(grepl("Cell Press", host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_elsevier_children <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
+                                                    works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
+
+## Bind its children publishers#### 
+
 
 # Only see "Elsevier" in the host_organization. 
 works_cited_type_articles_elsevier <- works_cited_type_articles %>%
@@ -941,6 +959,8 @@ works_cited_type_nonarticles_elsevier <- works_cited_type_nonarticles %>%
 
 works_published_elsevier <- works_published %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_elsevier <- bind_rows(works_cited_type_articles_elsevier_children, works_cited_type_articles_elsevier)
 
 works_cited_type_articles_elsevier_22 <- works_cited_type_articles_elsevier
 
@@ -953,15 +973,21 @@ works_cited_type_articles_elsevier_22_23_24 <- bind_rows(works_cited_type_articl
                                                          works_cited_type_articles_elsevier_23, 
                                                          works_cited_type_articles_elsevier_24)
 
+
 saveRDS(works_cited_type_articles_elsevier_22_23_24, "../works_cited_type_articles_elsevier_22_23_24.rds")
 
 works_cited_type_articles_elsevier_22_23_24 <- readRDS("../works_cited_type_articles_elsevier_22_23_24.rds")
 
+
+
+
 works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
 write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
 
+source("my_functions.R")
+final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2022)
+print(final_p$other_data[1])
 
-final_percentages <- count_works_by_year_category(works_cited_type_articles_elsevier)
 # This will count every unique value in the 'domain_L1' column
 df <- works_cited_type_articles_elsevier_yr22_23_24
 domain_counts <- df %>%
@@ -972,21 +998,15 @@ print(domain_counts)
 
 # 2022-2024: 
 
-# 2022 Citation data: "--- Full Summary: works_cited_type_articles_elsevier ---"
-# Total: 51,979
-# year_category     n percent
-# 2020-2024  8279     16%
-# 2015-2019 15757     30%
-#     -2014 27943     54%
+# > final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2022)
+# [1] "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2022 ) ---"
+# Category Count Percentage
+# 2018-2022 15872        29%
+# 2013-2017 13907        26%
+#     -2012 24027        45%
+# Other    12         0%
 
-# 2023: total published: 4120; total cited: 52921
-# 2023: "--- Full Summary: works_cited_type_articles_elsevier ---"
-#year_category     n percent
-# 2020-2024 11228     21%
-# 2015-2019 14859     28%
-#     -2014 26834     51%
-# nonarticles: 11,785
-# published: 1,358
+# 
 
 
 # Combine Excel Files

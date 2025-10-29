@@ -998,52 +998,105 @@ write_df_to_excel2 <- function(df, file_path_prefix = "citations/", max_chars = 
 }
 
 #####
-# count works by year category (for the past 5 years, 2020-2024, 2016-2019, and 2015)
-
-count_works_by_year_category <- function(works_df) {
-  # Capture the variable name for use in messages
+#' Count Cited Works and Return 'Other' Data for Inspection
+#'
+#' This function categorizes works relative to a 'citing_year' and
+#' returns both the summary statistics and the raw data for the 'Other'
+#' category for debugging/inspection.
+#'
+#' @param works_df A data frame containing a 'publication_year' column.
+#' @param citing_year A single numeric year (e.g., 2022) to use as the benchmark.
+#'
+#' @return A list with two elements:
+#'         $summary (data.frame): The formatted summary table.
+#'         $other_data (data.frame): The original rows that fell into 'Other'.
+#'
+count_cited_works_by_category <- function(works_df, citing_year) {
+  
+  # --- 1. Setup & Validation ---
   df_name <- deparse(substitute(works_df))
   
-  # 1. Check if the input is actually a data frame
+  if (missing(citing_year) || !is.numeric(citing_year) || length(citing_year) != 1 || is.na(citing_year)) {
+    stop("Error: 'citing_year' must be provided as a single numeric value (e.g., 2022).")
+  }
+  citing_year <- as.integer(citing_year)
+  
   if (!is.data.frame(works_df)) {
     stop(paste("Error:", df_name, "is not a data frame."))
   }
-  
-  # 2. Check if the data frame has any rows
   if (nrow(works_df) == 0) {
     stop(paste("Error:", df_name, "is empty and has 0 rows."))
   }
-  
-  # 3. Check for the required 'publication_year' column (this was already here)
   if (!"publication_year" %in% names(works_df)) {
     stop("Error: The data frame must contain a 'publication_year' column.")
   }
   
-  category_order <- c("2020-2024", "2015-2019", "    -2014", "Other")
+  # --- 2. Define Dynamic Categories ---
+  cat_1_start <- citing_year - 4
+  cat_1_end   <- citing_year 
+  cat_1_label <- paste0(cat_1_start, "-", cat_1_end) # e.g., 2017-2021
   
-  results_df <- works_df %>%
+  cat_2_start <- citing_year - 9
+  cat_2_end   <- citing_year - 5
+  cat_2_label <- paste0(cat_2_start, "-", cat_2_end) # e.g., 2012-2016
+  
+  cat_3_cutoff <- citing_year - 10
+  cat_3_label  <- paste0("    -", cat_3_cutoff) # e.g., -2011
+  
+  cat_4_label <- "Other"
+  
+  category_order <- c(cat_1_label, cat_2_label, cat_3_label, cat_4_label)
+  
+  # --- 3. Categorize ALL Data First ---
+  # We do this in one step so we can reuse it
+  categorized_df <- works_df %>%
     mutate(
       year_category = case_when(
-        publication_year >= 2020 & publication_year <= 2024 ~ "2020-2024",
-        publication_year >= 2015 & publication_year <= 2019 ~ "2015-2019",
-        publication_year <= 2014                      ~ "    -2014",
-        TRUE                                          ~ "Other"
+        is.na(publication_year) ~ cat_4_label,
+        publication_year >= cat_1_start & publication_year <= cat_1_end ~ cat_1_label,
+        publication_year >= cat_2_start & publication_year <= cat_2_end ~ cat_2_label,
+        publication_year <= cat_3_cutoff ~ cat_3_label,
+        TRUE ~ cat_4_label
       ),
       year_category = factor(year_category, levels = category_order)
-    ) %>%
-    count(year_category) %>%
-    mutate(
-      percent = (n / sum(n)) * 100,
-      percent = paste0(round(percent, 0), "%")
     )
   
-  results_df$year_category <- paste0("# ", results_df$year_category)
+  # --- 4. Core Calculation (using the categorized data) ---
+  summary_data <- categorized_df %>%
+    count(year_category, .drop = FALSE) %>%
+    mutate(
+      percent_numeric = (n / sum(n)) * 100
+    )
   
-  print(paste("--- Full Summary for:", df_name, "---"))
-  print(as.data.frame(results_df), row.names = FALSE)
+  # --- 5. Formatting for Output ---
+  formatted_results <- summary_data %>%
+    mutate(
+      year_category_formatted = paste0("# ", year_category),
+      percent_formatted = paste0(round(percent_numeric, 0), "%")
+    )
   
-  final_output <- results_df %>%
-    select(year_category, percent)
+  # --- 6. Get "Other" Data for Inspection ---
+  # (This is the new part)
+  other_data_for_inspection <- categorized_df %>%
+    filter(year_category == cat_4_label)
   
-  return(final_output)
+  # --- 7. Side Effect: Print Full Summary ---
+  print(paste("--- Cited Works Summary for:", df_name, "(relative to", citing_year, ") ---"))
+  print(
+    as.data.frame(
+      formatted_results %>%
+        select(Category = year_category_formatted, Count = n, Percentage = percent_formatted)
+    ),
+    row.names = FALSE
+  )
+  
+  # --- 8. Return Value (as a list) ---
+  final_output <- formatted_results %>%
+    select(year_category = year_category_formatted, percent = percent_formatted)
+  
+  # Return a list containing both the summary and the 'Other' data
+  return(list(
+    summary = final_output,
+    other_data = other_data_for_inspection
+  ))
 }
