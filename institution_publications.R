@@ -669,8 +669,6 @@ works_cited_source_nonissn_nonarticles <- works_cited_source_nonissn[works_cited
 #######################################################################
 ### Step 3: Getting analysis for publisher
 
-
-
 # 3.1 Standardize publishers' name (e.g. IOP vs. Institute of Physics) 
 # . Calculate both counts in a single summary step ---
 
@@ -720,12 +718,6 @@ top_50_publishers <- publisher_ranking %>% slice(1:50)
 top_50_publishers$percentage <- (top_50_publishers$article_count / total_article_count) * 100
 top_50_publishers$host_organization <- substr(top_50_publishers$host_organization, 1, 10)
 
-# top 100
-top_100_publishers <- publisher_ranking %>% slice(1:100)
-top_100_publishers$percentage <- (top_100_publishers$article_count / total_article_count) * 100
-top_100_publishers$host_organization <- substr(top_100_publishers$host_organization, 1, 10)
-
-
 # Bar plot for top 20 publishers
 ggplot(top_20_publishers, aes(x = reorder(host_organization, -article_count), y = article_count)) +
   geom_bar(stat = "identity", fill = "steelblue") +
@@ -744,7 +736,6 @@ ggplot(top_20_publishers, aes(x = reorder(host_organization, -article_count), y 
 total_article_count <- sum(publisher_ranking$article_count) # Total articles in all publishers
 top_20_total_count <- sum(top_20_publishers$article_count)  
 top_50_total_count <- sum(top_50_publishers$article_count)  
-top_100_total_count <- sum(top_100_publishers$article_count)  
 
 # Calculate the percentage for year 2019, 2020, 2021, 2022, 2023
 # Top  20: ~74-76%
@@ -752,17 +743,14 @@ top_100_total_count <- sum(top_100_publishers$article_count)
 # Top 100: ~95%
 top_20_percentage_of_total <- (top_20_total_count / total_article_count) * 100
 top_50_percentage_of_total <- (top_50_total_count / total_article_count) * 100
-top_100_percentage_of_total <-(top_100_total_count/ total_article_count) * 100
 
 print(paste("Top 20 publishers represent",  round(top_20_percentage_of_total, 0), "% of the total articles."))
 print(paste("Top 50 publishers represent",  round(top_50_percentage_of_total, 0), "% of the total articles."))
-print(paste("Top 100 publishers represent", round(top_100_percentage_of_total, 0), "% of the total articles."))
 
 view(publisher_ranking)
 # View the top 50 publishers.  
 # Top 10: Elsevier (20%), Wiley (9%), Oxford University Press (7%), IOP (5%) and IOP publishing (5%), Springer(5%), Nature,
 # Lippincott Williams & Wilkins, Taylor & Francis, SAGE Publishing (2%)
-
 
 ### Step : Final output to Excel
 
@@ -915,8 +903,6 @@ tryCatch({
   print(e)
 })
 
-
-
 #### 2025-10: Elsevier
 
 publisher_str <- "Elsevier"
@@ -944,10 +930,9 @@ works_cited_type_articles_c4 <- works_cited_type_articles %>%
 works_cited_type_articles_c5 <- works_cited_type_articles %>%
   filter(grepl("Cell Press", host_organization, ignore.case = TRUE))
 
+## Bind its children publishers#### 
 works_cited_type_articles_elsevier_children <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
                                                     works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
-
-## Bind its children publishers#### 
 
 
 # Only see "Elsevier" in the host_organization. 
@@ -962,12 +947,41 @@ works_published_elsevier <- works_published %>%
 
 works_cited_type_articles_elsevier <- bind_rows(works_cited_type_articles_elsevier_children, works_cited_type_articles_elsevier)
 
+head(works_cited_type_articles_elsevier)
+
 works_cited_type_articles_elsevier_22 <- works_cited_type_articles_elsevier
 
 works_cited_type_articles_elsevier_23 <- works_cited_type_articles_elsevier
 
 works_cited_type_articles_elsevier_24 <- works_cited_type_articles_elsevier
 
+source("my_functions.R")
+final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2024)
+print(final_p$other_data[1])
+
+# 2022-2024: 
+# final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2024)
+# "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2024 ) ---"
+# Category Count Percentage
+# 2019-2023 16400        33%
+# 2014-2018 12173        25%
+#     -2013 19918        41%
+#   Other   672         1%
+
+# "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2022 ) ---"
+# Category Count Percentage
+# 2017-2021 18508        34%
+# 2012-2016 12583        23%
+#     -2011 21948        41%
+# Other   779         1%
+# 
+# final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2023)
+# "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2023 ) ---"
+# Category Count Percentage
+# 2018-2022 17764        32%
+# 2013-2017 13032        24%
+#     -2012 23219        42%
+# Other   799         1%
 
 works_cited_type_articles_elsevier_22_23_24 <- bind_rows(works_cited_type_articles_elsevier_22, 
                                                          works_cited_type_articles_elsevier_23, 
@@ -984,9 +998,6 @@ works_cited_type_articles_elsevier_22_23_24 <- readRDS("../works_cited_type_arti
 works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
 write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
 
-source("my_functions.R")
-final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2022)
-print(final_p$other_data[1])
 
 # This will count every unique value in the 'domain_L1' column
 df <- works_cited_type_articles_elsevier_yr22_23_24
@@ -994,19 +1005,16 @@ domain_counts <- df %>%
   count(domain_L1, sort = TRUE)
 
 print(domain_counts)
-
-
-# 2022-2024: 
-
-# > final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2022)
-# [1] "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2022 ) ---"
-# Category Count Percentage
-# 2018-2022 15872        29%
-# 2013-2017 13907        26%
-#     -2012 24027        45%
-# Other    12         0%
-
-# 
+# Elsevier: 2022-2024
+#                             domain_L1     n
+# 1:                  Physical Sciences 68504
+# 2:                    Health Sciences 44347
+# 3:                      Life Sciences 29590
+# 4:                    Social Sciences 15138
+# 5:                               <NA>   210
+# 6: Health Sciences; Physical Sciences     2
+# 7:   Health Sciences; Social Sciences     2
+# 8:   Physical Sciences; Life Sciences     2
 
 
 # Combine Excel Files

@@ -1032,15 +1032,15 @@ count_cited_works_by_category <- function(works_df, citing_year) {
   }
   
   # --- 2. Define Dynamic Categories ---
-  cat_1_start <- citing_year - 4
-  cat_1_end   <- citing_year 
+  cat_1_start <- citing_year - 5
+  cat_1_end   <- citing_year - 1
   cat_1_label <- paste0(cat_1_start, "-", cat_1_end) # e.g., 2017-2021
   
-  cat_2_start <- citing_year - 9
-  cat_2_end   <- citing_year - 5
+  cat_2_start <- citing_year - 10
+  cat_2_end   <- citing_year - 6
   cat_2_label <- paste0(cat_2_start, "-", cat_2_end) # e.g., 2012-2016
   
-  cat_3_cutoff <- citing_year - 10
+  cat_3_cutoff <- citing_year - 11
   cat_3_label  <- paste0("    -", cat_3_cutoff) # e.g., -2011
   
   cat_4_label <- "Other"
