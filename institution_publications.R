@@ -85,10 +85,13 @@ works_count <-oa_fetch(
   #institutions.ror=c("05x2bcf33"), # Carnegie Mellon University (CMU)
   #institutions.ror=c("05hs6h993"), # Michigan State University (MSU) 
   #institutions.ror=c("00cvxb145"), # University of Washington
+
   
-  from_publication_date ="2021-01-01",
-  to_publication_date = "2021-12-31",
-  # type = "article",  # comment out this line to include other types 
+  options = list("data-version" = 2), 
+  
+  from_publication_date ="2024-01-01",
+  to_publication_date = "2024-12-31",
+  #type = "article",  # comment out this line to include other types 
   count_only = TRUE
 )
 
@@ -100,11 +103,11 @@ works_published_2024 <-oa_fetch(
    institutions.ror=c("03m2x1q45"), # UArizona
   
   #institutions.ror=c("00cvxb145"), # University of Washington
-  # type = "article", 
+  #type = "article", 
   from_publication_date ="2024-01-01",
   to_publication_date = "2024-12-31",
-  
-)
+  )
+
 
 # SHALL get all works, then filter them if needed. 
 # 2024-07: Works_published: openAlex changed its author df to "authorship". 
@@ -112,13 +115,12 @@ works_published_2024 <-oa_fetch(
 # 2023: All works: 10,559 (2025-01) 
 # 2023: journal only: 6,903 using primary_location.source.type = "journal" as a filter (not including type="repository")
 # 
-works_published_2023 <-oa_fetch(
+works_published_20232 <-oa_fetch(
   entity="works",
   
   # institutions.ror=c("03efmqc40"),  # ASU
-  # institutions.ror=c("03m2x1q45"), # UArizona
+  institutions.ror=c("03m2x1q45"), # UArizona
   #institutions.ror=c("00cvxb145"), # University of Washington
-  
   from_publication_date ="2023-01-01",
   to_publication_date = "2023-12-31",
 )
@@ -126,9 +128,9 @@ works_published_2023 <-oa_fetch(
 works_published_2022 <-oa_fetch(
   entity="works",
   # institutions.ror=c("03efmqc40"),  # ASU
-  institutions.ror=c("05hs6h993"), # MSU 
+  #institutions.ror=c("05hs6h993"), # MSU 
   
-  # institutions.ror=c("03m2x1q45"), # U Arizona
+  institutions.ror=c("03m2x1q45"), # U Arizona
   # institutions.ror=c("00cvxb145"), # University of Washington
   from_publication_date ="2022-01-01",
   to_publication_date = "2022-12-31",
@@ -624,7 +626,7 @@ head(matching_rows$id)
 #########################################################################################
 ### Step 2: Separate works_cited using criteria such as "type", "ISSN" or other criteria
 # First getting all the works_cited by year data
-works_cited <- works_cited_2022
+works_cited <- works_cited_2023
 
 works_cited <- works_cited_2022 %>%
   mutate(authored_year = 2022) %>%
@@ -656,15 +658,15 @@ number_of_unique_issns2 <- length(unique_issns2)
 ####################################################################
 #########################################################################
 # Step 2.2: The other way is to filter rows where issn_l is neither NA nor an empty string
-works_cited_source_issn_index <- !is.na(works_cited$issn_l) & works_cited$issn_l != ""
-works_cited_source_issn <- works_cited[works_cited_source_issn_index, ]
-works_cited_source_nonissn <- works_cited[!works_cited_source_issn_index, ]
+# works_cited_source_issn_index <- !is.na(works_cited$issn_l) & works_cited$issn_l != ""
+#works_cited_source_issn <- works_cited[works_cited_source_issn_index, ]
+# works_cited_source_nonissn <- works_cited[!works_cited_source_issn_index, ]
 #############################
 # Filter records where type is "article" (excluding conference paper etc )
-works_cited_source_issn_articles    <- works_cited_source_issn[works_cited_source_issn$type == "article", ]
-works_cited_source_issn_nonarticles <- works_cited_source_issn[works_cited_source_issn$type != "article", ]
-works_cited_source_nonissn_articles    <- works_cited_source_nonissn[works_cited_source_nonissn$type == "article", ]
-works_cited_source_nonissn_nonarticles <- works_cited_source_nonissn[works_cited_source_nonissn$type != "article", ]
+# works_cited_source_issn_articles    <- works_cited_source_issn[works_cited_source_issn$type == "article", ]
+# works_cited_source_issn_nonarticles <- works_cited_source_issn[works_cited_source_issn$type != "article", ]
+# works_cited_source_nonissn_articles    <- works_cited_source_nonissn[works_cited_source_nonissn$type == "article", ]
+# works_cited_source_nonissn_nonarticles <- works_cited_source_nonissn[works_cited_source_nonissn$type != "article", ]
 
 #######################################################################
 ### Step 3: Getting analysis for publisher
@@ -949,15 +951,20 @@ works_cited_type_articles_elsevier <- bind_rows(works_cited_type_articles_elsevi
 
 head(works_cited_type_articles_elsevier)
 
+source("my_functions.R")
+final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2023)
+print(final_p$other_data[1])
+# Analyze topic: domain, field, sub-field, topic
+
 works_cited_type_articles_elsevier_22 <- works_cited_type_articles_elsevier
 
 works_cited_type_articles_elsevier_23 <- works_cited_type_articles_elsevier
 
 works_cited_type_articles_elsevier_24 <- works_cited_type_articles_elsevier
 
-source("my_functions.R")
-final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2024)
-print(final_p$other_data[1])
+
+
+
 
 # 2022-2024: 
 # final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2024)
@@ -968,13 +975,6 @@ print(final_p$other_data[1])
 #     -2013 19918        41%
 #   Other   672         1%
 
-# "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2022 ) ---"
-# Category Count Percentage
-# 2017-2021 18508        34%
-# 2012-2016 12583        23%
-#     -2011 21948        41%
-# Other   779         1%
-# 
 # final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2023)
 # "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2023 ) ---"
 # Category Count Percentage
@@ -982,6 +982,14 @@ print(final_p$other_data[1])
 # 2013-2017 13032        24%
 #     -2012 23219        42%
 # Other   799         1%
+
+# "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2022 ) ---"
+# Category Count Percentage
+# 2017-2021 18508        34%
+# 2012-2016 12583        23%
+#     -2011 21948        41%
+# Other   779         1%
+
 
 works_cited_type_articles_elsevier_22_23_24 <- bind_rows(works_cited_type_articles_elsevier_22, 
                                                          works_cited_type_articles_elsevier_23, 
@@ -995,26 +1003,194 @@ works_cited_type_articles_elsevier_22_23_24 <- readRDS("../works_cited_type_arti
 
 
 
-works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
-write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
+#works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
+#write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
+
+works_cited_type_articles_elsevier_yr22 <- extract_topics_by_level(works_cited_type_articles_elsevier_22, 1)
+works_cited_type_articles_elsevier_yr22_field <- extract_topics_by_level(works_cited_type_articles_elsevier_22, 2)
+
+works_cited_type_articles_elsevier_yr23 <- extract_topics_by_level(works_cited_type_articles_elsevier_23, 1)
+#works_cited_type_articles_elsevier_yr23_field <- extract_topics_by_level(works_cited_type_articles_elsevier_23, 2)
+
+works_cited_type_articles_elsevier_yr24 <- extract_topics_by_level(works_cited_type_articles_elsevier_24, 1)
+#works_cited_type_articles_elsevier_yr24_field <- extract_topics_by_level(works_cited_type_articles_elsevier_24, 2)
+
+
+#write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
 
 
 # This will count every unique value in the 'domain_L1' column
-df <- works_cited_type_articles_elsevier_yr22_23_24
-domain_counts <- df %>%
-  count(domain_L1, sort = TRUE)
+#df <- works_cited_type_articles_elsevier_yr22_23_24
 
-print(domain_counts)
-# Elsevier: 2022-2024
-#                             domain_L1     n
-# 1:                  Physical Sciences 68504
-# 2:                    Health Sciences 44347
-# 3:                      Life Sciences 29590
-# 4:                    Social Sciences 15138
-# 5:                               <NA>   210
-# 6: Health Sciences; Physical Sciences     2
-# 7:   Health Sciences; Social Sciences     2
-# 8:   Physical Sciences; Life Sciences     2
+df_22 <- works_cited_type_articles_elsevier_yr22
+df_23 <- works_cited_type_articles_elsevier_yr23
+df_24 <- works_cited_type_articles_elsevier_yr24
+
+# --- 2022 ---
+# --- domain_L1 --- 
+count_domain_22 <- df_22 %>%
+  count(domain_L1, sort = TRUE) %>%
+  mutate(
+    total_n = sum(n), # Get total for this year
+    percent = (n / total_n) * 100,
+    percent_label = paste0(round(percent, 1), "%")
+  ) %>%
+  select(domain_L1, n, percent_label) # Clean up columns
+
+# -- field_L1 -- 
+count_field_22 <- df_22 %>%
+  count(field_L1, sort = TRUE) %>%
+  mutate(
+    total_n = sum(n), # Get total for this year
+    percent = (n / total_n) * 100,
+    percent_label = paste0(round(percent, 1), "%")
+  ) %>%
+  select(field_L1, n, percent_label) # Clean up columns
+
+count_subfield_22 <- df_22 %>%
+  count(subfield_L1, sort = TRUE) %>%
+  mutate(
+    total_n = sum(n), # Get total for this year
+    percent = (n / total_n) * 100,
+    percent_label = paste0(round(percent, 1), "%")
+  ) %>%
+  select(subfield_L1, n, percent_label) # Clean up columns
+
+# --- 2023 ---
+# --- domain_L1 --- 
+count_domain_23 <- df_23 %>%
+  count(domain_L1, sort = TRUE) %>%
+  mutate(
+    total_n = sum(n), # Get total for this year
+    percent = (n / total_n) * 100,
+    percent_label = paste0(round(percent, 1), "%")
+  ) %>%
+  select(domain_L1, n, percent_label) # Clean up columns
+
+# -- field_L1 -- 
+count_field_23 <- df_23 %>%
+  count(field_L1, sort = TRUE) %>%
+  mutate(
+    total_n = sum(n), # Get total for this year
+    percent = (n / total_n) * 100,
+    percent_label = paste0(round(percent, 1), "%")
+  ) %>%
+  select(field_L1, n, percent_label) # Clean up columns
+
+# --- 2024 ---
+# --- domain_L1 --- 
+count_domain_24 <- df_24 %>%
+  count(domain_L1, sort = TRUE) %>%
+  mutate(
+    total_n = sum(n), # Get total for this year
+    percent = (n / total_n) * 100,
+    percent_label = paste0(round(percent, 1), "%")
+  ) %>%
+  select(domain_L1, n, percent_label) # Clean up columns
+
+# -- field_L1 -- 
+count_field_24 <- df_24 %>%
+  count(field_L1, sort = TRUE) %>%
+  mutate(
+    total_n = sum(n), # Get total for this year
+    percent = (n / total_n) * 100,
+    percent_label = paste0(round(percent, 1), "%")
+  ) %>%
+  select(field_L1, n, percent_label) # Clean up columns
+
+print("--- 2022 Domain-Field-Subfield Counts ---")
+print(count_domain_22)
+print(count_field_22)
+print(count_subfield_22)
+
+print("--- 2023 Domain-Field-Subfield Counts ---")
+print(count_domain_23)
+print(count_field_23)
+#print(count_subfield_22)
+
+print("--- 2024 Domain-Field-Subfield Counts ---")
+print(count_domain_24)
+print(count_field_24)
+#print(count_subfield_24)
+
+
+
+
+# Elsevier: 2022 cited articles
+# 1] "--- 2022 Domain Counts ---"
+# print(domain_counts_22)
+# domain_L1     n percent_label
+# 1: Physical Sciences 23099         42.9%
+# 2:   Health Sciences 15068           28%
+# 3:     Life Sciences  9976         18.5%
+# 4:   Social Sciences  5584         10.4%
+# 5:              <NA>    91          0.2%
+
+# [1] "--- 2023 Domain Counts ---"
+# domain_L1     n percent_label
+# 1: Physical Sciences 24675           45%
+# 2:   Health Sciences 14391         26.3%
+# 3:     Life Sciences 10419           19%
+# 4:   Social Sciences  5262          9.6%
+# 5:              <NA>    67          0.1%
+
+# [1] "--- 2024 Domain Counts ---"
+# domain_L1     n percent_label
+# 1: Physical Sciences 20732         42.2%
+# 2:   Health Sciences 14890         30.3%
+# 3:     Life Sciences  9196         18.7%
+# 4:   Social Sciences  4293          8.7%
+# 5:              <NA>    52          0.1%
+
+
+
+# Run with group_by_col = "domain_L1"
+domain_results_grouped <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr22, 
+  citing_year = 2022, 
+  group_by_col = "domain_L1"
+)
+
+domain_results_grouped <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr23, 
+  citing_year = 2023, 
+  group_by_col = "domain_L1"
+)
+
+domain_results_grouped <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr24, 
+  citing_year = 2024, 
+  group_by_col = "domain_L1"
+)
+
+
+
+
+field_results_grouped <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr22, 
+  citing_year = 2022, 
+  group_by_col = "field_L1"
+)
+
+field_results_grouped <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr23, 
+  citing_year = 2023, 
+  group_by_col = "field_L1"
+)
+
+field_results_grouped <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr24, 
+  citing_year = 2024, 
+  group_by_col = "field_L1"
+)
+
+#### TESTING this field_result
+# Filter the data frame and print the results
+test_df <- works_cited_type_articles_elsevier_yr22 %>%
+  filter(field_L1 == "Chemical Engineering")
+
+test_df2 <- works_cited_type_articles_elsevier_yr23 %>%
+  filter(field_L1 == "Dentistry")
 
 
 # Combine Excel Files
@@ -1028,7 +1204,7 @@ tryCatch({
     addWorksheet(wb, sheetName = sheet_name)
     writeData(wb, sheet = sheet_name, x = df)
   }
-  saveWorkbook(wb, "citations/works_cited_type_articles_elsevier_22_23_24_v1.xlsx", overwrite = TRUE)
+  saveWorkbook(wb, "citations/works_cited_type_articles_elsevier_22_23_24_v2.xlsx", overwrite = TRUE)
   message("!!! Combination successful!")
 }, error = function(e) {
   message("Combination failed: ", e)
@@ -1380,7 +1556,6 @@ works_cited_type_articles_iop_22_23_24 <- bind_rows(works_cited_type_articles_io
 saveRDS(works_cited_type_articles_iop_22_23_24, "./citations/works_cited_type_articles_iop_22_23_24.rds")
 
 #  Test extract_topic
-source("my_functions.R")
 test_data <- head(works_cited_type_articles, 2)
 processed_data <- extract_topics_by_level(test_data, 1)
 #####
@@ -1803,14 +1978,16 @@ search_references(search_string, works_published)
 rank_top_cited_journals(works_cited_type_articles_brill_22_23_24, "so", 2000)
 
 
-rank_top_cited_journals(works_cited_type_articles_elsevier_22_23_24, "so", 8000)
+rank_top_cited_journals(works_cited_type_articles_elsevier_22_23_24, "so", "issn_l", "host_organization", 1000)
+
 rank_top_cited_journals(works_cited_type_articles_wiley_22_23_24, "so", 5000)
 
 rank_top_cited_journals(works_cited_type_articles_sage_22_23_24, "so", 2000)
 
 rank_top_cited_journals(works_cited_type_articles_tf_22_23_24, "so", 2000)
 
-#top_cited_journals <- rank_top_cited_journals(works_cited_type_articles_nature_sn_yr22_23_24, "so", 3000)
+top_cited_journals <- rank_top_cited_journals(works_cited_type_articles_elsevier_22_23_24, "so", "issn_l", "host_organization", 1000)
+
 
 #### Binding multiple years data
 #works_cited_type_articles_brill_2022_2023 <- bind_rows(works_cited_type_articles_brill_2023, works_cited_type_articles_brill_2022)
