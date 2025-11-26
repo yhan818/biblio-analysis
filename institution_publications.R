@@ -1164,8 +1164,6 @@ domain_results_grouped <- count_cited_works_by_group(
 )
 
 
-
-
 field_results_grouped <- count_cited_works_by_group(
   works_cited_type_articles_elsevier_yr22, 
   citing_year = 2022, 
@@ -1183,6 +1181,113 @@ field_results_grouped <- count_cited_works_by_group(
   citing_year = 2024, 
   group_by_col = "field_L1"
 )
+
+# Visualizations !!!!
+
+results <- count_cited_works_by_group(works_cited_type_articles_elsevier_yr23, 2023, "domain_L1", format_output = FALSE)
+
+ggplot(results$data, aes(x = domain_L1, y = n, fill = year_category)) +
+  geom_col()
+
+ggplot(results$data, aes(x = year_category, y = domain_L1, fill = percent_numeric)) +
+  geom_tile(color = "white") + # White borders make it grid-like
+  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)), color = "black", size = 3.5) +
+  scale_fill_gradient(low = "#e5f5e0", high = "#31a354") + # Green scale (or try "Blues")
+  labs(
+    title = "Citation Age Heatmap",
+    subtitle = "Darker colors indicate a higher concentration of citations",
+    x = "Citation Period",
+    y = "Domain",
+    fill = "Proportion"
+  ) +
+  theme_minimal() +
+  theme(panel.grid = element_blank()) # Remove grid lines for a cleaner look
+
+ggplot(results$data, aes(x = year_category, y = percent_numeric, group = domain_L1, color = domain_L1)) +
+  geom_line(linewidth = 1.2, alpha = 0.8) +
+  geom_point(size = 3) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Citation Decay Rates by Domain",
+    x = "Citation Age",
+    y = "Share of Total Citations",
+    color = "Domain"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+ggplot(results$data, aes(x = year_category, y = n)) +
+  geom_col(fill = "#4c8cb5") + # A nice steel blue
+  facet_wrap(~domain_L1, scales = "free_y") + # "free_y" lets each chart have its own scale
+  labs(
+    title = "Citation Volume Profiles",
+    subtitle = "Note: Y-axis scales differ by domain",
+    x = NULL,
+    y = "Count"
+  ) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+results2 <- count_cited_works_by_group(works_cited_type_articles_elsevier_yr23, 2023, "field_L1", format_output = FALSE)
+
+ggplot(results2$data, aes(x = field_L1, y = n, fill = year_category)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+ggplot(results2$data, aes(x = year_category, y = field_L1, fill = percent_numeric)) +
+  geom_tile(color = "white") + # White borders make it grid-like
+  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)), color = "black", size = 3.5) +
+  scale_fill_gradient(low = "#e5f5e0", high = "#31a354") + # Green scale (or try "Blues")
+  labs(
+    title = "Citation Age Heatmap",
+    subtitle = "Darker colors indicate a higher concentration of citations",
+    x = "Citation Period",
+    y = "Field",
+    fill = "Proportion"
+  ) +
+  theme_minimal() +
+  theme(panel.grid = element_blank()) # Remove grid lines for a cleaner look
+
+ggplot(results2$data, aes(x = year_category, y = percent_numeric, group = field_L1, color = field_L1)) +
+  geom_line(linewidth = 1.2, alpha = 0.8) +
+  geom_point(size = 3) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Citation Decay Rates by Field",
+    x = "Citation Age",
+    y = "Share of Total Citations",
+    color = "Domain"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+
+ggplot(results2$data, aes(x = year_category, y = n)) +
+  geom_col(fill = "#4c8cb5") +
+  facet_wrap(~field_L1, scales = "free_y", labeller = label_wrap_gen(width = 20)) + 
+  
+  # --- THE FIX: Limit axis to 3 breaks max ---
+  scale_y_continuous(
+    n.breaks = 3, 
+    labels = scales::label_number(scale_cut = scales::cut_short_scale())
+  ) + 
+  
+  labs(
+    title = "Citation Volume Profiles",
+    subtitle = "Note: Y-axis scales differ by field",
+    x = NULL,
+    y = "Count"
+  ) +
+  theme_light() +
+  theme(
+    strip.text = element_text(size = 7), 
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 7),
+    axis.text.y = element_text(size = 7) # Keep Y text small too
+  )
+
+# If using ggsave, specify a large height
+ggsave("citation_chart.png", width = 10, height = 12, dpi = 300)
 
 #### TESTING this field_result
 # Filter the data frame and print the results

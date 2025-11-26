@@ -1115,58 +1115,41 @@ count_cited_works_by_category <- function(works_df, citing_year) {
 #' @param citing_year A single numeric year (e.g., 2022) to use as the benchmark.
 #' @param group_by_col A string (e.g., "domain_L1") for the column to group by.
 #'                     If NULL (default), a total summary is returned.
+#' @param format_output TRUE                     
 #'
 #' @return A list with two elements:
 #'         $summary (data.frame): The formatted summary table, now with group data.
 #'         $other_data (data.frame): The original rows that fell into 'Other'.
 #'
-count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NULL) {
+library(dplyr)
+library(knitr) # Make sure this is loaded
+
+count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NULL, format_output = TRUE) {
   
   # --- 1. Setup & Validation ---
-  if (missing(works_df)) {
-    stop("Error: 'works_df' must be provided as a df.")
-  }
-  df_name <- deparse(substitute(works_df))
-  
-  if (missing(citing_year) || !is.numeric(citing_year) || length(citing_year) != 1 || is.na(citing_year)) {
-    stop("Error: 'citing_year' must be provided as a single numeric value (e.g., 2022).")
-  }
-  citing_year <- as.integer(citing_year)
-  
-  if (!is.data.frame(works_df)) {
-    stop(paste("Error:", df_name, "is not a data frame."))
-  }
-  if (nrow(works_df) == 0) {
-    stop(paste("Error:", df_name, "is empty and has 0 rows."))
-  }
-  if (!"publication_year" %in% names(works_df)) {
-    stop("Error: The data frame must contain a 'publication_year' column.")
-  }
-  
-  if (!is.null(group_by_col) && !group_by_col %in% names(works_df)) {
-    stop(paste("Error: The column '", group_by_col, "' does not exist in '", df_name, "'.", sep = ""))
+  if (missing(works_df)) stop("Error: 'works_df' must be provided.")
+  if (missing(citing_year) || !is.numeric(citing_year) || length(citing_year) != 1) {
+    stop("Error: 'citing_year' must be a single numeric value.")
   }
   
   # --- 2. Define Dynamic Categories ---
-  cat_0_year  <- citing_year                             
-  cat_0_label <- as.character(cat_0_year)                # e.g., "2022"
+  cat_0_year  <- as.integer(citing_year)
+  cat_1_start <- cat_0_year - 5
+  cat_1_end   <- cat_0_year - 1
+  cat_2_start <- cat_0_year - 10
+  cat_2_end   <- cat_0_year - 6
+  cat_3_cutoff <- cat_0_year - 11
   
-  cat_1_start <- citing_year - 5
-  cat_1_end   <- citing_year - 1
-  cat_1_label <- paste0(cat_1_start, "-", cat_1_end) # e.g., 2017-2021
-  
-  cat_2_start <- citing_year - 10
-  cat_2_end   <- citing_year - 6
-  cat_2_label <- paste0(cat_2_start, "-", cat_2_end) # e.g., 2012-2016
-  
-  cat_3_cutoff <- citing_year - 11
-  cat_3_label  <- paste0("-", cat_3_cutoff) # <-- MODIFIED (e.g., -2011)
-  
-  cat_4_label <- "Other" # <-- MODIFIED
+  # Labels
+  cat_0_label <- as.character(cat_0_year)
+  cat_1_label <- paste0(cat_1_start, "-", cat_1_end)
+  cat_2_label <- paste0(cat_2_start, "-", cat_2_end)
+  cat_3_label <- paste0("-", cat_3_cutoff)
+  cat_4_label <- "Other"
   
   category_order <- c(cat_0_label, cat_1_label, cat_2_label, cat_3_label, cat_4_label)
   
-  # --- 3. Categorize ALL Data First ---
+  # --- 3. Categorize Data ---
   categorized_df <- works_df %>%
     mutate(
       year_category = case_when(
@@ -1187,50 +1170,41 @@ count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NUL
     count(!!!syms(group_vars), .drop = FALSE)
   
   if (!is.null(group_by_col)) {
-    summary_data <- summary_data %>%
-      group_by(!!sym(group_by_col))
+    summary_data <- summary_data %>% group_by(!!sym(group_by_col))
   }
   
+  # Calculate percentages
   summary_data <- summary_data %>%
-    mutate(
-      percent_numeric = (n / sum(n)) * 100
-    ) %>%
+    mutate(percent_numeric = (n / sum(n))) %>%
     ungroup() 
   
-  # --- 5. Formatting for Output ---
-  formatted_results <- summary_data %>%
+  # --- 5. Format for Display ---
+  # We create a specific dataframe just for printing pretty tables
+  display_df <- summary_data %>%
     mutate(
-      # <-- MODIFIED: Simplified to apply "# " to ALL categories
-      year_category_formatted = paste0("# ", year_category),
-      percent_formatted = paste0(round(percent_numeric, 0), "%")
-    )
-  
-  # --- 6. Get "Other" Data for Inspection ---
-  other_data_for_inspection <- categorized_df %>%
-    filter(year_category == cat_4_label)
-  
-  # --- 7. Side Effect: Print Full Summary ---
-  print_df <- formatted_results %>%
+      Category = paste0("# ", year_category),
+      Percentage = paste0(round(percent_numeric * 100, 0), "%")
+    ) %>%
     select(
       any_of(group_by_col), 
-      Category = year_category_formatted, 
+      Category, 
       Count = n, 
-      Percentage = percent_formatted
+      Percentage
     )
   
-  print(paste("--- Cited Works Summary for:", df_name, "(relative to", citing_year, ") ---"))
-  print(as.data.frame(print_df), row.names = FALSE)
+  # --- 6. Side Effect: Print Table ---
+  if (format_output) {
+    cat(paste("\n--- Cited Works Summary (Ref Year:", citing_year, ") ---\n"))
+    print(kable(display_df, format = "simple", align = "l"))
+    cat("\n")
+  }
   
-  # --- 8. Return Value (as a list) ---
-  final_output <- formatted_results %>%
-    select(
-      any_of(group_by_col), 
-      year_category = year_category_formatted, 
-      percent = percent_formatted
-    )
-  
+  # --- 7. Return Value ---
+  # IMPORTANT: We return the numeric data ('summary_data') so you can plot it later,
+  # AND the 'display_df' if you want to export the pretty table.
   return(list(
-    summary = final_output,
-    other_data = other_data_for_inspection
+    data = summary_data,       # Use this one for ggplot (it has numbers!)
+    display_table = display_df, # Use this one for saving to CSV/Excel
+    other_rows = categorized_df %>% filter(year_category == cat_4_label)
   ))
 }
