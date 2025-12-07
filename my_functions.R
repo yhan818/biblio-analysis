@@ -1115,14 +1115,14 @@ count_cited_works_by_category <- function(works_df, citing_year) {
 #' @param citing_year A single numeric year (e.g., 2022) to use as the benchmark.
 #' @param group_by_col A string (e.g., "domain_L1") for the column to group by.
 #'                     If NULL (default), a total summary is returned.
-#' @param format_output TRUE                     
 #'
 #' @return A list with two elements:
 #'         $summary (data.frame): The formatted summary table, now with group data.
 #'         $other_data (data.frame): The original rows that fell into 'Other'.
 #'
+#'
 library(dplyr)
-library(knitr) # Make sure this is loaded
+library(knitr)
 
 count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NULL, format_output = TRUE) {
   
@@ -1134,27 +1134,33 @@ count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NUL
   
   # --- 2. Define Dynamic Categories ---
   cat_0_year  <- as.integer(citing_year)
+  
+  # MODIFIED: cat_1 now spans 6 years (e.g., 2018 to 2023)
   cat_1_start <- cat_0_year - 5
-  cat_1_end   <- cat_0_year - 1
+  cat_1_end   <- cat_0_year      # Includes the citing year
+  
+  # cat_2 (e.g., 2013 to 2017)
   cat_2_start <- cat_0_year - 10
-  cat_2_end   <- cat_0_year - 6
-  cat_3_cutoff <- cat_0_year - 11
+  cat_2_end   <- cat_1_start - 1 
+  
+  # cat_3 (e.g., -2012)
+  cat_3_cutoff <- cat_2_start - 1
   
   # Labels
-  cat_0_label <- as.character(cat_0_year)
-  cat_1_label <- paste0(cat_1_start, "-", cat_1_end)
-  cat_2_label <- paste0(cat_2_start, "-", cat_2_end)
-  cat_3_label <- paste0("-", cat_3_cutoff)
+  cat_1_label <- paste0(cat_1_start, "-", cat_1_end) # e.g. "2018-2023"
+  cat_2_label <- paste0(cat_2_start, "-", cat_2_end) # e.g. "2013-2017"
+  cat_3_label <- paste0("-", cat_3_cutoff)           # e.g. "-2012"
   cat_4_label <- "Other"
   
-  category_order <- c(cat_0_label, cat_1_label, cat_2_label, cat_3_label, cat_4_label)
+  # Removed cat_0 from the order
+  category_order <- c(cat_1_label, cat_2_label, cat_3_label, cat_4_label)
   
   # --- 3. Categorize Data ---
   categorized_df <- works_df %>%
     mutate(
       year_category = case_when(
         is.na(publication_year) ~ cat_4_label,
-        publication_year == cat_0_year ~ cat_0_label,  
+        # Logic simplified: cat_1 captures the recent block (inclusive of citing year)
         publication_year >= cat_1_start & publication_year <= cat_1_end ~ cat_1_label,
         publication_year >= cat_2_start & publication_year <= cat_2_end ~ cat_2_label,
         publication_year <= cat_3_cutoff ~ cat_3_label,
@@ -1162,6 +1168,12 @@ count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NUL
       ),
       year_category = factor(year_category, levels = category_order)
     )
+  
+  # --- [FIX ADDED HERE] Remove NA in grouping column ---
+  if (!is.null(group_by_col)) {
+    categorized_df <- categorized_df %>%
+      filter(!is.na(!!sym(group_by_col)))
+  }
   
   # --- 4. Core Calculation ---
   group_vars <- c(group_by_col, "year_category")
@@ -1179,7 +1191,6 @@ count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NUL
     ungroup() 
   
   # --- 5. Format for Display ---
-  # We create a specific dataframe just for printing pretty tables
   display_df <- summary_data %>%
     mutate(
       Category = paste0("# ", year_category),
@@ -1200,11 +1211,9 @@ count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NUL
   }
   
   # --- 7. Return Value ---
-  # IMPORTANT: We return the numeric data ('summary_data') so you can plot it later,
-  # AND the 'display_df' if you want to export the pretty table.
   return(list(
-    data = summary_data,       # Use this one for ggplot (it has numbers!)
-    display_table = display_df, # Use this one for saving to CSV/Excel
+    data = summary_data,      
+    display_table = display_df, 
     other_rows = categorized_df %>% filter(year_category == cat_4_label)
   ))
 }

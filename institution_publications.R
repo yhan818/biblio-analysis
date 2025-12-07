@@ -1029,6 +1029,8 @@ df_24 <- works_cited_type_articles_elsevier_yr24
 # --- 2022 ---
 # --- domain_L1 --- 
 count_domain_22 <- df_22 %>%
+  # ADDED: Filter out all rows where 'domain_L1' is NA
+  filter(!is.na(domain_L1)) %>%
   count(domain_L1, sort = TRUE) %>%
   mutate(
     total_n = sum(n), # Get total for this year
@@ -1039,6 +1041,8 @@ count_domain_22 <- df_22 %>%
 
 # -- field_L1 -- 
 count_field_22 <- df_22 %>%
+  # ADDED: Filter out all rows is NA
+  filter(!is.na(field_L1)) %>%
   count(field_L1, sort = TRUE) %>%
   mutate(
     total_n = sum(n), # Get total for this year
@@ -1048,6 +1052,8 @@ count_field_22 <- df_22 %>%
   select(field_L1, n, percent_label) # Clean up columns
 
 count_subfield_22 <- df_22 %>%
+  # ADDED: Filter out all rows where 'domain_L1' is NA
+  filter(!is.na(subfield_L1)) %>%
   count(subfield_L1, sort = TRUE) %>%
   mutate(
     total_n = sum(n), # Get total for this year
@@ -1059,6 +1065,8 @@ count_subfield_22 <- df_22 %>%
 # --- 2023 ---
 # --- domain_L1 --- 
 count_domain_23 <- df_23 %>%
+  # ADDED: Filter out all rows where 'domain_L1' is NA
+  filter(!is.na(domain_L1)) %>%
   count(domain_L1, sort = TRUE) %>%
   mutate(
     total_n = sum(n), # Get total for this year
@@ -1068,7 +1076,9 @@ count_domain_23 <- df_23 %>%
   select(domain_L1, n, percent_label) # Clean up columns
 
 # -- field_L1 -- 
-count_field_23 <- df_23 %>%
+count_field_22 <- df_22 %>%
+  # ADDED: Filter out all rows is NA
+  filter(!is.na(field_L1)) %>%
   count(field_L1, sort = TRUE) %>%
   mutate(
     total_n = sum(n), # Get total for this year
@@ -1080,6 +1090,8 @@ count_field_23 <- df_23 %>%
 # --- 2024 ---
 # --- domain_L1 --- 
 count_domain_24 <- df_24 %>%
+  # ADDED: Filter out all rows where 'domain_L1' is NA
+  filter(!is.na(domain_L1)) %>%
   count(domain_L1, sort = TRUE) %>%
   mutate(
     total_n = sum(n), # Get total for this year
@@ -1090,6 +1102,8 @@ count_domain_24 <- df_24 %>%
 
 # -- field_L1 -- 
 count_field_24 <- df_24 %>%
+  # ADDED: Filter out all rows is NA
+  filter(!is.na(field_L1)) %>%
   count(field_L1, sort = TRUE) %>%
   mutate(
     total_n = sum(n), # Get total for this year
@@ -1112,8 +1126,6 @@ print("--- 2024 Domain-Field-Subfield Counts ---")
 print(count_domain_24)
 print(count_field_24)
 #print(count_subfield_24)
-
-
 
 
 # Elsevier: 2022 cited articles
@@ -1143,66 +1155,187 @@ print(count_field_24)
 # 5:              <NA>    52          0.1%
 
 
-
-# Run with group_by_col = "domain_L1"
-domain_results_grouped <- count_cited_works_by_group(
+# 2022 Results
+domain_results_2022 <- count_cited_works_by_group(
   works_cited_type_articles_elsevier_yr22, 
   citing_year = 2022, 
   group_by_col = "domain_L1"
 )
 
-domain_results_grouped <- count_cited_works_by_group(
+# 2023 Results
+domain_results_2023 <- count_cited_works_by_group(
   works_cited_type_articles_elsevier_yr23, 
   citing_year = 2023, 
   group_by_col = "domain_L1"
 )
 
-domain_results_grouped <- count_cited_works_by_group(
+# 2024 Results
+domain_results_2024 <- count_cited_works_by_group(
   works_cited_type_articles_elsevier_yr24, 
   citing_year = 2024, 
   group_by_col = "domain_L1"
 )
 
+all_domain_patterns <- bind_rows(
+  # Extract 2022 data and add a year column
+  domain_results_2022$data %>% mutate(Citing_Year = 2022),
+  
+  # Extract 2023 data and add a year column
+  domain_results_2023$data %>% mutate(Citing_Year = 2023),
+  
+  # Extract 2024 data and add a year column
+  domain_results_2024$data %>% mutate(Citing_Year = 2024)
+) %>%
+  # 1. [NEW LINE ADDED HERE] Filter out rows where year_category is "Other"
+  filter(year_category != "Other") %>%
+  # 2. [NEW STEP] Sort by domain_L1 (primary sort) then by Citing_Year (secondary sort)
+  arrange(domain_L1, Citing_Year)
 
-field_results_grouped <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr22, 
-  citing_year = 2022, 
-  group_by_col = "field_L1"
-)
+# View the combined data for comparison
+print(all_domain_patterns)
 
-field_results_grouped <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr23, 
-  citing_year = 2023, 
-  group_by_col = "field_L1"
-)
 
-field_results_grouped <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr24, 
-  citing_year = 2024, 
-  group_by_col = "field_L1"
-)
+### Trend visualization for a single domain
+library(ggplot2)
+library(scales)
+library(dplyr)
+# 🛑 CHANGE THIS LINE: Set the domain you want to visualize 
+# (e.g., "Physical Sciences", "Health Sciences", "Life Sciences", "Social Sciences")
+domain_to_plot <- "Physical Sciences" 
 
-# Visualizations !!!!
+single_domain_data <- all_domain_patterns %>%
+  filter(domain_L1 == domain_to_plot)
 
-results <- count_cited_works_by_group(works_cited_type_articles_elsevier_yr23, 2023, "domain_L1", format_output = FALSE)
-
-ggplot(results$data, aes(x = domain_L1, y = n, fill = year_category)) +
-  geom_col()
-
-ggplot(results$data, aes(x = year_category, y = domain_L1, fill = percent_numeric)) +
-  geom_tile(color = "white") + # White borders make it grid-like
-  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)), color = "black", size = 3.5) +
-  scale_fill_gradient(low = "#e5f5e0", high = "#31a354") + # Green scale (or try "Blues")
+# Create the Grouped Column Chart
+ggplot(single_domain_data, 
+       aes(x = factor(Citing_Year), # Treat year as discrete
+           y = percent_numeric, 
+           fill = year_category)) +
+  
+  # Grouped columns showing the age distribution per year
+  geom_col(position = "dodge", color = "black", alpha = 0.8) +
+  
+  # Add text labels for the percentage values
+  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)),
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, 
+            size = 3) +
+  
+  # Format the Y-axis and set custom colors
+  scale_y_continuous(labels = scales::percent, limits = c(0, max(single_domain_data$percent_numeric) * 1.1)) +
+  scale_fill_brewer(palette = "Set1") + # Using a reliable RColorBrewer palette (Set1 has 9 colors)
+  
   labs(
-    title = "Citation Age Heatmap",
-    subtitle = "Darker colors indicate a higher concentration of citations",
-    x = "Citation Period",
-    y = "Domain",
-    fill = "Proportion"
+    title = paste("Citation Age Trend for:", domain_to_plot, "(2022-2024)"),
+    subtitle = "Change in the proportion of citations from different age categories.",
+    x = "Citing Year",
+    y = "Percentage of Citations",
+    fill = "Citation Period"
   ) +
   theme_minimal() +
-  theme(panel.grid = element_blank()) # Remove grid lines for a cleaner look
+  theme(legend.position = "bottom")
+# Note: You can also use geom_line() instead of geom_col() to emphasize continuous movement 
+# for a single citation period over the years.
 
+# Option 2: Plotting ALL domains at once using the combined 'all_domain_patterns' data frame
+ggplot(all_domain_patterns, 
+       aes(x = factor(Citing_Year), 
+           y = percent_numeric, 
+           fill = year_category)) +
+  
+  geom_col(position = "dodge", color = "black", alpha = 0.8) +
+  
+  # 🛑 THE KEY CHANGE: Use facet_wrap to create a panel for each domain
+  facet_wrap(~ domain_L1, scales = "free_y") + 
+  
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set1") + 
+  
+  labs(
+    title = "Citation Age Trend by Domain (2022-2024)",
+    subtitle = "Separate panels show the change for each domain over time.",
+    x = "Citing Year",
+    y = "Percentage of Citations",
+    fill = "Citation Period"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+#######################################
+############## Fields
+
+field_results_2022 <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr22, 
+  citing_year = 2022, 
+  group_by_col = "field_L1"
+)
+
+field_results_2023 <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr23, 
+  citing_year = 2023, 
+  group_by_col = "field_L1"
+)
+
+field_results_2024 <- count_cited_works_by_group(
+  works_cited_type_articles_elsevier_yr24, 
+  citing_year = 2024, 
+  group_by_col = "field_L1"
+)
+
+# --- 1. Combine and Sort the Field Data ---
+# Use the $data element from the list output and add the Citing_Year
+all_field_patterns <- bind_rows(
+  field_results_2022$data %>% mutate(Citing_Year = 2022),
+  field_results_2023$data %>% mutate(Citing_Year = 2023),
+  field_results_2024$data %>% mutate(Citing_Year = 2024)
+) %>% 
+  # 1. Filter out rows where year_category is "Other"
+  filter(year_category != "Other") %>%
+  # 2. Sort first by the field, then by the year
+  arrange(field_L1, Citing_Year)
+
+# --- 2. Filter out NA/Missing Fields (Recommended) ---
+# Based on earlier requests, this ensures the '<NA>' field category is removed
+all_field_patterns <- all_field_patterns %>%
+  filter(!is.na(field_L1))
+
+# --- 3. Visualize Trend for ALL Fields using Faceting ---
+# --- Visualization Code with Smaller Text Size ---
+ggplot(all_field_patterns, 
+       aes(x = factor(Citing_Year), 
+           y = percent_numeric, 
+           fill = year_category)) +
+  
+  geom_col(position = "dodge", color = "black", alpha = 0.8) +
+  
+  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)),
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, 
+            size = 1.2) + 
+  
+  # 🛑 UPDATED: Added labeller argument to wrap the field names
+  facet_wrap(~ field_L1, 
+             scales = "free_y",
+             labeller = label_wrap_gen(width = 20)) + 
+  
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  scale_fill_brewer(palette = "Set3") + 
+  
+  labs(
+    title = "Citation Age Trend by Field (2022-2024)",
+    subtitle = "Change in citation age composition for all specific fields.",
+    x = "Citing Year",
+    y = "Percentage of Citations",
+    fill = "Citation Period"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+
+############### Dec 6: need to change
 ggplot(results$data, aes(x = year_category, y = percent_numeric, group = domain_L1, color = domain_L1)) +
   geom_line(linewidth = 1.2, alpha = 0.8) +
   geom_point(size = 3) +
