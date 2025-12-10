@@ -1282,57 +1282,110 @@ field_results_2024 <- count_cited_works_by_group(
   group_by_col = "field_L1"
 )
 
-# --- 1. Combine and Sort the Field Data ---
-# Use the $data element from the list output and add the Citing_Year
+
+# --- 1. Run Analysis (Assuming results variables are populated) ---
+# ... (field_results_2022, 2023, 2024 populated here) ...
+
+# --- 2. Combine, Sort, and SIMPLIFY the Data ---
 all_field_patterns <- bind_rows(
   field_results_2022$data %>% mutate(Citing_Year = 2022),
   field_results_2023$data %>% mutate(Citing_Year = 2023),
   field_results_2024$data %>% mutate(Citing_Year = 2024)
 ) %>% 
-  # 1. Filter out rows where year_category is "Other"
-  filter(year_category != "Other") %>%
-  # 2. Sort first by the field, then by the year
+  # Filter out NA/missing fields (done previously)
+  filter(!is.na(field_L1)) %>% 
+  
+  # Create Simplified Age Group
+  mutate(
+    age_group_simplified = case_when(
+      # Cat_1 (e.g., 2019-2024) = "Year 0-5"
+      year_category == paste0(Citing_Year - 5, "-", Citing_Year) ~ "Year 0-5",
+      
+      # Cat_2 (e.g., 2014-2018) = "Year 6-10"
+      grepl("^-", year_category) == FALSE & grepl("-", year_category) == TRUE ~ "Year 6-10",
+      
+      # Cat_3 (e.g., -2013) = "Year 11+"
+      grepl("^-", year_category) == TRUE ~ "Year 11+",
+      
+      # Default should ideally not happen after NA filtering, but is still 'Other'
+      TRUE ~ "Other"
+    ),
+    # Ensure simplified groups are factored in a clear order
+    age_group_simplified = factor(age_group_simplified, 
+                                  levels = c("Year 0-5", "Year 6-10", "Year 11+", "Other"))
+  ) %>%
+  
+  # 🛑 NEW STEP: Remove the "Other" category from the visualization data set
+  filter(age_group_simplified != "Other") %>%
+  
+  # Sort first by the field, then by the year
   arrange(field_L1, Citing_Year)
 
-# --- 2. Filter out NA/Missing Fields (Recommended) ---
-# Based on earlier requests, this ensures the '<NA>' field category is removed
-all_field_patterns <- all_field_patterns %>%
+
+library(writexl)
+# Set the desired file path and name
+excel_file_path <- "all_field_citation_patterns.xlsx"
+write_xlsx(all_field_patterns, path = excel_file_path)
+print(paste("Data successfully saved to:", excel_file_path))
+
+# --- 3. Create Page Groups (4 fields per page) ---
+fields_to_page <- all_field_patterns %>%
+  ungroup() %>%
+  distinct(field_L1) %>%
+  arrange(field_L1) %>%
+  mutate(page_group = ceiling(row_number() / 4)) 
+
+all_field_patterns_paged <- all_field_patterns %>%
+  left_join(fields_to_page, by = "field_L1") %>%
   filter(!is.na(field_L1))
 
-# --- 3. Visualize Trend for ALL Fields using Faceting ---
-# --- Visualization Code with Smaller Text Size ---
-ggplot(all_field_patterns, 
-       aes(x = factor(Citing_Year), 
-           y = percent_numeric, 
-           fill = year_category)) +
+# --- 4. Iterate and Generate a Plot for Each Page Group ---
+num_pages <- max(all_field_patterns_paged$page_group)
+
+for (p in 1:num_pages) {
   
-  geom_col(position = "dodge", color = "black", alpha = 0.8) +
+  data_current_page <- all_field_patterns_paged %>%
+    filter(page_group == p)
   
-  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)),
-            position = position_dodge(width = 0.9), 
-            vjust = -0.5, 
-            size = 1.2) + 
+  plot_page <- ggplot(data_current_page, 
+                      aes(x = factor(Citing_Year), 
+                          y = percent_numeric, 
+                          fill = age_group_simplified)) + 
+    
+    geom_col(position = "dodge", color = "black", alpha = 0.8) +
+    
+    geom_text(aes(label = paste0(scales::percent(percent_numeric, accuracy = 1), "\n(", n, ")")),
+              position = position_dodge(width = 0.9), 
+              vjust = -0.1, # Adjusted vjust slightly to keep the text centered above the bar
+              size = 2.5) +
+    
+    facet_wrap(~ field_L1, 
+               scales = "free_y",
+               labeller = label_wrap_gen(width = 20)) + 
+    
+    scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+    
+    # 🛑 MODIFIED: Removed "Other" from the scale_fill_manual values, 
+    # but kept the three primary colors.
+    scale_fill_manual(values = c("Year 0-5" = "#0072B2",
+                                 "Year 6-10" = "#F0E442",
+                                 "Year 11+" = "#D55E00")) +
+    
+    labs(
+      title = paste("Citation Age Trend by Field (Page", p, "of", num_pages, ")"),
+      subtitle = "SUBTITLE",
+      x = "Citing Year",
+      y = "Percentage and Total Numbers of Citations",
+      fill = "Citation Period"
+    ) +
+    theme_minimal() +
+    theme(
+      legend.position = "bottom",
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    )
   
-  # 🛑 UPDATED: Added labeller argument to wrap the field names
-  facet_wrap(~ field_L1, 
-             scales = "free_y",
-             labeller = label_wrap_gen(width = 20)) + 
-  
-  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
-  scale_fill_brewer(palette = "Set3") + 
-  
-  labs(
-    title = "Citation Age Trend by Field (2022-2024)",
-    subtitle = "Change in citation age composition for all specific fields.",
-    x = "Citing Year",
-    y = "Percentage of Citations",
-    fill = "Citation Period"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "bottom",
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
+  print(plot_page)
+}
 
 
 ############### Dec 6: need to change
