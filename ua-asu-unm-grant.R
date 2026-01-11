@@ -106,7 +106,7 @@ ror_map <- c(
 )
 
 # --- 2. Load and Prepare Author Data ---
-csv_file <- "ua_asu_unm_grant_authors.csv"
+csv_file <- "ua_asu_unm_grant_authors2.csv"
 authors_df <- read_csv(csv_file)
 
 # Standardize column names (removes trailing spaces)
@@ -156,12 +156,13 @@ for (i in 1:nrow(authors_df)) {
 [Not Found] Hossein Ardehali at UA
 [Not Found] Haijiang Cai at UA
 [Not Found] Michael Daines at UA
-[Not Found] Tatiana Kalin at UA
+
+# [Not Found] Tatiana Kalin at UA (Cincinnati https://api.openalex.org/a5078276804 )
 [Not Found] Moulun Luo at UA
 
 
 
-# [Not Found] Mary laura Thomas at ASU (Use Mary Laura Lind)
+# [Not Found] Mary laura Thomas at ASU (Mary Laura Lind)
 # !!! [Not Found] Sampath Rangasamy at ASU (Arizona Research Center?, Phoenix, DO Check openAlex manually!!!)
 
 
@@ -169,6 +170,73 @@ for (i in 1:nrow(authors_df)) {
 [Not Found] Amy Gardiner at UNM (https://orcid.org/0000-0002-8179-4919)
 
 [Not Found] Finny Swamidoss at UNM
+
+
+
+#### Hanlding new added authors
+# Load necessary libraries
+library(tidyr)
+
+df <- read_excel("New list for faculty collaborations.xlsx", col_names = FALSE)
+
+df_split <- df %>%
+  # Separate the first column (...1) into Last Name and First Name at the comma
+  separate(col = ...1, into = c("Last Name", "First Name"), sep = ",", extra = "merge") %>%
+  mutate(
+    `Last Name` = trimws(`Last Name`),
+    `First Name` = trimws(`First Name`),
+    Institution = trimws(...4) # Using the 4th column for Institution
+  ) %>%
+  # Select only the three requested columns
+  select(`Last Name`, `First Name`, Institution)
+
+# 3. Output to CSV
+write.csv(df_split, "Faculty_Collaborations_Split.csv", row.names = FALSE)
+print("The 3-column CSV 'Faculty_Collaborations_Split.csv' has been created.")
+
+### compare with the original list
+
+library(dplyr)
+library(stringr)
+library(fuzzyjoin)
+
+# 1. Clean Faculty List (Remove punctuation)
+faculty_prep <- df %>%
+  separate(col = `...1`, into = c("Last_Name", "First_Name"), sep = ",", extra = "merge") %>%
+  mutate(
+    # Remove periods and commas for a cleaner match
+    clean_last  = str_replace_all(str_to_upper(trimws(Last_Name)), "[[:punct:]]", ""),
+    clean_first = str_replace_all(str_to_upper(trimws(First_Name)), "[[:punct:]]", ""),
+    match_key   = paste(clean_last, clean_first) # No comma in key
+  )
+
+# 2. Clean your authors_df
+authors_prep <- authors_df %>%
+  mutate(
+    # Replace 'name' with your actual column name
+    # Remove punctuation and standardize to uppercase
+    author_match_key = str_replace_all(str_to_upper(trimws(name)), "[[:punct:]]", "")
+  )
+
+# 3. Perform Ultra-Fuzzy Match
+# We increase max_dist to 10 to catch "Last, First Middle" vs "Last, First"
+matched_results <- stringdist_inner_join(
+  faculty_prep, 
+  authors_prep, 
+  by = c("match_key" = "author_match_key"),
+  max_dist = 10,  
+  method = "lv"
+)
+
+# 4. View Matches
+final_matches <- matched_results %>%
+  select(
+    Faculty_Name = match_key, 
+    Author_DF_Name = author_match_key
+  ) %>%
+  distinct()
+
+print(final_matches)
 
 
 
@@ -243,7 +311,7 @@ unm_hos_ror   <- "04skph061"
 niddk_ror     <- "00adh9b73"
 
 # --- 3. Load the CSV ---
-csv_file <- "ua_asu_unm_grant_authors.csv"
+csv_file <- "ua_asu_unm_grant_authors2.csv"
 authors_raw <- read_csv(csv_file)
 
 # Standardize column names (remove trailing spaces)
@@ -301,6 +369,10 @@ if (length(found_list) > 0) {
     select(display_name, id, works_count, csv_institution) %>%
     kable() %>%
     print()
+  
+  # Save identified authors to CSV
+  write_csv(found_df, "authors_identified.csv")
+  message("Success: Identified authors saved to 'authors_identified.csv'")
 }
 
 # Not Found Table
@@ -313,6 +385,10 @@ if (length(not_found_list) > 0) {
     select(`First Name`, `Last Name`, Institution) %>%
     kable() %>%
     print()
+  
+  # Save not found authors to CSV
+  write_csv(not_found_df, "authors_not_found.csv")
+  message("Warning: Not found authors saved to 'authors_not_found.csv'")
 }
 
 #####################3 CONTINUE WORKING ON THESE #############################
