@@ -26,19 +26,18 @@ library(openxlsx)
 library(readxl)
 library(writexl)
 
+source("my_functions.R")
+
 # free unused obj to manage memory
 rm(list=ls())
 gc()
 
-options("max.print" = 100000)
-options (openalexR.mailto="yhan@arizona.edu")
-PATH = "/home/yhan/Documents/biblio-analysis"
-setwd(PATH)
-getwd()
-print(here())
-
-
-source("my_functions.R")
+# options("max.print" = 100000)
+# options (openalexR.mailto="yhan@arizona.edu")
+# PATH = "/home/yhan/Documents/biblio-analysis"
+# setwd(PATH)
+# getwd()
+# print(here())
 
 ##### General comments:
 ### OpenAlex data structure has been gone through sevearl changes from 2023- 2025. Therefore,

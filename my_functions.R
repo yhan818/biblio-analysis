@@ -7,8 +7,13 @@ library(data.table)
 library(dplyr)
 library(rlang)
 
+options("max.print" = 100000)
+options(openalexR.mailto = "yhan@arizona.edu")
+PATH <- "/home/yhan/Documents/biblio-analysis"
 
-
+setwd(PATH)
+getwd()
+print(here())
 ##########################################
 
 
@@ -24,30 +29,29 @@ check_df_structure <- function(df_list) {
     warning("List must contain at least two data frames to compare.")
     return(FALSE)
   }
-  
+
   # --- 1. Get the structure of the first data.frame as a reference ---
   first_df_names <- names(df_list[[1]])
   first_df_types <- sapply(df_list[[1]], class)
-  
+
   # --- 2. Loop through the rest of the data.frames and compare ---
   for (i in 2:length(df_list)) {
     current_df <- df_list[[i]]
-    
+
     # Get structure of the current data.frame
     current_df_names <- names(current_df)
     current_df_types <- sapply(current_df, class)
-    
+
     # Compare names and types to the first data.frame
     # identical() is a strict comparison
-    if (!identical(first_df_names, current_df_names) || 
-        !identical(first_df_types, current_df_types)) {
-      
+    if (!identical(first_df_names, current_df_names) ||
+      !identical(first_df_types, current_df_types)) {
       # If there's a mismatch, print a message and return FALSE
       message(paste("Mismatch found at data.frame index:", i))
       return(FALSE)
     }
   }
-  
+
   # --- 3. If the loop completes, all structures match ---
   return(TRUE)
 }
@@ -55,12 +59,12 @@ check_df_structure <- function(df_list) {
 
 ############# Search Functions #######################
 ### Search if a publisher is in a DF
-# Output the publisher 
+# Output the publisher
 # @ return: the indices of the publisher
 search_publisher <- function(publisher_string, df) {
   # Find indices where the host_organization contains the publisher string (case insensitive)
   indices_with_string <- which(grepl(publisher_string, df$host_organization, ignore.case = TRUE))
-  
+
   print(df[indices_with_string, ]$host_organization)
   print(df[indices_with_string, ]$id)
   return(indices_with_string)
@@ -70,13 +74,13 @@ search_publisher <- function(publisher_string, df) {
 # publisher_string <- "Brill"
 # result_indices <- search_publisher(publisher_string, works_cited_type_articles)
 
-#### Function: search_work_publisher(): 
+#### Function: search_work_publisher():
 ## Search a work's publisher and output the publisher
 # @return: index of the DF
 search_work_publisher <- function(search_string, df) {
   # Find indices where the host_organization contains the search string (case insensitive)
   indices_with_string <- which(sapply(df$id, function(x) !is.na(x) && search_string %in% x))
-  
+
   print(df[indices_with_string, ]$host_organization)
   print(indices_with_string)
   return(indices_with_string)
@@ -89,7 +93,7 @@ search_work_publisher <- function(search_string, df) {
 ###############################################################
 # Verify any cited work using the function search_references()
 # Define the function to search for a string in the referenced_works column and print the output
-##############################################3
+############################################## 3
 search_references <- function(search_string, df) {
   indices_with_string <- which(sapply(df$referenced_works, function(x) search_string %in% x))
   print(indices_with_string)
@@ -122,32 +126,36 @@ search_string <- "Brill"
 find_org_works <- function(work_cited, works_published) {
   # Assign input dataframe to local variable df
   df <- works_published
-  
+
   # --- Input Checks ---
   # Check if df is actually a data frame
   if (!is.data.frame(df)) { # Added closing parenthesis here
     stop("Error: 'works_published' must be a data frame.") # Changed message slightly for clarity
   }
-  
+
   # Check for required 'referenced_works' column
   if (!"referenced_works" %in% names(df)) {
     warning("Warning: Dataframe 'works_published' missing 'referenced_works' column. Returning empty vector.")
     # Determine appropriate empty vector type based on 'id' column if it exists
-    if ("id" %in% names(df)) return(df$id[0]) else return(character(0))
+    if ("id" %in% names(df)) {
+      return(df$id[0])
+    } else {
+      return(character(0))
+    }
   }
-  
+
   # Check for required 'id' column
   if (!"id" %in% names(df)) {
     warning("Warning: Dataframe 'works_published' missing 'id' column. Returning empty vector.")
     return(character(0)) # Cannot return IDs if 'id' column is missing
   }
-  
+
   # Check if work_cited is a single string
   if (!is.character(work_cited) || length(work_cited) != 1) {
     # Corrected variable name in the error message below
     stop("Error: 'work_cited' must be a single string.")
   }
-  
+
   # --- Find Indices ---
   # Find indices where work_cited exists exactly within the referenced_works list/vector.
   # This handles cases where an element in referenced_works might be NULL.
@@ -155,37 +163,37 @@ find_org_works <- function(work_cited, works_published) {
     # Check if reference_list is not NULL before checking for work_cited within it
     !is.null(reference_list) && work_cited %in% reference_list
   }))
-  
+
   # --- Retrieve and Return IDs ---
   # If no indices found, this correctly returns an empty vector df$id[integer(0)]
   citing_ids <- df$id[indices_with_string]
-  
+
   return(citing_ids)
 }
 # --- Example Usage ---
 work_cited <- "https://openalex.org/W2176010001"
 # indices_with_string <- which(sapply(works_published$referenced_works, function(x) search_string %in% x))
-#find_org_works(work_cited, works_published_2024)
+# find_org_works(work_cited, works_published_2024)
 
 #### 2022 Nature-SN
 work_cited <- "https://openalex.org/W3217221255"
 work_cited <- "https://openalex.org/W576036492"
-work_cited<-"https://openalex.org/W4281394370"
-#find_org_works(work_cited, works_published_2022)
+work_cited <- "https://openalex.org/W4281394370"
+# find_org_works(work_cited, works_published_2022)
 
-work_cited<-"https://openalex.org/W1494075612"
+work_cited <- "https://openalex.org/W1494075612"
 
 
-#find_org_works(work_cited, works_published_2022)
+# find_org_works(work_cited, works_published_2022)
 
 
 ##### Handling works "topic": OpenAlex's new topic has a hierarchical structure:
 ### domain-field-subfield-topic system (https://docs.google.com/document/d/1bDopkhuGieQ4F8gGNj7sEc8WSE8mvLZS/edit)
 ### Example: https://api.openalex.org/works/W2944198613 (search for primary_topic: )
 ## A work may have multiple domain-field-subfield-topic. Primary topic has a number "1" in "i", the 2nd has "2", and so on.
-# The function adds 4 new cols: topic, subfield, field, and domain. 
-# Default: level = 1, it is primary 
-#         level = 2, it is secondry. Most works have 1 to 3 topic-subfield-field-domains, and do not have 4th topic. 
+# The function adds 4 new cols: topic, subfield, field, and domain.
+# Default: level = 1, it is primary
+#         level = 2, it is secondry. Most works have 1 to 3 topic-subfield-field-domains, and do not have 4th topic.
 
 # Load necessary libraries
 library(tidyverse)
@@ -200,7 +208,7 @@ extract_topics_by_level <- function(data, level = 1) {
   if (!("topics" %in% names(data)) || !("id" %in% names(data))) {
     stop("The data frame must contain 'id' and 'topics' columns.")
   }
-  
+
   # --- Data Extraction and Transformation ---
   topics_wide <- data %>%
     select(id, topics) %>%
@@ -208,15 +216,14 @@ extract_topics_by_level <- function(data, level = 1) {
     mutate(topics = map(topics, ~ rename(.x, entity_id = id))) %>%
     unnest(topics) %>%
     filter(i == level) %>%
-    
     # Pivot the data (we removed the factor line from here)
     pivot_wider(
       id_cols = id,
       names_from = name,
       values_from = display_name,
-      values_fn = ~paste(unique(.x), collapse = "; ")
+      values_fn = ~ paste(unique(.x), collapse = "; ")
     )
-  
+
   if (nrow(topics_wide) == 0) {
     warning(paste("No topics found for level", level))
     data$domain <- NA_character_
@@ -225,22 +232,22 @@ extract_topics_by_level <- function(data, level = 1) {
     data$topic <- NA_character_
     return(data)
   }
-  
+
   # --- Final Join & Reordering ---
   topics_wide <- topics_wide %>%
     rename_with(~ paste0(., "_L", level), .cols = -id)
-  
+
   final_data <- data %>%
     left_join(topics_wide, by = "id")
-  
+
   # THIS IS THE NEW LOGIC THAT ENFORCES THE ORDER:
   # 1. Define the desired column order
   ordered_col_names <- paste(c("domain", "field", "subfield", "topic"), "_L", level, sep = "")
-  
+
   # 2. Relocate those columns to the end of the data frame in that specific order
   final_data <- final_data %>%
-    relocate(any_of(ordered_col_names), .after = last_col()) # this appends 
-  
+    relocate(any_of(ordered_col_names), .after = last_col()) # this appends
+
   return(final_data)
 }
 
@@ -257,12 +264,12 @@ extract_topics_by_level_reverse_order <- function(data, level = 1) {
   if (!is.numeric(level) || length(level) != 1 || level < 1 || level != as.integer(level)) {
     stop("'level' must be a positive integer.")
   }
-  
+
   # --- Data Extraction and Transformation ---
   extracted_data <- data %>%
     select(id, title, topics) %>%
     # Rename the nested 'id' column *before* unnesting (as in original)
-    mutate(topics = map(topics, ~{
+    mutate(topics = map(topics, ~ {
       if (is.data.frame(.x) && "id" %in% names(.x)) {
         rename(.x, topic_id = id)
       } else {
@@ -275,37 +282,40 @@ extract_topics_by_level_reverse_order <- function(data, level = 1) {
     # Select relevant info - assuming 'i' is the level index and 'display_name' is the value
     # We no longer select or rename a 'name' column. This column is gone in 2025-05
     select(id, title, level_index = i, topic_display_name = display_name) # Renaming for clarity
-  
+
   # Handle the case where no rows match the level
   if (nrow(extracted_data) == 0) {
-    warning(paste("No data found for level", level,
-                  ". Returning original data frame with NA for new columns."))
+    warning(paste(
+      "No data found for level", level,
+      ". Returning original data frame with NA for new columns."
+    ))
     # Create the column that would have been added by the join with NA values
     # The column name will be dynamic based on the level
-    col_name = paste0("level_", level, "_topic_display_name")
+    col_name <- paste0("level_", level, "_topic_display_name")
     data[[col_name]] <- NA_character_ # Add the column with NA values
     return(data)
   }
-  
+
   # Pivot wider to create a column for this level's display name
   # Use level_index to create column names, adding a prefix for clarity
   extracted_data <- extracted_data %>%
-    pivot_wider(id_cols = c(id, title),
-                names_from = level_index, # Use the level index to name columns
-                values_from = topic_display_name, # Use the display name as the value
-                values_fn = ~paste(unique(.x), collapse = " - "),
-                names_prefix = "level_") # Add a prefix like "level_1", "level_2", etc.
-  
+    pivot_wider(
+      id_cols = c(id, title),
+      names_from = level_index, # Use the level index to name columns
+      values_from = topic_display_name, # Use the display name as the value
+      values_fn = ~ paste(unique(.x), collapse = " - "),
+      names_prefix = "level_"
+    ) # Add a prefix like "level_1", "level_2", etc.
+
   # --- Left Join ---
   # Join back to original data using id and title
   final_data <- data %>%
     left_join(extracted_data, by = c("id", "title"))
-  
+
   return(final_data)
 }
 
 extract_topics_by_level_pre_2025_04 <- function(data, level = 1) {
-  
   # --- Input Validation ---
   if (!is.data.frame(data)) {
     stop("'data' must be a data frame.")
@@ -316,12 +326,12 @@ extract_topics_by_level_pre_2025_04 <- function(data, level = 1) {
   if (!is.numeric(level) || length(level) != 1 || level < 1 || level != as.integer(level)) {
     stop("'level' must be a positive integer.")
   }
-  
+
   # --- Data Extraction ---
   extracted_data <- data %>%
     select(id, title, topics) %>%
     # Rename the nested 'id' column *before* unnesting
-    mutate(topics = map(topics, ~{
+    mutate(topics = map(topics, ~ {
       if (is.data.frame(.x) && "id" %in% names(.x)) {
         rename(.x, topic_id = id)
       } else {
@@ -332,32 +342,36 @@ extract_topics_by_level_pre_2025_04 <- function(data, level = 1) {
     filter(i == level) %>%
     # Select the relevant info
     select(id, title, level_name = name, display_name)
-  
+
   # Handle the case where no rows match the level
   if (nrow(extracted_data) == 0) {
-    warning(paste("No data found for level", level,
-                  ". Returning an empty data frame with appropriate columns."))
+    warning(paste(
+      "No data found for level", level,
+      ". Returning an empty data frame with appropriate columns."
+    ))
     # Create an empty data frame with the correct structure
     empty_df <- data %>%
-      select(id, title) %>%  # Keep id and title
-      mutate(topic = NA_character_,
-             subfield = NA_character_,
-             field = NA_character_,
-             domain = NA_character_)
+      select(id, title) %>% # Keep id and title
+      mutate(
+        topic = NA_character_,
+        subfield = NA_character_,
+        field = NA_character_,
+        domain = NA_character_
+      )
     return(empty_df)
   }
   # Pivot wider to create separate columns for each level_name
   extracted_data <- extracted_data %>%
-    pivot_wider(id_cols = c(id, title), names_from = level_name, values_from = display_name, values_fn = ~paste(unique(.x), collapse = ", "))
-  
+    pivot_wider(id_cols = c(id, title), names_from = level_name, values_from = display_name, values_fn = ~ paste(unique(.x), collapse = ", "))
+
   # --- Left Join ---
   final_data <- data %>%
-    left_join(extracted_data, by = c("id", "title"))  # Join back to original data
-  
+    left_join(extracted_data, by = c("id", "title")) # Join back to original data
+
   return(final_data)
 }
 
-# use: 
+# use:
 # works_cited_type_articles_publisher <- works_cited_type_articles_brill
 
 # primary_topics <- extract_topics_by_level(works_cited_type_articles_publisher, 1)
@@ -367,18 +381,15 @@ extract_topics_by_level_pre_2025_04 <- function(data, level = 1) {
 # fifth_topics   <- extract_topics_by_level(works_cited_type_articles_publisher, 5)
 
 
-
-
+################### Analyze top journals for each publisher ############
+# Function to rank top cited journals
+# Usage example:
+# rank_top_cited_journals(publisher_nature, "so", 10)  # Top 10 cited journals
 
 ################### Analyze top journals for each publisher ############
 # Function to rank top cited journals
 # Usage example:
-#rank_top_cited_journals(publisher_nature, "so", 10)  # Top 10 cited journals
-
-################### Analyze top journals for each publisher ############
-# Function to rank top cited journals
-# Usage example:
-#rank_top_cited_journals(publisher_nature, "so", "issn_l", "host_organization", 30)  # Top 10 cited journals
+# rank_top_cited_journals(publisher_nature, "so", "issn_l", "host_organization", 30)  # Top 10 cited journals
 
 rank_top_cited_journals <- function(data,
                                     journal_col, # e.g., "so"
@@ -403,7 +414,7 @@ rank_top_cited_journals <- function(data,
   if (!(source_host_org_col %in% names(data))) {
     stop(paste0("Source Host Organization column '", source_host_org_col, "' not found in input 'data'."))
   }
-  
+
   # --- Original summarization logic to get top cited journals ---
   # This part remains as it was.
   top_cited_journals <- data %>%
@@ -411,38 +422,38 @@ rank_top_cited_journals <- function(data,
     summarise(citation_count = n, .groups = "drop") %>%
     arrange(desc(citation_count)) %>%
     rename("Journal Title" = !!sym(journal_col))
-  
+
   # --- Add new columns "ISSN" and "host_organization" by looking up in original 'data' ---
   # Initialize the new columns in top_cited_journals_df
   top_cited_journals$ISSN <- NA_character_
   top_cited_journals$`host_organization` <- NA_character_ # Using backticks for the column name
-  
+
   for (i in 1:nrow(top_cited_journals)) {
     current_journal_title <- top_cited_journals$"Journal Title"[i]
-    
+
     # Find the first matching row in the original 'data'
     # data[[journal_col]] refers to the column in 'data' whose name is stored in the 'journal_col' variable (e.g., data$so)
     match_indices <- which(data[[journal_col]] == current_journal_title)
-    
+
     if (length(match_indices) > 0) {
       first_match_index <- match_indices[1] # Take the first match
-      
+
       # Assign values from the original 'data' using the source column names
       issn_value <- data[[source_issn_col]][first_match_index]
       host_org_value <- data[[source_host_org_col]][first_match_index]
-      
+
       top_cited_journals$ISSN[i] <- if (is.null(issn_value) || length(issn_value) == 0) NA_character_ else as.character(issn_value)
       top_cited_journals$`host_organization`[i] <- if (is.null(host_org_value) || length(host_org_value) == 0) NA_character_ else as.character(host_org_value)
     }
   }
-  
+
   # Reorder columns for better presentation if desired
   top_cited_journals <- top_cited_journals %>%
     select("Journal Title", "ISSN", "host_organization", "citation_count", everything())
-  
+
   # --- Printing and Slicing Logic (operates on the now enriched top_cited_journals) ---
   df_to_print_and_write <- top_cited_journals # Start with the full enriched data
-  
+
   if (is.null(top_n) || top_n >= nrow(df_to_print_and_write)) {
     print(as.data.frame(df_to_print_and_write))
   } else {
@@ -451,26 +462,29 @@ rank_top_cited_journals <- function(data,
     df_to_print_and_write <- df_to_print_and_write %>%
       slice(1:top_n)
   }
-  
+
   # --- File Output ---
   # Get the name of the input data frame
   df_name <- deparse(substitute(data))
-  
+
   # Create the output file path
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
   # Modified filename to indicate enriched content
   output_file <- file.path(output_dir, paste0(df_name, "_top_cited_journals.xlsx"))
-  
+
   # Write to Excel using the (potentially sliced) enriched data frame
-  tryCatch({
-    write_xlsx(list("Top Cited Journals" = as.data.frame(df_to_print_and_write)), output_file)
-    message(paste("Successfully wrote top cited journals to:", output_file))
-  }, error = function(e) {
-    message(paste("Error writing to Excel:", e$message))
-  })
-  
+  tryCatch(
+    {
+      write_xlsx(list("Top Cited Journals" = as.data.frame(df_to_print_and_write)), output_file)
+      message(paste("Successfully wrote top cited journals to:", output_file))
+    },
+    error = function(e) {
+      message(paste("Error writing to Excel:", e$message))
+    }
+  )
+
   # The function will return the enriched data frame, sliced if top_n was applied.
   # If you want to always return the full enriched data regardless of top_n for the file,
   # you would return 'top_cited_journals_df' instead of 'df_to_print_and_write'.
@@ -533,7 +547,7 @@ rank_top_cited_journals <- function(data,
 # # print("Returned data (loop version, alt names):")
 # # print(results_loop_alt_names)
 
- 
+
 compare_top_journals <- function(df_ua, df_ou, n) {
   #' Compares the top N journal titles between two data frames.
   #'
@@ -556,29 +570,29 @@ compare_top_journals <- function(df_ua, df_ou, n) {
   if (!"Journal Title" %in% colnames(df_ou)) {
     stop("Error: 'Journal Title' column not found in ou data frame.")
   }
-  
+
   # Get the top N journal titles from each data frame
   # Ensure n does not exceed the number of rows in the dataframe
   n_ua <- min(n, nrow(df_ua))
   n_ou <- min(n, nrow(df_ou))
-  
+
   ua_top_n_titles <- head(df_ua$`Journal Title`, n_ua)
   ou_top_n_titles <- head(df_ou$`Journal Title`, n_ou)
-  
+
   # Convert to character vectors to ensure set operations work correctly
   ua_top_n_titles <- as.character(ua_top_n_titles)
   ou_top_n_titles <- as.character(ou_top_n_titles)
-  
+
   # Find common and unique journals
   common_journals <- intersect(ua_top_n_titles, ou_top_n_titles)
   ua_unique_journals <- setdiff(ua_top_n_titles, ou_top_n_titles)
   ou_unique_journals <- setdiff(ou_top_n_titles, ua_top_n_titles)
-  
+
   # Calculate counts
   count_common <- length(common_journals)
   count_ua_unique <- length(ua_unique_journals)
   count_ou_unique <- length(ou_unique_journals)
-  
+
   return(list(
     common = common_journals,
     ua_unique = ua_unique_journals,
@@ -590,25 +604,23 @@ compare_top_journals <- function(df_ua, df_ou, n) {
 }
 
 
-
-
 # Reformating Column "author" raw data >>> author regular name
-###### $author data structure. 
-# 1. works_cited: a data frame (or data.table), and its each row is a cited work.   
-# 2. the "author" column: it is a "list". Each element of this list is the "author" info. 
-#     each data frame has the au_display_name column. 
-#     some elements are data frames and some are other data types. 
-# 
+###### $author data structure.
+# 1. works_cited: a data frame (or data.table), and its each row is a cited work.
+# 2. the "author" column: it is a "list". Each element of this list is the "author" info.
+#     each data frame has the au_display_name column.
+#     some elements are data frames and some are other data types.
+#
 # Apply the function to the author column
 
 extract_author_names <- function(author_data) {
   message("DEBUG: Input author_data class: ", class(author_data))
-  
+
   if (is.null(author_data)) {
     message("DEBUG: author_data is NULL.")
     return(NA_character_)
   }
-  
+
   if (is.data.frame(author_data)) {
     message("DEBUG: author_data is a data frame.")
     author_df <- author_data
@@ -619,25 +631,25 @@ extract_author_names <- function(author_data) {
     message("DEBUG: author_data is not a dataframe or list of dataframe.")
     return(NA_character_)
   }
-  
+
   if (!is.data.frame(author_df)) {
     message("DEBUG: author_df is not a data frame.")
     return(NA_character_)
   }
-  
+
   if (!("au_display_name" %in% names(author_df))) {
     message("DEBUG: author_df is missing au_display_name.")
     return(NA_character_)
   }
-  
+
   message("DEBUG: au_display_name column exists.")
   message("DEBUG: Number of rows in author_df: ", nrow(author_df))
-  
+
   if (nrow(author_df) > 0) {
     message("DEBUG: au_display_name values: ", paste(author_df$au_display_name, collapse = ", "))
     valid_names <- author_df$au_display_name[!is.na(author_df$au_display_name)]
     message("DEBUG: valid_names: ", paste(valid_names, collapse = ", "))
-    if(length(valid_names) > 0){
+    if (length(valid_names) > 0) {
       author_names <- paste(valid_names, collapse = "; ")
     } else {
       author_names <- NA_character_
@@ -646,189 +658,196 @@ extract_author_names <- function(author_data) {
     message("DEBUG: author_df is empty.")
     author_names <- NA_character_
   }
-  
+
   message("DEBUG: Final author_names: ", author_names)
   return(author_names)
 }
-
 
 
 write_df_to_excel <- function(df, file_path_prefix = "citations/", max_chars = 32767) { # Updated default max_chars
   df_name <- deparse(substitute(df))
   file_name <- paste0(df_name, ".xlsx")
   file_path <- paste0(file_path_prefix, file_name)
-  
+
   # Ensure the directory exists
   if (!dir.exists(file_path_prefix)) {
     dir.create(file_path_prefix, recursive = TRUE)
     message(paste("Created directory:", file_path_prefix))
   }
-  
+
   # Define the truncation marker - keep it reasonably short
   trunc_marker <- " [...trunc]" # Example marker (11 chars)
-  
+
   # Function to process a single value with depth tracking
   process_value <- function(x, max_chars, depth = 0, col_name = "") {
     indent <- paste(rep("  ", depth), collapse = "")
-    
+
     if (is.null(x) || length(x) == 0) {
       return(NA_character_)
     }
-    
-    tryCatch({
-      if (all(is.na(x))) {
-        return(NA_character_)
-      } else if (col_name == "author" && is.list(x) && length(x) > 0 && is.data.frame(x[[1]])) { # Added checks for structure
-        message("\nDEBUG: Processing author data")
-        author_df <- x[[1]]
-        if (nrow(author_df) == 0) return(NA_character_) # Handle empty data frame
-        
-        row_strings <- character(nrow(author_df))
-        for(i in 1:nrow(author_df)) {
-          author_info <- c(
-            author_df$au_id[i], author_df$au_display_name[i], author_df$au_orcid[i],
-            author_df$author_position[i], author_df$is_corresponding[i], author_df$au_affiliation_raw[i],
-            author_df$institution_id[i], author_df$institution_display_name[i], author_df$institution_ror[i],
-            author_df$institution_country_code[i], author_df$institution_type[i], author_df$institution_lineage[i]
-          )
-          # Convert potential NULLs or NAs within author_info to "" or "NA" before pasting
-          author_info <- sapply(author_info, function(val) ifelse(is.null(val) || is.na(val), "NA", as.character(val)))
-          row_strings[i] <- paste(author_info, collapse = ": ")
-        }
-        full_string <- paste(row_strings, collapse = "; ")
-        
-        # --- ADDED TRUNCATION CHECK ---
-        if (nchar(full_string) > max_chars) {
-          allowed_len <- max_chars - nchar(trunc_marker)
-          if (allowed_len < 0) allowed_len <- 0 # Safety check
-          full_string <- paste0(substr(full_string, 1, allowed_len), trunc_marker)
-        }
-        message("DEBUG: Authors final string length: ", nchar(full_string))
-        return(full_string)
-        
-      } else if (col_name == "topics" && is.list(x) && length(x) > 0 && is.data.frame(x[[1]])) { # Added checks for structure
-        message("\nDEBUG: Processing topics data")
-        topics_df <- x[[1]]
-        if (nrow(topics_df) == 0) return(NA_character_) # Handle empty data frame
-        
-        row_strings <- character(nrow(topics_df))
-        for(i in 1:nrow(topics_df)) {
-          topic_values <- c(
-            topics_df$i[i], topics_df$score[i], topics_df$name[i],
-            topics_df$id[i], topics_df$display_name[i]
-          )
-          # Convert potential NULLs or NAs before pasting
-          topic_values <- sapply(topic_values, function(val) ifelse(is.null(val) || is.na(val), "NA", as.character(val)))
-          row_strings[i] <- paste(topic_values, collapse = ": ")
-        }
-        full_string <- paste(row_strings, collapse = "; ")
-        
-        # --- ADDED TRUNCATION CHECK ---
-        if (nchar(full_string) > max_chars) {
-          allowed_len <- max_chars - nchar(trunc_marker)
-          if (allowed_len < 0) allowed_len <- 0 # Safety check
-          full_string <- paste0(substr(full_string, 1, allowed_len), trunc_marker)
-        }
-        message("DEBUG: Topics final string length: ", nchar(full_string))
-        return(full_string)
-        
-      } else if (is.data.frame(x)) {
-        # message("DEBUG: Processing generic data.frame")
-        if (nrow(x) == 0) return(NA_character_) # Handle empty data frame
-        
-        row_strings <- character(nrow(x))
-        for(i in 1:nrow(x)) {
-          # Convert row to character, handling potential NULL/NA
-          row_values <- sapply(x[i,], function(val) ifelse(is.null(val) || is.na(val), "NA", as.character(val)))
-          row_strings[i] <- paste(row_values, collapse = ": ")
-        }
-        full_string <- paste(row_strings, collapse = "; ")
-        
-        # --- ADDED TRUNCATION CHECK ---
-        if (nchar(full_string) > max_chars) {
-          allowed_len <- max_chars - nchar(trunc_marker)
-          if (allowed_len < 0) allowed_len <- 0 # Safety check
-          full_string <- paste0(substr(full_string, 1, allowed_len), trunc_marker)
-        }
-        # message("DEBUG: Generic DF final string length: ", nchar(full_string))
-        return(full_string)
-        
-      } else if (is.list(x) && !is.data.frame(x)) {
-        # message("DEBUG: Processing generic list")
-        # Original list processing logic (already includes truncation)
-        unlisted <- unlist(x)
-        if (is.null(unlisted) || length(unlisted) == 0) {
+
+    tryCatch(
+      {
+        if (all(is.na(x))) {
           return(NA_character_)
+        } else if (col_name == "author" && is.list(x) && length(x) > 0 && is.data.frame(x[[1]])) { # Added checks for structure
+          message("\nDEBUG: Processing author data")
+          author_df <- x[[1]]
+          if (nrow(author_df) == 0) {
+            return(NA_character_)
+          } # Handle empty data frame
+
+          row_strings <- character(nrow(author_df))
+          for (i in 1:nrow(author_df)) {
+            author_info <- c(
+              author_df$au_id[i], author_df$au_display_name[i], author_df$au_orcid[i],
+              author_df$author_position[i], author_df$is_corresponding[i], author_df$au_affiliation_raw[i],
+              author_df$institution_id[i], author_df$institution_display_name[i], author_df$institution_ror[i],
+              author_df$institution_country_code[i], author_df$institution_type[i], author_df$institution_lineage[i]
+            )
+            # Convert potential NULLs or NAs within author_info to "" or "NA" before pasting
+            author_info <- sapply(author_info, function(val) ifelse(is.null(val) || is.na(val), "NA", as.character(val)))
+            row_strings[i] <- paste(author_info, collapse = ": ")
+          }
+          full_string <- paste(row_strings, collapse = "; ")
+
+          # --- ADDED TRUNCATION CHECK ---
+          if (nchar(full_string) > max_chars) {
+            allowed_len <- max_chars - nchar(trunc_marker)
+            if (allowed_len < 0) allowed_len <- 0 # Safety check
+            full_string <- paste0(substr(full_string, 1, allowed_len), trunc_marker)
+          }
+          message("DEBUG: Authors final string length: ", nchar(full_string))
+          return(full_string)
+        } else if (col_name == "topics" && is.list(x) && length(x) > 0 && is.data.frame(x[[1]])) { # Added checks for structure
+          message("\nDEBUG: Processing topics data")
+          topics_df <- x[[1]]
+          if (nrow(topics_df) == 0) {
+            return(NA_character_)
+          } # Handle empty data frame
+
+          row_strings <- character(nrow(topics_df))
+          for (i in 1:nrow(topics_df)) {
+            topic_values <- c(
+              topics_df$i[i], topics_df$score[i], topics_df$name[i],
+              topics_df$id[i], topics_df$display_name[i]
+            )
+            # Convert potential NULLs or NAs before pasting
+            topic_values <- sapply(topic_values, function(val) ifelse(is.null(val) || is.na(val), "NA", as.character(val)))
+            row_strings[i] <- paste(topic_values, collapse = ": ")
+          }
+          full_string <- paste(row_strings, collapse = "; ")
+
+          # --- ADDED TRUNCATION CHECK ---
+          if (nchar(full_string) > max_chars) {
+            allowed_len <- max_chars - nchar(trunc_marker)
+            if (allowed_len < 0) allowed_len <- 0 # Safety check
+            full_string <- paste0(substr(full_string, 1, allowed_len), trunc_marker)
+          }
+          message("DEBUG: Topics final string length: ", nchar(full_string))
+          return(full_string)
+        } else if (is.data.frame(x)) {
+          # message("DEBUG: Processing generic data.frame")
+          if (nrow(x) == 0) {
+            return(NA_character_)
+          } # Handle empty data frame
+
+          row_strings <- character(nrow(x))
+          for (i in 1:nrow(x)) {
+            # Convert row to character, handling potential NULL/NA
+            row_values <- sapply(x[i, ], function(val) ifelse(is.null(val) || is.na(val), "NA", as.character(val)))
+            row_strings[i] <- paste(row_values, collapse = ": ")
+          }
+          full_string <- paste(row_strings, collapse = "; ")
+
+          # --- ADDED TRUNCATION CHECK ---
+          if (nchar(full_string) > max_chars) {
+            allowed_len <- max_chars - nchar(trunc_marker)
+            if (allowed_len < 0) allowed_len <- 0 # Safety check
+            full_string <- paste0(substr(full_string, 1, allowed_len), trunc_marker)
+          }
+          # message("DEBUG: Generic DF final string length: ", nchar(full_string))
+          return(full_string)
+        } else if (is.list(x) && !is.data.frame(x)) {
+          # message("DEBUG: Processing generic list")
+          # Original list processing logic (already includes truncation)
+          unlisted <- unlist(x)
+          if (is.null(unlisted) || length(unlisted) == 0) {
+            return(NA_character_)
+          }
+          unlisted <- unlisted[!is.null(unlisted) & !is.na(unlisted)]
+          if (length(unlisted) == 0) {
+            return(NA_character_)
+          }
+          full_string <- paste(unlisted, collapse = ": ")
+
+          # Using the consistent truncation logic
+          if (nchar(full_string) > max_chars) {
+            allowed_len <- max_chars - nchar(trunc_marker)
+            if (allowed_len < 0) allowed_len <- 0 # Safety check
+            return(paste0(substr(full_string, 1, allowed_len), trunc_marker))
+          }
+          return(full_string) # Return unmodified if within limit
+        } else {
+          # message("DEBUG: Processing scalar value")
+          # Original scalar processing logic (already includes truncation)
+          char_val <- as.character(x) # Convert single value to character
+          if (length(char_val) > 1) { # Should not happen often here but safer
+            char_val <- paste(char_val, collapse = ": ")
+          }
+
+          # Using the consistent truncation logic
+          if (nchar(char_val) > max_chars) {
+            allowed_len <- max_chars - nchar(trunc_marker)
+            if (allowed_len < 0) allowed_len <- 0 # Safety check
+            return(paste0(substr(char_val, 1, allowed_len), trunc_marker))
+          }
+          return(char_val) # Return unmodified if within limit
         }
-        unlisted <- unlisted[!is.null(unlisted) & !is.na(unlisted)]
-        if (length(unlisted) == 0) {
-          return(NA_character_)
-        }
-        full_string <- paste(unlisted, collapse = ": ")
-        
-        # Using the consistent truncation logic
-        if (nchar(full_string) > max_chars) {
-          allowed_len <- max_chars - nchar(trunc_marker)
-          if (allowed_len < 0) allowed_len <- 0 # Safety check
-          return(paste0(substr(full_string, 1, allowed_len), trunc_marker))
-        }
-        return(full_string) # Return unmodified if within limit
-        
-      } else {
-        # message("DEBUG: Processing scalar value")
-        # Original scalar processing logic (already includes truncation)
-        char_val <- as.character(x) # Convert single value to character
-        if (length(char_val) > 1) { # Should not happen often here but safer
-          char_val <- paste(char_val, collapse = ": ")
-        }
-        
-        # Using the consistent truncation logic
-        if (nchar(char_val) > max_chars) {
-          allowed_len <- max_chars - nchar(trunc_marker)
-          if (allowed_len < 0) allowed_len <- 0 # Safety check
-          return(paste0(substr(char_val, 1, allowed_len), trunc_marker))
-        }
-        return(char_val) # Return unmodified if within limit
+      },
+      error = function(e) {
+        warning(paste("Error processing value in column '", col_name, "':", e$message))
+        return(NA_character_) # Return NA on error
       }
-    }, error = function(e) {
-      warning(paste("Error processing value in column '", col_name, "':", e$message))
-      return(NA_character_) # Return NA on error
-    })
+    )
   }
-  
+
   # Convert data.table to data.frame if necessary
   if (inherits(df, "data.table")) {
     df <- as.data.frame(df)
   }
-  
+
   # Create output dataframe (initialize with NA_character_ for safety)
   df_processed <- data.frame(matrix(NA_character_, nrow = nrow(df), ncol = ncol(df)))
   colnames(df_processed) <- colnames(df)
-  
+
   # Process each cell using the updated process_value function
   # Using nested loops for clarity, apply could also be used but might be complex with column names
   for (j in seq_along(colnames(df))) {
     col_name <- colnames(df)[j]
-    #message(paste("Processing column:", col_name))
+    # message(paste("Processing column:", col_name))
     for (i in seq_len(nrow(df))) {
       # Access the element correctly, df[[j]][i] or df[[col_name]][i]
       cell_value <- df[[j]][[i]]
       df_processed[i, j] <- process_value(cell_value, max_chars, depth = 1, col_name = col_name)
     }
   }
-  
+
   # Write the processed dataframe to Excel
-  tryCatch({
-    write_xlsx(df_processed, file_path)
-    message(paste("Successfully wrote", df_name, "to", file_path))
-  }, error = function(e) {
-    # Provide more context on error
-    message(paste("Error writing", df_name, "to Excel file:", file_path))
-    message("Original error message:", e$message)
-    # Consider printing offending row/column if possible, though identifying it post-processing is hard
-    # You might add more detailed logging within the process_value function if needed
-    print(e) # Print the full error object
-  })
+  tryCatch(
+    {
+      write_xlsx(df_processed, file_path)
+      message(paste("Successfully wrote", df_name, "to", file_path))
+    },
+    error = function(e) {
+      # Provide more context on error
+      message(paste("Error writing", df_name, "to Excel file:", file_path))
+      message("Original error message:", e$message)
+      # Consider printing offending row/column if possible, though identifying it post-processing is hard
+      # You might add more detailed logging within the process_value function if needed
+      print(e) # Print the full error object
+    }
+  )
 }
 
 # --- Example Usage ---
@@ -862,141 +881,144 @@ write_df_to_excel2 <- function(df, file_path_prefix = "citations/", max_chars = 
   df_name <- deparse(substitute(df))
   file_name <- paste0(df_name, ".xlsx")
   file_path <- paste0(file_path_prefix, file_name)
-  
+
   # Function to process a single value with depth tracking
   process_value <- function(x, max_chars, depth = 0, col_name = "") {
     indent <- paste(rep("  ", depth), collapse = "")
-    
+
     if (is.null(x) || length(x) == 0) {
       return(NA_character_)
     }
-    
-    tryCatch({
-      if (all(is.na(x))) {
+
+    tryCatch(
+      {
+        if (all(is.na(x))) {
+          return(NA_character_)
+        } else if (col_name == "author") {
+          message("\nDEBUG: Processing author data")
+          # Extract the data frame from the list
+          author_df <- x[[1]]
+          # message("DEBUG: Number of authors: ", nrow(author_df))
+
+          # Process each author
+          row_strings <- character(nrow(author_df))
+          for (i in 1:nrow(author_df)) {
+            # Get specific fields in desired order
+            author_info <- c(
+              author_df$au_id[i],
+              author_df$au_display_name[i],
+              author_df$au_orcid[i],
+              author_df$author_position[i],
+              author_df$is_corresponding[i],
+              author_df$au_affiliation_raw[i],
+              author_df$institution_id[i],
+              author_df$institution_display_name[i],
+              author_df$institution_ror[i],
+              author_df$institution_country_code[i],
+              author_df$institution_type[i],
+              author_df$institution_lineage[i]
+            )
+            row_strings[i] <- paste(author_info, collapse = ": ")
+            # message("DEBUG: Author ", i, " values: ", row_strings[i])
+          }
+
+          full_string <- paste(row_strings, collapse = "; ")
+          # message("DEBUG: Authors final string: ", full_string)
+          return(full_string)
+        } else if (col_name == "topics") {
+          # message("\nDEBUG: Processing topics data")
+          # Extract the data frame from the list
+          topics_df <- x[[1]]
+          # message("DEBUG: Number of topics: ", nrow(topics_df))
+
+          # Process each topic row
+          row_strings <- character(nrow(topics_df))
+          for (i in 1:nrow(topics_df)) {
+            topic_values <- c(
+              topics_df$i[i],
+              topics_df$score[i],
+              topics_df$name[i],
+              topics_df$id[i],
+              topics_df$display_name[i]
+            )
+            row_strings[i] <- paste(topic_values, collapse = ": ")
+            # message("DEBUG: Topic ", i, " values: ", row_strings[i])
+          }
+
+          full_string <- paste(row_strings, collapse = "; ")
+          # message("DEBUG: Topics final string: ", full_string)
+          return(full_string)
+        } else if (is.data.frame(x)) {
+          row_strings <- character(nrow(x))
+          for (i in 1:nrow(x)) {
+            row_values <- as.character(unlist(x[i, ]))
+            row_strings[i] <- paste(row_values, collapse = ": ")
+          }
+          full_string <- paste(row_strings, collapse = "; ")
+          return(full_string)
+        } else if (is.list(x) && !is.data.frame(x)) {
+          unlisted <- unlist(x)
+          if (is.null(unlisted) || length(unlisted) == 0) {
+            return(NA_character_)
+          }
+          unlisted <- unlisted[!is.null(unlisted) & !is.na(unlisted)]
+          if (length(unlisted) == 0) {
+            return(NA_character_)
+          }
+          full_string <- paste(unlisted, collapse = ": ")
+          if (nchar(full_string) > max_chars) {
+            return(paste0(substr(full_string, 1, max_chars), " [truncated...]"))
+          }
+          return(full_string)
+        } else {
+          char_val <- as.character(x)
+          if (length(char_val) > 1) {
+            char_val <- paste(char_val, collapse = ": ")
+          }
+          if (nchar(char_val) > max_chars) {
+            return(paste0(substr(char_val, 1, max_chars), " [truncated...]"))
+          }
+          return(char_val)
+        }
+      },
+      error = function(e) {
+        warning(paste("Error processing value:", e$message))
         return(NA_character_)
-      } else if (col_name == "author") {
-        message("\nDEBUG: Processing author data")
-        # Extract the data frame from the list
-        author_df <- x[[1]]
-        # message("DEBUG: Number of authors: ", nrow(author_df))
-        
-        # Process each author
-        row_strings <- character(nrow(author_df))
-        for(i in 1:nrow(author_df)) {
-          # Get specific fields in desired order
-          author_info <- c(
-            author_df$au_id[i],
-            author_df$au_display_name[i],
-            author_df$au_orcid[i],
-            author_df$author_position[i],
-            author_df$is_corresponding[i],
-            author_df$au_affiliation_raw[i],
-            author_df$institution_id[i],
-            author_df$institution_display_name[i],
-            author_df$institution_ror[i],
-            author_df$institution_country_code[i],
-            author_df$institution_type[i],
-            author_df$institution_lineage[i]
-          )
-          row_strings[i] <- paste(author_info, collapse = ": ")
-          #message("DEBUG: Author ", i, " values: ", row_strings[i])
-        }
-        
-        full_string <- paste(row_strings, collapse = "; ")
-        #message("DEBUG: Authors final string: ", full_string)
-        return(full_string)
-        
-      } else if (col_name == "topics") {
-        #message("\nDEBUG: Processing topics data")
-        # Extract the data frame from the list
-        topics_df <- x[[1]]
-        #message("DEBUG: Number of topics: ", nrow(topics_df))
-        
-        # Process each topic row
-        row_strings <- character(nrow(topics_df))
-        for(i in 1:nrow(topics_df)) {
-          topic_values <- c(
-            topics_df$i[i],
-            topics_df$score[i],
-            topics_df$name[i],
-            topics_df$id[i],
-            topics_df$display_name[i]
-          )
-          row_strings[i] <- paste(topic_values, collapse = ": ")
-          #message("DEBUG: Topic ", i, " values: ", row_strings[i])
-        }
-        
-        full_string <- paste(row_strings, collapse = "; ")
-        #message("DEBUG: Topics final string: ", full_string)
-        return(full_string)
-        
-      } else if (is.data.frame(x)) {
-        row_strings <- character(nrow(x))
-        for(i in 1:nrow(x)) {
-          row_values <- as.character(unlist(x[i,]))
-          row_strings[i] <- paste(row_values, collapse = ": ")
-        }
-        full_string <- paste(row_strings, collapse = "; ")
-        return(full_string)
-        
-      } else if (is.list(x) && !is.data.frame(x)) {
-        unlisted <- unlist(x)
-        if (is.null(unlisted) || length(unlisted) == 0) {
-          return(NA_character_)
-        }
-        unlisted <- unlisted[!is.null(unlisted) & !is.na(unlisted)]
-        if (length(unlisted) == 0) {
-          return(NA_character_)
-        }
-        full_string <- paste(unlisted, collapse = ": ")
-        if (nchar(full_string) > max_chars) {
-          return(paste0(substr(full_string, 1, max_chars), " [truncated...]"))
-        }
-        return(full_string)
-      } else {
-        char_val <- as.character(x)
-        if (length(char_val) > 1) {
-          char_val <- paste(char_val, collapse = ": ")
-        }
-        if (nchar(char_val) > max_chars) {
-          return(paste0(substr(char_val, 1, max_chars), " [truncated...]"))
-        }
-        return(char_val)
       }
-    }, error = function(e) {
-      warning(paste("Error processing value:", e$message))
-      return(NA_character_)
-    })
+    )
   }
-  
+
   # Convert data.table to data.frame if necessary
   if (inherits(df, "data.table")) {
     df <- as.data.frame(df)
   }
-  
+
   # Create output dataframe
   df_processed <- data.frame(matrix(nrow = nrow(df), ncol = ncol(df)))
   colnames(df_processed) <- colnames(df)
-  
+
   # Process each row
   for (i in seq_len(nrow(df))) {
-    #message(sprintf("\nProcessing main row %d:", i))
-    current_row <- df[i, , drop = FALSE]  # Keep as dataframe
+    # message(sprintf("\nProcessing main row %d:", i))
+    current_row <- df[i, , drop = FALSE] # Keep as dataframe
     processed_row <- sapply(names(current_row), function(col) {
       result <- process_value(current_row[[col]], max_chars, depth = 1, col_name = col)
-      #message("DEBUG: Final result for column ", col, ": ", result)
+      # message("DEBUG: Final result for column ", col, ": ", result)
       return(result)
     })
-    df_processed[i,] <- processed_row
+    df_processed[i, ] <- processed_row
   }
-  
-  tryCatch({
-    write_xlsx(df_processed, file_path)
-    message(paste("Successfully wrote", df_name, "to", file_path))
-  }, error = function(e) {
-    message(paste("Error writing", df_name, "to Excel:", e))
-    print(e)
-  })
+
+  tryCatch(
+    {
+      write_xlsx(df_processed, file_path)
+      message(paste("Successfully wrote", df_name, "to", file_path))
+    },
+    error = function(e) {
+      message(paste("Error writing", df_name, "to Excel:", e))
+      print(e)
+    }
+  )
 }
 
 #####
@@ -1014,18 +1036,17 @@ write_df_to_excel2 <- function(df, file_path_prefix = "citations/", max_chars = 
 #'         $other_data (data.frame): The original rows that fell into 'Other'.
 #'
 count_cited_works_by_category <- function(works_df, citing_year) {
-  
   # --- 1. Setup & Validation ---
   if (missing(works_df)) {
-    stop("Error: 'works_df' must be provided as a df." )
+    stop("Error: 'works_df' must be provided as a df.")
   }
   df_name <- deparse(substitute(works_df))
-  
+
   if (missing(citing_year) || !is.numeric(citing_year) || length(citing_year) != 1 || is.na(citing_year)) {
     stop("Error: 'citing_year' must be provided as a single numeric value (e.g., 2022).")
   }
   citing_year <- as.integer(citing_year)
-  
+
   if (!is.data.frame(works_df)) {
     stop(paste("Error:", df_name, "is not a data frame."))
   }
@@ -1035,23 +1056,23 @@ count_cited_works_by_category <- function(works_df, citing_year) {
   if (!"publication_year" %in% names(works_df)) {
     stop("Error: The data frame must contain a 'publication_year' column.")
   }
-  
+
   # --- 2. Define Dynamic Categories ---
   cat_1_start <- citing_year - 5
-  cat_1_end   <- citing_year - 1
+  cat_1_end <- citing_year - 1
   cat_1_label <- paste0(cat_1_start, "-", cat_1_end) # e.g., 2017-2021
-  
+
   cat_2_start <- citing_year - 10
-  cat_2_end   <- citing_year - 6
+  cat_2_end <- citing_year - 6
   cat_2_label <- paste0(cat_2_start, "-", cat_2_end) # e.g., 2012-2016
-  
+
   cat_3_cutoff <- citing_year - 11
-  cat_3_label  <- paste0("    -", cat_3_cutoff) # e.g., -2011
-  
+  cat_3_label <- paste0("    -", cat_3_cutoff) # e.g., -2011
+
   cat_4_label <- "Other"
-  
+
   category_order <- c(cat_1_label, cat_2_label, cat_3_label, cat_4_label)
-  
+
   # --- 3. Categorize ALL Data First ---
   # We do this in one step so we can reuse it
   categorized_df <- works_df %>%
@@ -1065,26 +1086,26 @@ count_cited_works_by_category <- function(works_df, citing_year) {
       ),
       year_category = factor(year_category, levels = category_order)
     )
-  
+
   # --- 4. Core Calculation (using the categorized data) ---
   summary_data <- categorized_df %>%
     count(year_category, .drop = FALSE) %>%
     mutate(
       percent_numeric = (n / sum(n)) * 100
     )
-  
+
   # --- 5. Formatting for Output ---
   formatted_results <- summary_data %>%
     mutate(
       year_category_formatted = paste0("# ", year_category),
       percent_formatted = paste0(round(percent_numeric, 0), "%")
     )
-  
+
   # --- 6. Get "Other" Data for Inspection ---
   # (This is the new part)
   other_data_for_inspection <- categorized_df %>%
     filter(year_category == cat_4_label)
-  
+
   # --- 7. Side Effect: Print Full Summary ---
   print(paste("--- Cited Works Summary for:", df_name, "(relative to", citing_year, ") ---"))
   print(
@@ -1094,18 +1115,17 @@ count_cited_works_by_category <- function(works_df, citing_year) {
     ),
     row.names = FALSE
   )
-  
+
   # --- 8. Return Value (as a list) ---
   final_output <- formatted_results %>%
     select(year_category = year_category_formatted, percent = percent_formatted)
-  
+
   # Return a list containing both the summary and the 'Other' data
   return(list(
     summary = final_output,
     other_data = other_data_for_inspection
   ))
 }
-
 
 
 #' Count Cited Works by Group and Category
@@ -1127,36 +1147,35 @@ library(dplyr)
 library(knitr)
 
 count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NULL, format_output = TRUE) {
-  
   # --- 1. Setup & Validation ---
   if (missing(works_df)) stop("Error: 'works_df' must be provided.")
   if (missing(citing_year) || !is.numeric(citing_year) || length(citing_year) != 1) {
     stop("Error: 'citing_year' must be a single numeric value.")
   }
-  
+
   # --- 2. Define Dynamic Categories ---
-  cat_0_year  <- as.integer(citing_year)
-  
+  cat_0_year <- as.integer(citing_year)
+
   # MODIFIED: cat_1 now spans 6 years (e.g., 2018 to 2023)
   cat_1_start <- cat_0_year - 5
-  cat_1_end   <- cat_0_year      # Includes the citing year
-  
+  cat_1_end <- cat_0_year # Includes the citing year
+
   # cat_2 (e.g., 2013 to 2017)
   cat_2_start <- cat_0_year - 10
-  cat_2_end   <- cat_1_start - 1 
-  
+  cat_2_end <- cat_1_start - 1
+
   # cat_3 (e.g., -2012)
   cat_3_cutoff <- cat_2_start - 1
-  
+
   # Labels
   cat_1_label <- paste0(cat_1_start, "-", cat_1_end) # e.g. "2018-2023"
   cat_2_label <- paste0(cat_2_start, "-", cat_2_end) # e.g. "2013-2017"
-  cat_3_label <- paste0("-", cat_3_cutoff)           # e.g. "-2012"
+  cat_3_label <- paste0("-", cat_3_cutoff) # e.g. "-2012"
   cat_4_label <- "Other"
-  
+
   # Removed cat_0 from the order
   category_order <- c(cat_1_label, cat_2_label, cat_3_label, cat_4_label)
-  
+
   # --- 3. Categorize Data ---
   categorized_df <- works_df %>%
     mutate(
@@ -1170,28 +1189,28 @@ count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NUL
       ),
       year_category = factor(year_category, levels = category_order)
     )
-  
+
   # --- [FIX ADDED HERE] Remove NA in grouping column ---
   if (!is.null(group_by_col)) {
     categorized_df <- categorized_df %>%
       filter(!is.na(!!sym(group_by_col)))
   }
-  
+
   # --- 4. Core Calculation ---
   group_vars <- c(group_by_col, "year_category")
-  
+
   summary_data <- categorized_df %>%
     count(!!!syms(group_vars), .drop = FALSE)
-  
+
   if (!is.null(group_by_col)) {
     summary_data <- summary_data %>% group_by(!!sym(group_by_col))
   }
-  
+
   # Calculate percentages
   summary_data <- summary_data %>%
     mutate(percent_numeric = (n / sum(n))) %>%
-    ungroup() 
-  
+    ungroup()
+
   # --- 5. Format for Display ---
   display_df <- summary_data %>%
     mutate(
@@ -1199,23 +1218,74 @@ count_cited_works_by_group <- function(works_df, citing_year, group_by_col = NUL
       Percentage = paste0(round(percent_numeric * 100, 0), "%")
     ) %>%
     select(
-      any_of(group_by_col), 
-      Category, 
-      Count = n, 
+      any_of(group_by_col),
+      Category,
+      Count = n,
       Percentage
     )
-  
+
   # --- 6. Side Effect: Print Table ---
   if (format_output) {
     cat(paste("\n--- Cited Works Summary (Ref Year:", citing_year, ") ---\n"))
     print(kable(display_df, format = "simple", align = "l"))
     cat("\n")
   }
-  
+
   # --- 7. Return Value ---
   return(list(
-    data = summary_data,      
-    display_table = display_df, 
+    data = summary_data,
+    display_table = display_df,
     other_rows = categorized_df %>% filter(year_category == cat_4_label)
   ))
+}
+# --- Added on 2026-01-26 ---
+
+# Helper function to ensure IDs match regardless of URL prefix
+clean_id <- function(x) gsub("https://openalex.org/", "", unlist(x))
+
+# --- The search_author Function ---
+search_author <- function(author_name, affiliation_ror) {
+  base_dir <- file.path("./", "output")
+  if (!dir.exists(base_dir)) {
+    dir.create(base_dir, recursive = TRUE)
+  }
+  safe_name <- gsub("[^[:alnum:]]", "_", author_name)
+  log_file <- file.path(base_dir, paste0(safe_name, ".log"))
+
+  author_results <- tryCatch(
+    {
+      oa_fetch(entity = "authors", search = author_name)
+    },
+    error = function(e) {
+      cat(paste0(Sys.time(), " Error: ", e, "\n"), file = log_file, append = TRUE)
+      return(NULL)
+    }
+  )
+
+  if (!is.null(author_results) && nrow(author_results) > 0) {
+    inst_col <- intersect(names(author_results), c("last_known_institution", "last_known_institutions"))
+
+    if (length(inst_col) == 0) {
+      return(NULL)
+    }
+
+    matches <- sapply(seq_len(nrow(author_results)), function(i) {
+      inst_info <- author_results[[inst_col]][[i]]
+      if (is.null(inst_info)) {
+        return(FALSE)
+      }
+
+      if (is.data.frame(inst_info) && "ror" %in% names(inst_info)) {
+        return(any(grepl(affiliation_ror, inst_info$ror, ignore.case = TRUE)))
+      }
+      if (is.list(inst_info) && "ror" %in% names(inst_info)) {
+        return(grepl(affiliation_ror, inst_info$ror, ignore.case = TRUE))
+      }
+      return(FALSE)
+    })
+
+    filtered <- author_results[matches, ]
+    return(if (nrow(filtered) > 0) filtered else NULL)
+  }
+  return(NULL)
 }
