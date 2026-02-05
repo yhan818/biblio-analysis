@@ -1,142 +1,8 @@
 install.packages("readxl")
 
-library(openalexR)
-library(tidyverse)
 library(readxl)
-library(knitr)
-
 source("my_functions.R")
 
-
-# Initialize lists to track results
-found_list <- list()
-not_found_list <- list()
-
-# Example usage:
-u_arizona_ror <- "https://ror.org/03m2x1q45"
-res <- search_author("Terry Badger", u_arizona_ror)
-if (!is.null(res)) res |> show_authors() |> knitr::kable()
-
-### For name like "Yan Han". easily get wrong matches. 
-# author_results <- tryCatch({
-#   oa_fetch(
-#     entity = "authors",
-#     orcid = "0000-0001-9518-2684"
-#   )
-# }, error = function(e) {
-#   err_msg <- paste0(Sys.time(), " search_author(), Error: ", author_name, ": ", e$message, "\n")
-#   cat(err_msg, file = log_file, append = TRUE)
-#   return(NULL)
-# })
-
-
-
-
-
-# --- Test Setup ---
-
-# 1. Create a master list of all verified OpenAlex IDs in the group
-all_group_ids <- sapply(found_list, function(x) x$id)
-verified_names <- names(found_list)
-
-all_collabs <- list()
-
-
-# --- Test Setup ---
-focal_id <- "https://openalex.org/A5049047999"
-focal_name <- "Robert Hanson" 
-
-# Helper function to ensure IDs match regardless of URL prefix
-# 1. Prepare Group IDs (Clean them for comparison)
-all_group_ids_clean <- clean_id(all_group_ids)
-focal_id_clean <- clean_id(focal_id)
-other_group_ids_clean <- all_group_ids_clean[all_group_ids_clean != focal_id_clean]
-
-message("Targeting ", length(other_group_ids_clean), " other authors in the group.")
-
-
-
-# --- Fetching Works ---
-# --- Prerequisites ---
-# Ensure 'all_group_ids' exists from your Step 1 loop.
-# Ensure 'all_group_ids' exists from your Step 1 loop.
-
-focal_id <- "https://openalex.org/A5049047999"
-focal_name <- "Robert Hanson"
-  five_years_ago <- "2021-01-01"
-
-# 1) Works identified (Last 5 years)
-works <- oa_fetch(
-  entity = "works", 
-  author.id = focal_id, 
-  from_publication_date = five_years_ago, 
-  verbose = FALSE
-)
-
-if (!is.null(works) && nrow(works) > 0) {
-  
-  # Prepare the matching list (excluding the focal author)
-  other_group_ids_clean <- clean_id(all_group_ids[all_group_ids != focal_id])
-  
-  # 2) Get unique collaborators & 3) Match with list
-  # We do this paper-by-paper to build a clean lookup table
-  collab_lookup <- map_df(seq_len(nrow(works)), function(i) {
-    auth_df <- works$authorships[[i]]
-    
-    # Extract arrays of IDs and Names from this paper
-    # (Handles cases where IDs are nested or top-level)
-    paper_ids <- if ("id" %in% names(auth_df)) auth_df$id else auth_df$author$id
-    paper_names <- if ("display_name" %in% names(auth_df)) auth_df$display_name else auth_df$author$display_name
-    
-    # 3) Match array with collaborator_list
-    match_idx <- which(clean_id(paper_ids) %in% other_group_ids_clean)
-    
-    if (length(match_idx) > 0) {
-      # 4) Prepare collaborator name and id output
-      tibble(
-        work_id = works$id[i],
-        collab_names = paste(unique(paper_names[match_idx]), collapse = "; "),
-        collab_ids   = paste(unique(paper_ids[match_idx]), collapse = "; "),
-        collab_count = length(unique(paper_ids[match_idx]))
-      )
-    } else {
-      NULL
-    }
-  })
-  
-  # --- Combine and Output ---
-  if (nrow(collab_lookup) > 0) {
-    
-    # Flatten the works metadata
-    flat_works <- show_works(works)
-    
-    # Join the collaborator info back to the flattened works
-    # This prevents the "size mismatch" error
-    final_output <- flat_works %>%
-      inner_join(collab_lookup, by = c("id" = "work_id")) %>%
-      mutate(focal_author = focal_name)
-    
-    # Output count of papers
-    cat("\nTotal papers with group collaborations:", nrow(final_output), "\n")
-    
-    # Output table with names and IDs
-    final_output %>%
-      select(focal_author, collab_count, collab_names, collab_ids, display_name) %>%
-      knitr::kable() %>%
-      print()
-    
-  } else {
-    message("No group members found in papers from the last 5 years.")
-  }
-}
-
-
-
-
-
-
-
-################################ The above shall go to myfunctions.
 
 # [Not Found] Henry Tseng at ASU (Jui-Heng Tseng)
 # [Not Found] Ken Buetow at ASU (Kennith Buetow)
@@ -158,81 +24,11 @@ if (!is.null(works) && nrow(works) > 0) {
 [Not Found] Amy Gardiner at UNM (https://orcid.org/0000-0002-8179-4919)
 [Not Found] Finny Swamidoss at UNM
 
-
-
-#### Hanlding new added authors
-# Load necessary libraries
-library(tidyr)
-
-df <- read_excel("New list for faculty collaborations.xlsx", col_names = FALSE)
-df_split <- df %>%
-  # Separate the first column (...1) into Last Name and First Name at the comma
-  separate(col = ...1, into = c("Last Name", "First Name"), sep = ",", extra = "merge") %>%
-  mutate(
-    `Last Name` = trimws(`Last Name`),
-    `First Name` = trimws(`First Name`),
-    Institution = trimws(...4) # Using the 4th column for Institution
-  ) %>%
-  # Select only the three requested columns
-  select(`Last Name`, `First Name`, Institution)
-
-# 3. Output to CSV
-write.csv(df_split, "Faculty_Collaborations_Split.csv", row.names = FALSE)
-print("The 3-column CSV 'Faculty_Collaborations_Split.csv' has been created.")
-
-### compare with the original list
-
-library(dplyr)
-library(stringr)
-library(fuzzyjoin)
-
-# 1. Clean Faculty List (Remove punctuation)
-faculty_prep <- df %>%
-  separate(col = `...1`, into = c("Last_Name", "First_Name"), sep = ",", extra = "merge") %>%
-  mutate(
-    # Remove periods and commas for a cleaner match
-    clean_last  = str_replace_all(str_to_upper(trimws(Last_Name)), "[[:punct:]]", ""),
-    clean_first = str_replace_all(str_to_upper(trimws(First_Name)), "[[:punct:]]", ""),
-    match_key   = paste(clean_last, clean_first) # No comma in key
-  )
-
-# 2. Clean your authors_df
-authors_prep <- authors_df %>%
-  mutate(
-    # Replace 'name' with your actual column name
-    # Remove punctuation and standardize to uppercase
-    author_match_key = str_replace_all(str_to_upper(trimws(name)), "[[:punct:]]", "")
-  )
-
-# 3. Perform Ultra-Fuzzy Match
-# We increase max_dist to 10 to catch "Last, First Middle" vs "Last, First"
-matched_results <- stringdist_inner_join(
-  faculty_prep, 
-  authors_prep, 
-  by = c("match_key" = "author_match_key"),
-  max_dist = 10,  
-  method = "lv"
-)
-
-# 4. View Matches
-final_matches <- matched_results %>%
-  select(
-    Faculty_Name = match_key, 
-    Author_DF_Name = author_match_key
-  ) %>%
-  distinct()
-
-print(final_matches)
-
 ########################
 #### Latest code: 2026-01-15
 library(openalexR)
 library(tidyverse)
 library(knitr)
-
-# --- 1. The search_author Function ---
-# --- 1. The search_author Function ---
-# Moved to my_functions.R
 
 # --- 2. ROR Definitions ---
 ua_ror        <- "03m2x1q45"
@@ -320,13 +116,41 @@ if (length(not_found_list) > 0) {
   message("Warning: Not found authors saved to 'authors_not_found.csv'")
 }
 
+#######################
+# --- Manual Additions ---
+# Example for one author
+manual_id   <- "https://openalex.org/A5078276804" # Replace with actual ID
+manual_name <- "Tatiana Kalin"                     # Must match the name in your CSV exactly
+manual_inst <- "UA"                                # "UA", "ASU", "UNM"
+
+manual_id   <- "https://openalex.org/A5078276804" # Replace with actual ID
+manual_name <- "Tatiana Kalin"                     # Must match the name in your CSV exactly
+manual_inst <- "UA"                                # "UA", "ASU", "UNM"
+
+
+# Fetch the author data 
+manual_author <- oa_fetch(entity = "authors", identifier = manual_id)
+
+if (!is.null(manual_author) && nrow(manual_author) > 0) {
+  # Add the required institution column
+  manual_match <- manual_author[1, ]
+  manual_match$csv_institution <- manual_inst
+  
+  # Add to found_list
+  found_list[[manual_name]] <- manual_match
+  
+  # Optional: Remove from not_found_list so it doesn't show up there
+  not_found_list[[manual_name]] <- NULL
+  
+  message("Manually added: ", manual_name)
+}
+
 #######################################################
 ####################### 2026-01-26
+# Step 2:
 ####################################
 ########################################################
 # --- Section 6: Robust Collaboration Search using Authorships ---
-
-
 
 if (length(found_list) < 2) {
   stop("\nNot enough authors were identified to perform a cross-reference search.")
