@@ -9,23 +9,46 @@ source("my_functions.R")
 # [Not Found] Bill Shuttleworth at UNM (William )
 
 
-[Not Found] Hossein Ardehali at UA
 [Not Found] Haijiang Cai at UA
 [Not Found] Michael Daines at UA
 
-# [Not Found] Tatiana Kalin at UA (Cincinnati https://api.openalex.org/a5078276804 )
+# Manually added: [Not Found] Tatiana Kalin at UA (Cincinnati https://api.openalex.org/a5078276804 )
 # [Not Found] Moulun Luo at UA
 
 # [Not Found] Mary laura Thomas at ASU (Mary Laura Lind)
 # !!! [Not Found] Sampath Rangasamy at ASU (Arizona Research Center?, Phoenix, DO Check openAlex manually!!!)
 
 
+========================================================
+  ❌ AUTHORS NOT FOUND (Manual Check Needed)
+========================================================
+  
+  
+  |First Name |Last Name     |Institution |
+  |:----------|:-------------|:-----------|
+  |James      |BIbb          |UA          |
+  |Nipavan    |Chiamvimonvat |UA          | >>> UC Davis
+  |Michael    |Daines        |UA          |
+  |Tatiana    |Kalin         |UA          | >> Cincinati 
+  |Moulun     |Luo           |UA          |
+  |Yanqiao    |Zhang         |UA          |
+  |Sampath    |Rangasamy     |ASU         |
+  |Gaberiel   |Shaibi        |ASU         |
+  |Vincent    |Pizziconi     |ASU         |
+  |Nathan     |Zaidman       |UNM         |
+  |Eliseo     |Castillo      |UNM         |
+  |f          |Clark         |UNM         |
+  |Michael    |Deyhle        |UNM         |
+  |Amy        |Gardiner      |UNM         |
+  |Finny      |Swamidoss     |UNM         |
+  |Kathleen   |Rogers        |UA          |
+  |Reza       |Shekarriz     |UNM         |
+
 [Not Found] Olga Ponomarova at UNM (https://orcid.org/0000-0001-6331-9949 ). Handle differently
-[Not Found] Amy Gardiner at UNM (https://orcid.org/0000-0002-8179-4919)
-[Not Found] Finny Swamidoss at UNM
+ Amy Gardiner at UNM (https://orcid.org/0000-0002-8179-4919)
 
 ########################
-#### Latest code: 2026-01-15
+#### 1st code: 2026-01-15, updated: 2026-02-04
 library(openalexR)
 library(tidyverse)
 library(knitr)
@@ -118,15 +141,29 @@ if (length(not_found_list) > 0) {
 
 #######################
 # --- Manual Additions ---
-# Example for one author
-manual_id   <- "https://openalex.org/A5078276804" # Replace with actual ID
+# Finny Swamidoss https://hsc.unm.edu/directory/swamidoss-finny.html # Not found in OpenAlex
+
+manual_id   <- "https://openalex.org/A5078276804"  # At 
 manual_name <- "Tatiana Kalin"                     # Must match the name in your CSV exactly
 manual_inst <- "UA"                                # "UA", "ASU", "UNM"
 
-manual_id   <- "https://openalex.org/A5078276804" # Replace with actual ID
-manual_name <- "Tatiana Kalin"                     # Must match the name in your CSV exactly
+manual_id   <- "https://openalex.org/A5031817215"  # At UC Davis in OpenAlex
+manual_name <- "Nipavan Chiamvimonvat"             # Must match the name in your CSV exactly
 manual_inst <- "UA"                                # "UA", "ASU", "UNM"
 
+
+manual_id   <- "https://openalex.org/a5033254684"  # 
+manual_name <- "Amy Gardiner"             # Must match the name in your CSV exactly
+manual_inst <- "UNM"                                # "UA", "ASU", "UNM"
+
+
+manual_id   <- "https://openalex.org/a5012045039"  # Past institution = U Arizona
+manual_name <- "James Bibb"             # Must match the name in your CSV exactly
+manual_inst <- "UA"                                # "UA", "ASU", "UNM"
+
+manual_id   <- "https://openalex.org/a5006730507"  # Past institution = U Arizona
+manual_name <- "Michael Daines"             # Must match the name in your CSV exactly
+manual_inst <- "UA"                                # "UA", "ASU", "UNM"
 
 # Fetch the author data 
 manual_author <- oa_fetch(entity = "authors", identifier = manual_id)
@@ -176,6 +213,7 @@ for (focal_name in verified_names) {
     entity = "works", 
     author.id = focal_id, 
     from_publication_date = five_years_ago,
+    type= "article",
     verbose = FALSE
   )
   
@@ -213,7 +251,6 @@ for (focal_name in verified_names) {
   }
 }
 
-colnames(final_report)
 
 if (length(all_collabs) > 0) {
   final_report <- bind_rows(all_collabs) %>% 
