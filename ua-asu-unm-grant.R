@@ -1,8 +1,5 @@
-install.packages("readxl")
 
-library(readxl)
 source("my_functions.R")
-
 
 # [Not Found] Henry Tseng at ASU (Jui-Heng Tseng)
 # [Not Found] Ken Buetow at ASU (Kennith Buetow)
@@ -48,10 +45,7 @@ source("my_functions.R")
  Amy Gardiner at UNM (https://orcid.org/0000-0002-8179-4919)
 
 ########################
-#### 1st code: 2026-01-15, updated: 2026-02-04
-library(openalexR)
-library(tidyverse)
-library(knitr)
+#### 1st code: 2026-01-15, updated: 2026-02-13
 
 # --- 2. ROR Definitions ---
 ua_ror        <- "03m2x1q45"
@@ -61,7 +55,7 @@ unm_hos_ror   <- "04skph061"
 niddk_ror     <- "00adh9b73"
 
 # --- 3. Load the CSV ---
-csv_file <- "ua_asu_unm_grant_authors2.csv"
+csv_file <- "ua_asu_unm_grant_authors_fin.csv"
 authors_raw <- read_csv(csv_file)
 
 # Standardize column names
@@ -140,46 +134,81 @@ if (length(not_found_list) > 0) {
 }
 
 #######################
-# --- Manual Additions ---
-# Finny Swamidoss https://hsc.unm.edu/directory/swamidoss-finny.html # Not found in OpenAlex
+### Not found
+### Megan Camey
+## |Finny       |Swamidoss     |UNM         |
+## |Kathleen    |Rogers        |UA          | >> Ohio State?? 
+# Reza Shekarriz , Albuquerque, or Shahid Beheshti University ??
 
-manual_id   <- "https://openalex.org/A5078276804"  # At 
-manual_name <- "Tatiana Kalin"                     # Must match the name in your CSV exactly
-manual_inst <- "UA"                                # "UA", "ASU", "UNM"
-
-manual_id   <- "https://openalex.org/A5031817215"  # At UC Davis in OpenAlex
-manual_name <- "Nipavan Chiamvimonvat"             # Must match the name in your CSV exactly
-manual_inst <- "UA"                                # "UA", "ASU", "UNM"
-
-
+# --- Manual Additions (Batch Processing) ---
 manual_id   <- "https://openalex.org/a5033254684"  # 
 manual_name <- "Amy Gardiner"             # Must match the name in your CSV exactly
 manual_inst <- "UNM"                                # "UA", "ASU", "UNM"
 
-
-manual_id   <- "https://openalex.org/a5012045039"  # Past institution = U Arizona
-manual_name <- "James Bibb"             # Must match the name in your CSV exactly
-manual_inst <- "UA"                                # "UA", "ASU", "UNM"
-
-manual_id   <- "https://openalex.org/a5006730507"  # Past institution = U Arizona
-manual_name <- "Michael Daines"             # Must match the name in your CSV exactly
-manual_inst <- "UA"                                # "UA", "ASU", "UNM"
-
-# Fetch the author data 
 manual_author <- oa_fetch(entity = "authors", identifier = manual_id)
-
 if (!is.null(manual_author) && nrow(manual_author) > 0) {
   # Add the required institution column
   manual_match <- manual_author[1, ]
   manual_match$csv_institution <- manual_inst
-  
-  # Add to found_list
   found_list[[manual_name]] <- manual_match
-  
-  # Optional: Remove from not_found_list so it doesn't show up there
   not_found_list[[manual_name]] <- NULL
-  
   message("Manually added: ", manual_name)
+}
+
+
+# Define manual entries here. Add new lines as needed.
+manual_authors_batch <- tribble(
+  ~id, ~name, ~inst,
+  "https://openalex.org/a5012045039", "James Bibb", "UA",
+  "https://openalex.org/A5031817215", "Nipavan Chiamvimonvat", "UA",
+  "https://openalex.org/a5006730507", "Michael Daines", "UA",
+  "https://openalex.org/A5078276804", "Tatiana Kalin", "UA",
+  "https://openalex.org/A5100695723", "Moulun Luo", "UA",
+  "https://openalex.org/A5045587465", "Liya Yin", "UA",
+  "https://openalex.org/a5066121781", "Banerjee Ronaldip", "UA",
+  "https://openalex.org/a5002109010", "Sampath Rangasamy", "ASU",
+  "https://openalex.org/a5020644260", "Vincent Pizziconi", "ASU",
+"https://openalex.org/a5018559401", "Eliseo Castillo", "UNM",
+"https://openalex.org/a5068225719", "Michael Deyhle", "UNM",
+"https://openalex.org/a5033254684", "Amy Gardiner", "UNM",
+"https://openalex.org/a5110488400", "Marylaura Thomas", "ASU"
+  # Add more below:
+  # "ID", "Name", "Institution"
+)
+
+message(paste("\nProcessing", nrow(manual_authors_batch), "manual additions..."))
+
+for (i in 1:nrow(manual_authors_batch)) {
+  m_id   <- manual_authors_batch$id[i]
+  m_name <- manual_authors_batch$name[i]
+  m_inst <- manual_authors_batch$inst[i]
+  
+  # Fetch the author data 
+  # Check if ID looks valid (basic check)
+  if (!is.na(m_id) && m_id != "") {
+      tryCatch({
+        Sys.sleep(2)
+        manual_author <- oa_fetch(entity = "authors", identifier = m_id)
+        
+        if (!is.null(manual_author) && nrow(manual_author) > 0) {
+          # Add the required institution column
+          manual_match <- manual_author[1, ]
+          manual_match$csv_institution <- m_inst
+          
+          # Add to found_list
+          found_list[[m_name]] <- manual_match
+          
+          # Remove from not_found_list
+          not_found_list[[m_name]] <- NULL
+          
+          message("Manually added: ", m_name)
+        } else {
+          message("Failed to fetch manual author: ", m_name, " (ID: ", m_id, ")")
+        }
+      }, error = function(e) {
+        message("Error fetching ", m_name, ": ", e$message)
+      })
+  }
 }
 
 #######################################################

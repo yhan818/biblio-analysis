@@ -26,18 +26,12 @@ library(openxlsx)
 library(readxl)
 library(writexl)
 
-source("my_functions.R")
 
 # free unused obj to manage memory
 rm(list=ls())
 gc()
 
-# options("max.print" = 100000)
-# options (openalexR.mailto="yhan@arizona.edu")
-# PATH = "/home/yhan/Documents/biblio-analysis"
-# setwd(PATH)
-# getwd()
-# print(here())
+source("my_functions.R")
 
 ##### General comments:
 ### OpenAlex data structure has been gone through sevearl changes from 2023- 2025. Therefore,
@@ -75,6 +69,8 @@ gc()
 # Note: When we query OpenAlex, we use the ROR ID (not the institution ID) to retrieve an institution’s data. This is because the ROR ID is stable, 
 # universal standard for institutional identification, ensuring our findings are both reproducible and interoperable with the wider scholarly data ecosystem and stability in a long term
 
+Sys.getenv("OPENALEXR_APIKEY")
+
 works_count <-oa_fetch(
   entity="works",
   institutions.ror=c("03m2x1q45"), # UArizona
@@ -85,13 +81,13 @@ works_count <-oa_fetch(
   #institutions.ror=c("05hs6h993"), # Michigan State University (MSU) 
   #institutions.ror=c("00cvxb145"), # University of Washington
 
-  
   options = list("data-version" = 2), 
   
   from_publication_date ="2024-01-01",
   to_publication_date = "2024-12-31",
   #type = "article",  # comment out this line to include other types 
-  count_only = TRUE
+  count_only = TRUE,
+  api_key = Sys.getenv("OPENALEXR_APIKEY")
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 

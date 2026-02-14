@@ -2,13 +2,18 @@
 ### Common functions
 
 library(openxlsx)
+library(readxl)
 library(writexl)
 library(data.table)
 library(dplyr)
 library(rlang)
 
-options("max.print" = 100000)
-options(openalexR.mailto = "yhan@arizona.edu")
+library(openalexR)
+library(tidyverse)
+library(knitr)
+
+
+options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
 PATH <- "/home/yhan/Documents/biblio-analysis"
 
 setwd(PATH)
