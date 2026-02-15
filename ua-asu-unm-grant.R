@@ -319,6 +319,63 @@ clean_export <- final_report %>%
 
 writexl::write_xlsx(clean_export, "found_collaborations_short_summary.xlsx")
 
+# --- 7. Count Total Collaborations per Author ---
+if (exists("final_report") && nrow(final_report) > 0) {
+  
+  message("\n>>> COUNTING COLLABORATIONS PER AUTHOR...")
+  
+  # Initialize counts
+  # We want to count how many papers each 'found' author is involved in within final_report
+  
+  # 1. Get the mapping of ID -> Name
+  # found_list is a list of 1-row dataframes
+  if (exists("found_list") && length(found_list) > 0) {
+      if (requireNamespace("purrr", quietly = TRUE)) {
+        group_id_map <- setNames(names(found_list), purrr::map_chr(found_list, "id"))
+      } else {
+        # Fallback without purrr
+        group_id_map <- setNames(names(found_list), sapply(found_list, function(x) x$id))
+      }
+      
+      # 2. Extract author IDs involved in each paper
+      all_ids_in_papers <- final_report$authorships %>%
+        lapply(function(df) {
+          if (is.null(df) || nrow(df) == 0) return(character(0))
+          # Return IDs that match our group
+          df$id[df$id %in% names(group_id_map)]
+        }) 
+      
+      # Flatten to a long format: (PaperIndex, AuthorID)
+      # We just need counts per author
+      all_ids_flat <- unlist(all_ids_in_papers)
+      
+      if (length(all_ids_flat) > 0) {
+          author_counts_df <- data.frame(ID = all_ids_flat, stringsAsFactors = FALSE) %>%
+            count(ID, name = "Collaborations") %>%
+            mutate(Name = group_id_map[ID]) %>%
+            select(Name, Collaborations) %>%
+            arrange(desc(Collaborations))
+          
+          # Print to console
+          print(author_counts_df)
+          
+          # Save to CSV
+          readr::write_csv(author_counts_df, "author_collaboration_counts.csv")
+          message("Results saved to 'author_collaboration_counts.csv'")
+      } else {
+        message("No group authors found in the final report authorships (unexpected).")
+      }
+      
+  } else {
+      message("found_list is missing. Cannot map IDs to names.")
+  }
+
+} else {
+  message("No final_report found or it is empty. Cannot count collaborations.")
+}
+
+
+
 
 
 
