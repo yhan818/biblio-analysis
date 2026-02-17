@@ -87,7 +87,6 @@ works_count <-oa_fetch(
   to_publication_date = "2024-12-31",
   #type = "article",  # comment out this line to include other types 
   count_only = TRUE,
-  api_key = Sys.getenv("OPENALEXR_APIKEY")
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
@@ -532,6 +531,9 @@ print(paste("Do all DataFrames in matching_list have the same structure?", all_d
 
 works_cited_2022_2024 <- bind_rows(works_cited_2022, works_cited_2023, works_cited_2024)
 saveRDS(works_cited_2022_2024, "../works_cited_2022_2024.rds")
+
+
+works_cited_2022_2024 <- readRDS("../works_cited_2022_2024.rds")
 works_cited <- works_cited_2022_2024
 
 # One is primary.source.type = journal, the other (works_cited_2) contains everything
@@ -620,8 +622,8 @@ head(matching_rows$id)
 ########################################################################################
 #########################################################################################
 ### Step 2: Separate works_cited using criteria such as "type", "ISSN" or other criteria
-# First getting all the works_cited by year data
-works_cited <- works_cited_2023
+# First getting all the works_cited by year data. year by year. 2022 > 2023 > 2024 
+works_cited <- works_cited_2024
 
 works_cited <- works_cited_2022 %>%
   mutate(authored_year = 2022) %>%
@@ -900,9 +902,19 @@ tryCatch({
   print(e)
 })
 
-#### 2025-10: Elsevier
 
-publisher_str <- "Elsevier"
+##### The following code can be used for any big publishers. 
+#### 2025-10: Elsevier
+### 2026-02: Springer + Nature Portfolio 
+
+
+#publisher_str <- "Elsevier"
+
+publisher_str <- "Springer" # Nature Portfolio 
+### Springer Nature (Germany) is the parent
+### It has some child publishers. All contain "Springer" as part of the string. No need to add them separately. 
+### https://api.openalex.org/i1313014049
+
 
 # testing to see if any publisher containing a string e.g, "Physics" 
 temp_publishers <- works_cited_type_articles %>%
@@ -928,50 +940,48 @@ works_cited_type_articles_c5 <- works_cited_type_articles %>%
   filter(grepl("Cell Press", host_organization, ignore.case = TRUE))
 
 ## Bind its children publishers#### 
-works_cited_type_articles_elsevier_children <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
+works_cited_type_articles_publisher_children <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
                                                     works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
 
 
 # Only see "Elsevier" in the host_organization. 
-works_cited_type_articles_elsevier <- works_cited_type_articles %>%
+works_cited_type_articles_publisher <- works_cited_type_articles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
 
-works_cited_type_nonarticles_elsevier <- works_cited_type_nonarticles %>%
+works_cited_type_nonarticles_publisher <- works_cited_type_nonarticles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
 
-works_published_elsevier <- works_published %>%
+works_published_publisher <- works_published %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
 
-works_cited_type_articles_elsevier <- bind_rows(works_cited_type_articles_elsevier_children, works_cited_type_articles_elsevier)
+works_cited_type_articles_publisher <- bind_rows(works_cited_type_articles_publisher_children, works_cited_type_articles_publisher)
 
-head(works_cited_type_articles_elsevier)
+# list all child publishers of the publisher
+unique_publishers <- unique(works_cited_type_articles_publisher$host_organization)
+print(unique_publishers)
 
-source("my_functions.R")
-final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2023)
+final_p <- count_cited_works_by_category(works_cited_type_articles_publisher, 2024)
 print(final_p$other_data[1])
 # Analyze topic: domain, field, sub-field, topic
 
-works_cited_type_articles_elsevier_22 <- works_cited_type_articles_elsevier
+# Get 2022 data, then 2023, then 2024
+works_cited_type_articles_publisher_22 <- works_cited_type_articles_publisher
 
-works_cited_type_articles_elsevier_23 <- works_cited_type_articles_elsevier
+works_cited_type_articles_publisher_23 <- works_cited_type_articles_publisher
 
-works_cited_type_articles_elsevier_24 <- works_cited_type_articles_elsevier
-
-
-
+works_cited_type_articles_publisher_24 <- works_cited_type_articles_publisher
 
 
-# 2022-2024: 
-# final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2024)
-# "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2024 ) ---"
+
+# 2022-2024: Elsevier
+# "--- Cited Works Summary for: works_cited_type_articles_publisher (relative to 2024 ) ---"
 # Category Count Percentage
 # 2019-2023 16400        33%
 # 2014-2018 12173        25%
 #     -2013 19918        41%
 #   Other   672         1%
 
-# final_p <- count_cited_works_by_category(works_cited_type_articles_elsevier, 2023)
-# "--- Cited Works Summary for: works_cited_type_articles_elsevier (relative to 2023 ) ---"
+# final_p <- count_cited_works_by_category(works_cited_type_articles_publisher, 2023)
 # Category Count Percentage
 # 2018-2022 17764        32%
 # 2013-2017 13032        24%
@@ -986,40 +996,63 @@ works_cited_type_articles_elsevier_24 <- works_cited_type_articles_elsevier
 # Other   779         1%
 
 
-works_cited_type_articles_elsevier_22_23_24 <- bind_rows(works_cited_type_articles_elsevier_22, 
-                                                         works_cited_type_articles_elsevier_23, 
-                                                         works_cited_type_articles_elsevier_24)
+######### Springer:
+# [1] "--- Cited Works Summary for: works_cited_type_articles_springer (relative to 2022 ) ---"
+# Category Count Percentage
+# 2017-2021  5450        33%
+# 2012-2016  3856        24%
+#     -2011  6767        41%
+# Other   309         2%
+
+### Yr 2023
+# Category Count Percentage
+# 2018-2022  5641        33%
+# 2013-2017  4081        24%
+#     -2012  6875        41%
+# Other   276         2%
+
+### Yr 2024
+# 2019-2023  4975        35%
+# 2014-2018  3441        24%
+#     -2013  5763        40%
+# Other   203         1%
 
 
-saveRDS(works_cited_type_articles_elsevier_22_23_24, "../works_cited_type_articles_elsevier_22_23_24.rds")
-
-works_cited_type_articles_elsevier_22_23_24 <- readRDS("../works_cited_type_articles_elsevier_22_23_24.rds")
 
 
+works_cited_type_articles_publisher_22_23_24 <- bind_rows(works_cited_type_articles_publisher_22, 
+                                                         works_cited_type_articles_publisher_23, 
+                                                         works_cited_type_articles_publisher_24)
+
+# use elsevier for springer 
+saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_springer_22_23_24.rds")
+
+### comment out when loading a new publisher
+#works_cited_type_articles_publisher_22_23_24 <- readRDS("../works_cited_type_articles_elsevier_22_23_24.rds")
 
 
 #works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
 #write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
 
-works_cited_type_articles_elsevier_yr22 <- extract_topics_by_level(works_cited_type_articles_elsevier_22, 1)
-works_cited_type_articles_elsevier_yr22_field <- extract_topics_by_level(works_cited_type_articles_elsevier_22, 2)
+works_cited_type_articles_elsevier_yr22 <- extract_topics_by_level(works_cited_type_articles_publisher_22, 1)
+works_cited_type_articles_publisher_yr22_field <- extract_topics_by_level(works_cited_type_articles_publisher_22, 2)
 
-works_cited_type_articles_elsevier_yr23 <- extract_topics_by_level(works_cited_type_articles_elsevier_23, 1)
-#works_cited_type_articles_elsevier_yr23_field <- extract_topics_by_level(works_cited_type_articles_elsevier_23, 2)
+works_cited_type_articles_publisher_yr23 <- extract_topics_by_level(works_cited_type_articles_publisher_23, 1)
+#works_cited_type_articles_publisher_yr23_field <- extract_topics_by_level(works_cited_type_articles_publisher_23, 2)
 
-works_cited_type_articles_elsevier_yr24 <- extract_topics_by_level(works_cited_type_articles_elsevier_24, 1)
-#works_cited_type_articles_elsevier_yr24_field <- extract_topics_by_level(works_cited_type_articles_elsevier_24, 2)
+works_cited_type_articles_publisher_yr24 <- extract_topics_by_level(works_cited_type_articles_publisher_24, 1)
+#works_cited_type_articles_publisher_yr24_field <- extract_topics_by_level(works_cited_type_articles_publisher_24, 2)
 
 
-#write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
+write_df_to_excel(works_cited_type_articles_publisher_yr22_23_24)
 
 
 # This will count every unique value in the 'domain_L1' column
-#df <- works_cited_type_articles_elsevier_yr22_23_24
+#df <- works_cited_type_articles_publisher_yr22_23_24
 
-df_22 <- works_cited_type_articles_elsevier_yr22
-df_23 <- works_cited_type_articles_elsevier_yr23
-df_24 <- works_cited_type_articles_elsevier_yr24
+df_22 <- works_cited_type_articles_publisher_yr22
+df_23 <- works_cited_type_articles_publisher_yr23
+df_24 <- works_cited_type_articles_publisher_yr24
 
 # --- 2022 ---
 # --- domain_L1 --- 
@@ -1152,21 +1185,21 @@ print(count_field_24)
 
 # 2022 Results
 domain_results_2022 <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr22, 
+  works_cited_type_articles_publisher_yr22, 
   citing_year = 2022, 
   group_by_col = "domain_L1"
 )
 
 # 2023 Results
 domain_results_2023 <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr23, 
+  works_cited_type_articles_publisher_yr23, 
   citing_year = 2023, 
   group_by_col = "domain_L1"
 )
 
 # 2024 Results
 domain_results_2024 <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr24, 
+  works_cited_type_articles_publisher_yr24, 
   citing_year = 2024, 
   group_by_col = "domain_L1"
 )
@@ -1260,19 +1293,19 @@ ggplot(all_domain_patterns,
 ############## Fields
 
 field_results_2022 <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr22, 
+  works_cited_type_articles_publisher_yr22, 
   citing_year = 2022, 
   group_by_col = "field_L1"
 )
 
 field_results_2023 <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr23, 
+  works_cited_type_articles_publisher_yr23, 
   citing_year = 2023, 
   group_by_col = "field_L1"
 )
 
 field_results_2024 <- count_cited_works_by_group(
-  works_cited_type_articles_elsevier_yr24, 
+  works_cited_type_articles_publisher_yr24, 
   citing_year = 2024, 
   group_by_col = "field_L1"
 )
@@ -1317,9 +1350,7 @@ all_field_patterns <- bind_rows(
   arrange(field_L1, Citing_Year)
 
 
-library(writexl)
-# Set the desired file path and name
-excel_file_path <- "all_field_citation_patterns.xlsx"
+excel_file_path <- "springer_all_field_citation_patterns.xlsx"
 write_xlsx(all_field_patterns, path = excel_file_path)
 print(paste("Data successfully saved to:", excel_file_path))
 
@@ -1382,14 +1413,13 @@ for (p in 1:num_pages) {
   print(plot_page)
 }
 
-
-############### Dec 6: need to change
-ggplot(results$data, aes(x = year_category, y = percent_numeric, group = domain_L1, color = domain_L1)) +
+##################
+ggplot(domain_results_2022$data, aes(x = year_category, y = percent_numeric, group = domain_L1, color = domain_L1)) +
   geom_line(linewidth = 1.2, alpha = 0.8) +
   geom_point(size = 3) +
   scale_y_continuous(labels = scales::percent) +
   labs(
-    title = "Citation Decay Rates by Domain",
+    title = "Citation Change Rates by Domain",
     x = "Citation Age",
     y = "Share of Total Citations",
     color = "Domain"
@@ -1397,7 +1427,7 @@ ggplot(results$data, aes(x = year_category, y = percent_numeric, group = domain_
   theme_minimal() +
   theme(legend.position = "bottom")
 
-ggplot(results$data, aes(x = year_category, y = n)) +
+ggplot(domain_results_2022$data, aes(x = year_category, y = n)) +
   geom_col(fill = "#4c8cb5") + # A nice steel blue
   facet_wrap(~domain_L1, scales = "free_y") + # "free_y" lets each chart have its own scale
   labs(
@@ -1410,7 +1440,7 @@ ggplot(results$data, aes(x = year_category, y = n)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
-results2 <- count_cited_works_by_group(works_cited_type_articles_elsevier_yr23, 2023, "field_L1", format_output = FALSE)
+results2 <- count_cited_works_by_group(works_cited_type_articles_publisher_yr23, 2023, "field_L1", format_output = FALSE)
 
 ggplot(results2$data, aes(x = field_L1, y = n, fill = year_category)) +
   geom_col() +
@@ -1435,7 +1465,7 @@ ggplot(results2$data, aes(x = year_category, y = percent_numeric, group = field_
   geom_point(size = 3) +
   scale_y_continuous(labels = scales::percent) +
   labs(
-    title = "Citation Decay Rates by Field",
+    title = "Citation Change Rates by Field",
     x = "Citation Age",
     y = "Share of Total Citations",
     color = "Domain"
@@ -1472,15 +1502,15 @@ ggsave("citation_chart.png", width = 10, height = 12, dpi = 300)
 
 #### TESTING this field_result
 # Filter the data frame and print the results
-test_df <- works_cited_type_articles_elsevier_yr22 %>%
+test_df <- works_cited_type_articles_publisher_yr22 %>%
   filter(field_L1 == "Chemical Engineering")
 
-test_df2 <- works_cited_type_articles_elsevier_yr23 %>%
+test_df2 <- works_cited_type_articles_publisher_yr23 %>%
   filter(field_L1 == "Dentistry")
 
 
 # Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_elsevier_yr22_23_24.xlsx", "citations/elsevier_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+excel_files <- c("citations/works_cited_type_articles_springer_yr22_23_24.xlsx", "citations/springer_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {

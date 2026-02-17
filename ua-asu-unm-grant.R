@@ -168,12 +168,12 @@ manual_authors_batch <- tribble(
   "https://openalex.org/a5066121781", "Banerjee Ronaldip", "UA",
   "https://openalex.org/a5002109010", "Sampath Rangasamy", "ASU",
   "https://openalex.org/a5020644260", "Vincent Pizziconi", "ASU",
-"https://openalex.org/a5018559401", "Eliseo Castillo", "UNM",
-"https://openalex.org/a5068225719", "Michael Deyhle", "UNM",
-"https://openalex.org/a5033254684", "Amy Gardiner", "UNM",
-"https://openalex.org/a5110488400", "Marylaura Thomas", "ASU"
-  # Add more below:
-  # "ID", "Name", "Institution"
+  "https://openalex.org/a5018559401", "Eliseo Castillo", "UNM",
+  "https://openalex.org/a5068225719", "Michael Deyhle", "UNM",
+  "https://openalex.org/a5033254684", "Amy Gardiner", "UNM",
+  "https://openalex.org/a5110488400", "Marylaura Thomas", "ASU"
+    # Add more below:
+    # "ID", "Name", "Institution"
 )
 
 message(paste("\nProcessing", nrow(manual_authors_batch), "manual additions..."))
