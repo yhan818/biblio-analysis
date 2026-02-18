@@ -17,15 +17,12 @@ install.packages("here")
 library(openalexR)
 packageVersion("openalexR")
 
-library(here)
-library(jsonlite)
-library(dplyr)
-library(tidyverse)
-library(data.table)
-library(openxlsx)
-library(readxl)
-library(writexl)
+options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
+PATH <- "/home/yhan/Documents/biblio-analysis"
 
+setwd(PATH)
+getwd()
+print(here())
 
 # free unused obj to manage memory
 rm(list=ls())

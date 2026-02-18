@@ -1,4 +1,11 @@
 
+
+options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
+PATH <- "/home/yhan/Documents/biblio-analysis"
+
+setwd(PATH)
+getwd()
+print(here())
 source("my_functions.R")
 
 # [Not Found] Henry Tseng at ASU (Jui-Heng Tseng)

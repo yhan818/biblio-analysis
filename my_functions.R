@@ -7,18 +7,12 @@ library(writexl)
 library(data.table)
 library(dplyr)
 library(rlang)
-
+library(jsonlite)
 library(openalexR)
 library(tidyverse)
 library(knitr)
+library(here)
 
-
-options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
-PATH <- "/home/yhan/Documents/biblio-analysis"
-
-setwd(PATH)
-getwd()
-print(here())
 ##########################################
 
 
