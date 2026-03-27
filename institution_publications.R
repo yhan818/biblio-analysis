@@ -80,8 +80,8 @@ works_count <-oa_fetch(
 
   options = list("data-version" = 2), 
   
-  from_publication_date ="2024-01-01",
-  to_publication_date = "2024-12-31",
+  from_publication_date ="2022-01-01",
+  to_publication_date = "2022-12-31",
   #type = "article",  # comment out this line to include other types 
   count_only = TRUE,
 )
@@ -867,11 +867,8 @@ search_string <- "https://openalex.org/W2944198613"
 
 
 works_cited_type_articles_brill_22 <- works_cited_type_articles_brill
-
 works_cited_type_articles_brill_23 <- works_cited_type_articles_brill
-
 works_cited_type_articles_brill_24 <- works_cited_type_articles_brill
-
 works_cited_type_articles_brill_22_23_24 <- bind_rows(works_cited_type_articles_brill_22, 
                                                       works_cited_type_articles_brill_23, 
                                                       works_cited_type_articles_brill_24)
@@ -901,16 +898,45 @@ tryCatch({
 
 
 ##### The following code can be used for any big publishers. 
+
+
 #### 2025-10: Elsevier
-### 2026-02: Springer + Nature Portfolio 
+
+# To find Elsevier’s children in OpenAlex:
+### Step 1: Identify Elsevier’s publisher ID (P4310320)
+### Step 2: Query filter=parent_publisher:<Elsevier_ID> (https://api.openalex.org/publishers?filter=parent_publisher:https://openalex.org/P4310320990)
+### Step 3: confirm hierarchy_level = 1, ptionally inspect lineage to understand deeper structure
+### OpenAlex provides all three fields (parent_publisher, lineage, hierarchy_level) for this exact purpose.
 
 
 #publisher_str <- "Elsevier"
 
-publisher_str <- "Springer" # Nature Portfolio 
+### 2026-02: Springer
+### "https://openalex.org/P4310319965"
+# publisher_str <- "Springer" 
+### Finding its children publishers: https://api.openalex.org/publishers?filter=parent_publisher:https://openalex.org/P4310319965
 ### Springer Nature (Germany) is the parent
-### It has some child publishers. All contain "Springer" as part of the string. No need to add them separately. 
-### https://api.openalex.org/i1313014049
+### Child publishers:
+### "Springer Science+Business Media"
+### "Nature Portfolio"
+### 2: "BioMed Central"
+### 3: "Pleiades Publishing"
+### 4: "Springer International Publishing"
+
+### "Palgrave Macmillan"
+### Adis, Springer Healthcare"
+### "Springer Nature (Netherlands)"
+### "Springer VS"
+### "J.B. Metzler"
+### 10: "Springer Vienna"
+### 11: "Springer Medizin"
+### 12: "Spektrum-Verlag"
+
+### 2026-03: Nature Portfolio:  
+### https://api.openalex.org/p4310319908
+### None children publisher
+publisher_str <- "Nature Portfolio" 
+
 
 
 # testing to see if any publisher containing a string e.g, "Physics" 
@@ -920,7 +946,7 @@ temp_publishers <- works_cited_type_articles %>%
   filter(str_detect(host_organization, regex("KeAi", ignore_case = TRUE))) %>%
   distinct(host_organization)
 
-# Only see Elsevier's child publishers in the host_organization. 
+# Only see the publisher's child publishers in the host_organization. 
 works_cited_type_articles_c1 <- works_cited_type_articles %>%
   filter(grepl("Academic Press", host_organization, ignore.case = TRUE))
 
@@ -941,7 +967,10 @@ works_cited_type_articles_publisher_children <-bind_rows(works_cited_type_articl
                                                     works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
 
 
-# Only see "Elsevier" in the host_organization. 
+######################  Filter for the PUBLISHER
+########################
+###########################
+# Only see the publisher ("publisher_str") in the host_organization. 
 works_cited_type_articles_publisher <- works_cited_type_articles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
 
@@ -951,15 +980,11 @@ works_cited_type_nonarticles_publisher <- works_cited_type_nonarticles %>%
 works_published_publisher <- works_published %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
 
-works_cited_type_articles_publisher <- bind_rows(works_cited_type_articles_publisher_children, works_cited_type_articles_publisher)
+#works_cited_type_articles_publisher <- bind_rows(works_cited_type_articles_publisher_children, works_cited_type_articles_publisher)
 
 # list all child publishers of the publisher
 unique_publishers <- unique(works_cited_type_articles_publisher$host_organization)
 print(unique_publishers)
-
-final_p <- count_cited_works_by_category(works_cited_type_articles_publisher, 2024)
-print(final_p$other_data[1])
-# Analyze topic: domain, field, sub-field, topic
 
 # Get 2022 data, then 2023, then 2024
 works_cited_type_articles_publisher_22 <- works_cited_type_articles_publisher
@@ -968,6 +993,14 @@ works_cited_type_articles_publisher_23 <- works_cited_type_articles_publisher
 
 works_cited_type_articles_publisher_24 <- works_cited_type_articles_publisher
 
+
+
+final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_22, 2022)
+final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_23, 2023)
+final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_24, 2024)
+
+print(final_p$other_data[1])
+# Analyze topic: domain, field, sub-field, topic
 
 
 # 2022-2024: Elsevier
@@ -1014,7 +1047,27 @@ works_cited_type_articles_publisher_24 <- works_cited_type_articles_publisher
 #     -2013  5763        40%
 # Other   203         1%
 
+############### Nature Portfolio #############
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_22 (relative to 2022 ) ---"
+# Category Count Percentage
+# 2017-2021  6076        49%
+# 2012-2016  3012        24%
+#     -2011  2973        24%
+# Other   370         3%
 
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_23 (relative to 2023 ) ---"
+# Category Count Percentage
+# 2018-2022  6255        46%
+# 2013-2017  3634        26%
+#     -2012  3342        24%
+# Other   492         4%
+
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_24 (relative to 2024 ) ---"
+# Category Count Percentage
+# 2019-2023  6081        48%
+# 2014-2018  3286        26%
+#     -2013  2846        23%
+# Other   351         3%
 
 
 works_cited_type_articles_publisher_22_23_24 <- bind_rows(works_cited_type_articles_publisher_22, 
@@ -1022,25 +1075,22 @@ works_cited_type_articles_publisher_22_23_24 <- bind_rows(works_cited_type_artic
                                                          works_cited_type_articles_publisher_24)
 
 # use elsevier for springer 
-saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_springer_22_23_24.rds")
+saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_nature_22_23_24.rds")
 
 ### comment out when loading a new publisher
 #works_cited_type_articles_publisher_22_23_24 <- readRDS("../works_cited_type_articles_elsevier_22_23_24.rds")
 
-
-#works_cited_type_articles_elsevier_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_elsevier_22_23_24, 1)
-#write_df_to_excel(works_cited_type_articles_elsevier_yr22_23_24)
-
-works_cited_type_articles_elsevier_yr22 <- extract_topics_by_level(works_cited_type_articles_publisher_22, 1)
+works_cited_type_articles_publisher_yr22 <- extract_topics_by_level(works_cited_type_articles_publisher_22, 1)
 works_cited_type_articles_publisher_yr22_field <- extract_topics_by_level(works_cited_type_articles_publisher_22, 2)
 
 works_cited_type_articles_publisher_yr23 <- extract_topics_by_level(works_cited_type_articles_publisher_23, 1)
-#works_cited_type_articles_publisher_yr23_field <- extract_topics_by_level(works_cited_type_articles_publisher_23, 2)
+works_cited_type_articles_publisher_yr23_field <- extract_topics_by_level(works_cited_type_articles_publisher_23, 2)
 
 works_cited_type_articles_publisher_yr24 <- extract_topics_by_level(works_cited_type_articles_publisher_24, 1)
-#works_cited_type_articles_publisher_yr24_field <- extract_topics_by_level(works_cited_type_articles_publisher_24, 2)
+works_cited_type_articles_publisher_yr24_field <- extract_topics_by_level(works_cited_type_articles_publisher_24, 2)
 
 
+works_cited_type_articles_publisher_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_publisher_22_23_24, 1)
 write_df_to_excel(works_cited_type_articles_publisher_yr22_23_24)
 
 
@@ -1101,7 +1151,7 @@ count_domain_23 <- df_23 %>%
   select(domain_L1, n, percent_label) # Clean up columns
 
 # -- field_L1 -- 
-count_field_22 <- df_22 %>%
+count_field_23 <- df_23 %>%
   # ADDED: Filter out all rows is NA
   filter(!is.na(field_L1)) %>%
   count(field_L1, sort = TRUE) %>%
@@ -1347,7 +1397,7 @@ all_field_patterns <- bind_rows(
   arrange(field_L1, Citing_Year)
 
 
-excel_file_path <- "springer_all_field_citation_patterns.xlsx"
+excel_file_path <- "Nature_all_field_citation_patterns.xlsx"
 write_xlsx(all_field_patterns, path = excel_file_path)
 print(paste("Data successfully saved to:", excel_file_path))
 
@@ -1363,6 +1413,9 @@ all_field_patterns_paged <- all_field_patterns %>%
   filter(!is.na(field_L1))
 
 # --- 4. Iterate and Generate a Plot for Each Page Group ---
+# 1. Open the PDF device
+# Set the file name and paper dimensions (e.g., 11x8.5 for landscape)
+pdf("Citation_Age_Trends.pdf", width = 11, height = 8.5)
 num_pages <- max(all_field_patterns_paged$page_group)
 
 for (p in 1:num_pages) {
@@ -1395,7 +1448,7 @@ for (p in 1:num_pages) {
                                  "Year 11+" = "#D55E00")) +
     
     labs(
-      title = paste("Citation Age Trend by Field (Page", p, "of", num_pages, ")"),
+      title = paste("Citation Age Trend by Field (Page", p, "of", num_pages, ")", publisher_str ),
       subtitle = "SUBTITLE",
       x = "Citing Year",
       y = "Percentage and Total Numbers of Citations",
@@ -1409,6 +1462,8 @@ for (p in 1:num_pages) {
   
   print(plot_page)
 }
+
+dev.off()
 
 ##################
 ggplot(domain_results_2022$data, aes(x = year_category, y = percent_numeric, group = domain_L1, color = domain_L1)) +
@@ -1506,8 +1561,12 @@ test_df2 <- works_cited_type_articles_publisher_yr23 %>%
   filter(field_L1 == "Dentistry")
 
 
+# Top cited ? need to check code...#############!!!!!!!!!!!!!!!!!
+top_cited_journals <- rank_top_cited_journals(works_cited_type_articles_publisher_22_23_24, "so", "issn_l", "host_organization", 1000)
+
+
 # Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_springer_yr22_23_24.xlsx", "citations/springer_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+excel_files <- c("citations/works_cited_type_articles_nature_yr22_23_24.xlsx", "citations/nature_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {
@@ -1517,7 +1576,7 @@ tryCatch({
     addWorksheet(wb, sheetName = sheet_name)
     writeData(wb, sheet = sheet_name, x = df)
   }
-  saveWorkbook(wb, "citations/works_cited_type_articles_elsevier_22_23_24_v2.xlsx", overwrite = TRUE)
+  saveWorkbook(wb, "citations/works_cited_type_articles_nature_22_23_24_v2.xlsx", overwrite = TRUE)
   message("!!! Combination successful!")
 }, error = function(e) {
   message("Combination failed: ", e)
@@ -2299,7 +2358,7 @@ rank_top_cited_journals(works_cited_type_articles_sage_22_23_24, "so", 2000)
 
 rank_top_cited_journals(works_cited_type_articles_tf_22_23_24, "so", 2000)
 
-top_cited_journals <- rank_top_cited_journals(works_cited_type_articles_elsevier_22_23_24, "so", "issn_l", "host_organization", 1000)
+top_cited_journals <- rank_top_cited_journals(works_cited_type_articles_publisher_22_23_24, "so", "issn_l", "host_organization", 1000)
 
 
 #### Binding multiple years data

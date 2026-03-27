@@ -170,6 +170,7 @@ manual_authors_batch <- tribble(
   "https://openalex.org/A5031817215", "Nipavan Chiamvimonvat", "UA",
   "https://openalex.org/a5006730507", "Michael Daines", "UA",
   "https://openalex.org/A5078276804", "Tatiana Kalin", "UA",
+  "https://openalex.org/a5055276714", "Julie Ledford", "UA",
   "https://openalex.org/A5100695723", "Moulun Luo", "UA",
   "https://openalex.org/A5045587465", "Liya Yin", "UA",
   "https://openalex.org/a5066121781", "Banerjee Ronaldip", "UA",
@@ -183,6 +184,13 @@ manual_authors_batch <- tribble(
     # "ID", "Name", "Institution"
 )
 
+# NOT FOUND by Yan 
+# Finny      |Swamidoss     |UNM         |
+# |Kathleen   |Rogers        |UA          |
+#  |Reza       |Shekarriz     |UNM 
+# |Megan      |Camey         |UA          |
+  
+
 message(paste("\nProcessing", nrow(manual_authors_batch), "manual additions..."))
 
 for (i in 1:nrow(manual_authors_batch)) {
@@ -194,7 +202,7 @@ for (i in 1:nrow(manual_authors_batch)) {
   # Check if ID looks valid (basic check)
   if (!is.na(m_id) && m_id != "") {
       tryCatch({
-        Sys.sleep(2)
+        Sys.sleep(1)
         manual_author <- oa_fetch(entity = "authors", identifier = m_id)
         
         if (!is.null(manual_author) && nrow(manual_author) > 0) {
