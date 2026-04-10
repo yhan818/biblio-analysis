@@ -80,14 +80,14 @@ works_count <-oa_fetch(
 
   options = list("data-version" = 2), 
   
-  from_publication_date ="2022-01-01",
-  to_publication_date = "2022-12-31",
+  from_publication_date ="2025-01-01",
+  to_publication_date = "2025-12-31",
   #type = "article",  # comment out this line to include other types 
   count_only = TRUE,
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
-works_published_2024 <-oa_fetch(
+works_published_2025 <-oa_fetch(
   entity="works",
   
   # institutions.ror=c("03efmqc40"),  # ASU
@@ -95,8 +95,8 @@ works_published_2024 <-oa_fetch(
   
   #institutions.ror=c("00cvxb145"), # University of Washington
   #type = "article", 
-  from_publication_date ="2024-01-01",
-  to_publication_date = "2024-12-31",
+  from_publication_date ="2025-01-01",
+  to_publication_date = "2025-12-31",
   )
 
 
@@ -106,7 +106,7 @@ works_published_2024 <-oa_fetch(
 # 2023: All works: 10,559 (2025-01) 
 # 2023: journal only: 6,903 using primary_location.source.type = "journal" as a filter (not including type="repository")
 # 
-works_published_20232 <-oa_fetch(
+works_published_2023 <-oa_fetch(
   entity="works",
   
   # institutions.ror=c("03efmqc40"),  # ASU
@@ -623,7 +623,6 @@ head(matching_rows$id)
 ### Always run this year by year 
 
 works_cited <- works_cited_2024
-
 works_cited <- works_cited_2022 %>%
   mutate(authored_year = 2022) %>%
   select(authored_year, everything())  # This moves UA_authored_year to first position
@@ -940,6 +939,17 @@ publisher_str <- "Springer"
 #publisher_str <- "Nature Portfolio" 
 
 
+##################################################
+### 2026-04: Wiley
+####  https://api.openalex.org/p4310320595
+### Child publishers: https://api.openalex.org/publishers?filter=parent_publisher:https://openalex.org/p4310320595
+###     None found: 
+###     After the "Hindawi disaster" (which cost them significantly in revenue and reputation), 
+###     Wiley moved to eliminate sub-brands to simplify their reporting and oversight. 
+
+publisher_str <- "Wiley" 
+
+
 
 # testing to see if any publisher containing a string e.g, "Physics" 
 temp_publishers <- works_cited_type_articles %>%
@@ -948,7 +958,8 @@ temp_publishers <- works_cited_type_articles %>%
   filter(str_detect(host_organization, regex("KeAi", ignore_case = TRUE))) %>%
   distinct(host_organization)
 
-# Only see the publisher's child publishers in the host_organization. 
+###############################################################
+# Only USE the block code when the publisher's child publishers in the host_organization. 
 # replacing grepl("[child publisher]")
 works_cited_type_articles_c1 <- works_cited_type_articles %>%
   filter(grepl("BioMed Central", host_organization, ignore.case = TRUE))
@@ -968,6 +979,8 @@ works_cited_type_articles_c5 <- works_cited_type_articles %>%
 ## Bind its child publishers#### 
 works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
                                                     works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
+
+##########################################################################
 
 
 ######################  Filter for the PUBLISHER
@@ -1073,10 +1086,34 @@ print(final_p$other_data[1])
 # Other   351         3%
 
 
+############# Wiley ############################
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_22 (relative to 2022 ) ---"
+# Category Count Percentage
+# 2017-2021  8297        32%
+# 2012-2016  5893        22%
+#     -2011 11672        44%
+# Other   456         2%
+
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_23 (relative to 2023 ) ---"
+# Category Count Percentage
+# 2018-2022  8462        32%
+# 2013-2017  6058        23%
+#     -2012 11464        43%
+# Other   379         1%
+
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_24 (relative to 2024 ) ---"
+# Category Count Percentage
+# 2019-2023  7399        31%
+# 2014-2018  5507        23%
+#     -2013 10690        45%
+# Other   331         1%
+
+
+
 works_cited_type_articles_publisher_22_23_24 <- bind_rows(works_cited_type_articles_publisher_22, 
                                                          works_cited_type_articles_publisher_23, 
                                                          works_cited_type_articles_publisher_24)
-saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_springer_22_23_24.rds")
+saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_wiley_22_23_24.rds")
 
 
 ### comment out when loading a new publisher
@@ -1409,7 +1446,7 @@ all_field_patterns <- all_field_patterns %>%
     # Add more renames as needed: `New Name` = old_name
   )
 
-excel_file_path <- "Springer_all_field_citation_patterns.xlsx"
+excel_file_path <- "Wiley_all_field_citation_patterns.xlsx"
 write_xlsx(all_field_patterns, path = excel_file_path)
 print(paste("Data successfully saved to:", excel_file_path))
 
@@ -1427,7 +1464,7 @@ all_field_patterns_paged <- all_field_patterns %>%
 # --- 4. Iterate and Generate a Plot for Each Page Group ---
 # 1. Open the PDF device
 # Set the file name and paper dimensions (e.g., 11x8.5 for landscape)
-pdf("Cited_article_age_trends.pdf", width = 11, height = 8.5)
+pdf("Wiley_cited_article_age_trends.pdf", width = 11, height = 8.5)
 num_pages <- max(all_field_patterns_paged$page_group)
 
 for (p in 1:num_pages) {
@@ -1438,7 +1475,7 @@ for (p in 1:num_pages) {
   plot_page <- ggplot(data_current_page, 
                       aes(x = factor(CITED_ARTICLE_PUB_YR), 
                           y = percent_numeric, 
-                          fill = age_group_simplified)) + 
+                          fill = CITED_ARTICLE_AGE)) + 
     
     geom_col(position = "dodge", color = "black", alpha = 0.8) +
     
