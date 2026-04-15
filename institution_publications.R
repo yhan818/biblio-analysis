@@ -1412,21 +1412,21 @@ all_field_patterns <- bind_rows(
   # Create Simplified Age Group
   mutate(
     age_group_simplified = case_when(
-      # Cat_1 (e.g., 2019-2024) = "Year 0-5"
-      year_category == paste0(Citing_Year - 5, "-", Citing_Year) ~ "Year 0-5",
+      # Cat_1 (e.g., 2019-2024) = "0-5 years"
+      year_category == paste0(Citing_Year - 5, "-", Citing_Year) ~ "0-5 years",
       
-      # Cat_2 (e.g., 2014-2018) = "Year 6-10"
-      grepl("^-", year_category) == FALSE & grepl("-", year_category) == TRUE ~ "Year 6-10",
+      # Cat_2 (e.g., 2014-2018) = "6-10 years"
+      grepl("^-", year_category) == FALSE & grepl("-", year_category) == TRUE ~ "6-10 years",
       
-      # Cat_3 (e.g., -2013) = "Year 11+"
-      grepl("^-", year_category) == TRUE ~ "Year 11+",
+      # Cat_3 (e.g., -2013) = "11+ years"
+      grepl("^-", year_category) == TRUE ~ "11+ years",
       
       # Default should ideally not happen after NA filtering, but is still 'Other'
       TRUE ~ "Other"
     ),
     # Ensure simplified groups are factored in a clear order
     age_group_simplified = factor(age_group_simplified, 
-                                  levels = c("Year 0-5", "Year 6-10", "Year 11+", "Other"))
+                                  levels = c("0-5 years", "6-10 years", "11+ years", "Other"))
   ) %>%
   
   # 🛑 NEW STEP: Remove the "Other" category from the visualization data set
@@ -1439,10 +1439,11 @@ all_field_patterns <- bind_rows(
 # Rename columns before export
 all_field_patterns <- all_field_patterns %>%
   rename(
-    `CITED_ARTICLE_PUB_YR`      = Citing_Year,
-    `CITED_ARTICLE_AGE`         = age_group_simplified,
-    `field_L1`      = field_L1,
-    `CITED_ARTICLE_PUB_YR_CAT` = year_category
+    `Field (Level 1)`      = field_L1,
+    `CITED_ARTICLE_YR_CAT` = year_category, 
+    `CITING_ARTICLE_PUB_YR`= Citing_Year,
+    `CITING_ARTICLE_AGE`    = age_group_simplified,
+    
     # Add more renames as needed: `New Name` = old_name
   )
 
@@ -1450,6 +1451,7 @@ excel_file_path <- "Wiley_all_field_citation_patterns.xlsx"
 write_xlsx(all_field_patterns, path = excel_file_path)
 print(paste("Data successfully saved to:", excel_file_path))
 
+############ NO NEED TO HAVE PAGE GrOUP
 # --- 3. Create Page Groups (4 fields per page) ---
 fields_to_page <- all_field_patterns %>%
   ungroup() %>%
@@ -1460,61 +1462,85 @@ fields_to_page <- all_field_patterns %>%
 all_field_patterns_paged <- all_field_patterns %>%
   left_join(fields_to_page, by = "field_L1") %>%
   filter(!is.na(field_L1))
+##########################3
 
-# --- 4. Iterate and Generate a Plot for Each Page Group ---
-# 1. Open the PDF device
-# Set the file name and paper dimensions (e.g., 11x8.5 for landscape)
-pdf("Wiley_cited_article_age_trends.pdf", width = 11, height = 8.5)
-num_pages <- max(all_field_patterns_paged$page_group)
+# --- 4. PLOT 
 
-for (p in 1:num_pages) {
-  
-  data_current_page <- all_field_patterns_paged %>%
-    filter(page_group == p)
-  
-  plot_page <- ggplot(data_current_page, 
-                      aes(x = factor(CITED_ARTICLE_PUB_YR), 
-                          y = percent_numeric, 
-                          fill = CITED_ARTICLE_AGE)) + 
-    
-    geom_col(position = "dodge", color = "black", alpha = 0.8) +
-    
-    geom_text(aes(label = paste0(scales::percent(percent_numeric, accuracy = 1), "\n(", n, ")")),
-              position = position_dodge(width = 0.9), 
-              vjust = -0.1, # Adjusted vjust slightly to keep the text centered above the bar
-              size = 2.5) +
-    
-    facet_wrap(~ field_L1, 
-               scales = "free_y",
-               labeller = label_wrap_gen(width = 20)) + 
-    
-    scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
-    
-    # 🛑 MODIFIED: Removed "Other" from the scale_fill_manual values, 
-    # but kept the three primary colors.
-    scale_fill_manual(values = c("Year 0-5" = "#0072B2",
-                                 "Year 6-10" = "#F0E442",
-                                 "Year 11+" = "#D55E00")) +
-    
-    labs(
-      title = paste("Citation Age Trend by Field (Page", p, "of", num_pages, ")", publisher_str ),
-      subtitle = "SUBTITLE",
-      x = "UA ARTICLE PUB YR",
-      y = "Percent and Total Numbers of Citations",
-      fill = "CITED_ARTICLE_AGE"
-    ) +
-    theme_minimal() +
-    theme(
-      legend.position = "bottom",
-      axis.text.x = element_text(angle = 45, hjust = 1)
-    )
-  
-  print(plot_page)
+# 1. Clean up any previous failed PDF attempts
+while (!is.null(dev.list())) dev.off()
+
+# Clean up publisher_str to ensure it creates a valid filename
+clean_publisher <- gsub("[^A-Za-z0-9_]", "_", publisher_str)
+file_name <- paste0(clean_publisher, "_Field_Trends.pdf")
+
+message("Saving PDF to: ", file.path(getwd(), file_name))
+
+# 2. Open the PDF
+pdf(file_name, width = 11, height = 8.5)
+
+# 3. Get the list of unique fields
+unique_fields <- unique(na.omit(all_field_patterns$`Field (Level 1)`))
+
+if(length(unique_fields) == 0) {
+  warning("unique_fields is empty. The loop will not run.")
 }
 
-# Reset the stuck RStudio graphics device
-dev.off()          # Close the broken device
-dev.off()          # Sometimes needed twice
+# 4. The Loop
+for (current_field in unique_fields) {
+  
+  message("Processing field: ", current_field)
+  
+  data_subset <- all_field_patterns %>%
+    filter(`Field (Level 1)` == current_field)
+  
+  if(nrow(data_subset) == 0) {
+    message(" -> No data found, skipping.")
+    next
+  }
+  
+  # ERROR HANDLING: Wrap the plot in tryCatch
+  tryCatch({
+    plot_page <- ggplot(data_subset, 
+                        aes(x = factor(CITING_ARTICLE_PUB_YR), 
+                            y = percent_numeric, 
+                            fill = CITING_ARTICLE_AGE)) + 
+      geom_col(position = "dodge", color = "black", alpha = 0.8) +
+      geom_text(aes(label = paste0(scales::percent(percent_numeric, accuracy = 1), 
+                                   "\n(", n, ")")),
+                position = position_dodge(width = 0.9), 
+                vjust = -0.3, 
+                size = 3) + 
+      scale_y_continuous(labels = scales::percent, 
+                         expand = expansion(mult = c(0, 0.2))) + 
+      scale_fill_manual(values = c("0-5 years" = "#0072B2",
+                                   "6-10 years" = "#F0E442",
+                                   "11+ years" = "#D55E00")) +
+      labs(
+        title = paste("Citation Age Trend:", current_field),
+        subtitle = paste("Publisher Analysis:", publisher_str),
+        x = "Article Publication Year",
+        y = "Percentage of Total Citations",
+        fill = "Citation Age Group"
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(size = 16, face = "bold")
+      )
+    
+    print(plot_page)
+    message(" -> Successfully plotted.")
+    
+  }, error = function(e) {
+    message(" -> ERROR plotting this field: ", e$message)
+  })
+}
+
+# 5. Finalize the file
+dev.off()
+message("Done! PDF finalized.")
+
 
 # Now your plot should render in the Plots pane again
 print(p)
@@ -1559,7 +1585,7 @@ results2 <- count_cited_works_by_group(works_cited_type_articles_publisher_yr23,
 
 ggplot(results2$data, aes(x = field_L1, y = n, fill = year_category)) +
   geom_col() +
-  labs(fill = "CITED_ARTICLE_AGE") +
+  labs(fill = paste(publisher_str, "CITING_ARTICLE_AGE")) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 ggplot(results2$data, aes(x = year_category, y = field_L1, fill = percent_numeric)) +
@@ -1567,9 +1593,9 @@ ggplot(results2$data, aes(x = year_category, y = field_L1, fill = percent_numeri
   geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)), color = "black", size = 3.5) +
   scale_fill_gradient(low = "#e5f5e0", high = "#31a354") + # Green scale (or try "Blues")
   labs(
-    title = "Citation Age Heatmap",
+    title = paste(publisher_str, "Citation Age Heatmap"),
     subtitle = "Darker colors indicate a higher concentration of citations",
-    x = "CITED_ARTICLE_AGE",
+    x = "CITING_ARTICLE_AGE",
     y = "Field",
     fill = "Proportion"
   ) +
@@ -1581,7 +1607,7 @@ ggplot(results2$data, aes(x = year_category, y = percent_numeric, group = field_
   geom_point(size = 3) +
   scale_y_continuous(labels = scales::percent) +
   labs(
-    title = "Citation Change Rates by Field",
+    title = paste(publisher_str, "Citation Change Rates by Field"),
     x = "CITED_ARTICLE_AGE",
     y = "Share of Total Citations",
     color = "Domain"
@@ -1601,7 +1627,7 @@ ggplot(results2$data, aes(x = year_category, y = n)) +
   ) + 
   
   labs(
-    title = "Citation Volume Profiles",
+    title = paste(publisher_str, "Citation Volume Profiles"),
     subtitle = "Note: Y-axis scales differ by field",
     x = "CITED_ARTICLE_AGE",
     y = "Count"
