@@ -42,10 +42,11 @@ source("my_functions.R")
 # Retrieving all publications association with UArizona's ROR (Research Organization Registry) ID.
 # UA works_published per year is ~9,000. For running 2 years data, need better computer or crashed R studio.
 # After DataCite integration 92 M records on 2025-09, it does NOT show a significant number UA publications added 
-# Year 2024:  7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
-# Year 2023: 10,625 (2025-11), <<< 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
-# Year 2022:  8,871 (2025-11), <<< 8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
-# Year 2021:  9,336 (7,048 type-journal articles and reviews)
+# Year 2025:  9,067 (2026-05)
+# Year 2024:  9,383 (2026-05) <<< 7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
+# Year 2023: 11,034 (2026-05) <<< 10,625 (2025-11), <<< 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
+# Year 2022:  9,136 (2026-05) <<< 8,871 (2025-11), <<< 8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
+# Year 2021:  9,500 (2026-05) <<< 9,336 (2025-11) (7,048 type-journal articles and reviews)
 # Year 2020: 
 # Year 2019: 8,847 
 # 2023-current: 14,660 works : 5 min to get UAworks with 3 GB mem, 264 mins to pull 372,000 reference's data with 8.6 GB  
@@ -80,8 +81,8 @@ works_count <-oa_fetch(
 
   options = list("data-version" = 2), 
   
-  from_publication_date ="2025-01-01",
-  to_publication_date = "2025-12-31",
+  from_publication_date ="2021-01-01",
+  to_publication_date = "2021-12-31",
   #type = "article",  # comment out this line to include other types 
   count_only = TRUE,
 )
@@ -519,6 +520,9 @@ works_cited_2023 <- readRDS("../works_cited_2023.rds")
 
 works_cited_2024 <- readRDS("../works_cited_2024.rds")
 
+# 
+df1 <-works_cited_2024
+record <- df1[grepl("https://openalex.org/W3217039319", df1$id),]
 
 # compare df again before binding rows
 matching_list <- list(works_cited_2022, works_cited_2023, works_cited_2024) 
@@ -622,15 +626,18 @@ head(matching_rows$id)
 # First getting all the works_cited by year data. year by year. 2022 > 2023 > 2024 
 ### Always run this year by year 
 
-works_cited <- works_cited_2024
+works_cited <- works_cited_2022
 works_cited <- works_cited_2022 %>%
   mutate(authored_year = 2022) %>%
   select(authored_year, everything())  # This moves UA_authored_year to first position
 
+
+works_cited <- works_cited_2023
 works_cited <- works_cited_2023 %>%
   mutate(authored_year = 2023) %>%
   select(authored_year, everything())  # This moves UA_authored_year to first position
 
+works_cited <- works_cited_2024
 works_cited <- works_cited_2024 %>%
   mutate(authored_year = 2024) %>%
   select(authored_year, everything())  # This moves UA_authored_year to first position
@@ -797,25 +804,6 @@ publisher_NA <- publisher_NA %>%
 publisher_NA <- publisher_NA %>%
   mutate(across(where(is.character), ~ ifelse(nchar(.) > 32767, substr(., 1, 32767), .)))
 
-### old code: 2024-12
-publisher_microbiology <- works_cited_source_issn[grepl(publisher_name, works_cited_source_issn$host_organization, ignore.case = TRUE), ]
-
-publisher_plos <- works_cited_source_issn[grepl("Public Library of Science", works_cited_source_issn$host_organization_name, ignore.case = TRUE), ]
-publisher_aaas <- works_cited_source_issn[grepl("American Association for the Advancement of Science", works_cited_source_issn$host_organization_name, ignore.case = TRUE), ]
-publisher_ua  <- works_cited_source_issn[grepl("University of Arizona",       works_cited_source_issn$host_organization, ignore.case = TRUE), ]
-publisher_uap <- works_cited_source_issn[grepl("University of Arizona Press", works_cited_source_issn$host_organization, ignore.case = TRUE), ]
-works_cited_source_issn_cell <- works_cited_source_issn[grepl("Cell Press", works_cited_source_issn$host_organization, ignore.case = TRUE), ]
-
-publisher_cell_press_unique <- unique(publisher_cell_press)
-df <-publisher_cell_press
-
-# IWA: cited (yyyy): 19 (2019), 34 (2020), 21 (2021), 19 (2022),   
-works_cited_source_issn_iwa <- works_cited_source_issn[grepl("IWA Publishing", works_cited_source_issn$host_organization_name, ignore.case = TRUE), ]
-truncate_and_write(works_cited_source_issn_iwa)
-
-id_counts <-table(publisher_iwa$id)
-duplicateds <- id_counts[id_counts >= 1]
-print(id_counts)
 
 # APS: 
 # 2023: journal (article, review): 166; Non-journal (book-chapter): 0
@@ -861,10 +849,6 @@ works_cited_type_nonarticles_brill <- works_cited_type_nonarticles %>%
 works_published_brill <- works_published %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
 
-### Test data
-search_string <- "https://openalex.org/W2944198613"
-
-
 works_cited_type_articles_brill_22 <- works_cited_type_articles_brill
 works_cited_type_articles_brill_23 <- works_cited_type_articles_brill
 works_cited_type_articles_brill_24 <- works_cited_type_articles_brill
@@ -895,11 +879,12 @@ tryCatch({
   print(e)
 })
 
-
+##############################################################################
 ##### The following code can be used for any big publishers. 
 
-
-#### 2025-10: Elsevier
+##########################################################################
+################## Beginning Elsevier Block
+#### 2026-04 /  2025-10: Elsevier
 
 # To find Elsevier’s children in OpenAlex:
 ### Step 1: Identify Elsevier’s publisher ID (P4310320)
@@ -907,13 +892,41 @@ tryCatch({
 ### Step 3: confirm hierarchy_level = 1, ptionally inspect lineage to understand deeper structure
 ### OpenAlex provides all three fields (parent_publisher, lineage, hierarchy_level) for this exact purpose.
 
+publisher_str <- "Elsevier"
 
-#publisher_str <- "Elsevier"
+###############################################################
+# Only USE the block code when the publisher's child publishers in the host_organization. 
+# replacing grepl("[child publisher]")
+works_cited_type_articles_c1 <- works_cited_type_articles %>%
+  filter(grepl("Cell Press", host_organization_name, ignore.case = TRUE))
+
+works_cited_type_articles_c2 <- works_cited_type_articles %>%
+  filter(grepl("Academic Press", host_organization_name, ignore.case = TRUE))
+
+works_cited_type_articles_c3 <- works_cited_type_articles %>%
+  filter(grepl("Churchill Livingstone", host_organization_name, ignore.case = TRUE))
+
+works_cited_type_articles_c4 <- works_cited_type_articles %>%
+  filter(grepl("KeAi", host_organization_name, ignore.case = TRUE))
+
+works_cited_type_articles_c5 <- works_cited_type_articles %>%
+  filter(grepl("Saunders", host_organization, ignore.case = TRUE))
+
+## Bind its child publishers#### 
+works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
+                                                       works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
+
+##########################################################################
+############# END of Elsevier Block 
+
+
 
 #################################################
+########### Springer (excluding: Nature ) Block: Begining 
 ### 2026-03: Springer
 ### "https://openalex.org/P4310319965"
-publisher_str <- "Springer" 
+# publisher_str <- "Springer" 
+
 ### Finding its children publishers: https://api.openalex.org/publishers?filter=parent_publisher:https://openalex.org/P4310319965
 ### Springer Nature (Germany) is the parent
 ### Child publishers:
@@ -937,18 +950,6 @@ publisher_str <- "Springer"
 ### https://api.openalex.org/p4310319908
 ### None children publisher
 #publisher_str <- "Nature Portfolio" 
-
-
-##################################################
-### 2026-04: Wiley
-####  https://api.openalex.org/p4310320595
-### Child publishers: https://api.openalex.org/publishers?filter=parent_publisher:https://openalex.org/p4310320595
-###     None found: 
-###     After the "Hindawi disaster" (which cost them significantly in revenue and reputation), 
-###     Wiley moved to eliminate sub-brands to simplify their reporting and oversight. 
-
-publisher_str <- "Wiley" 
-
 
 
 # testing to see if any publisher containing a string e.g, "Physics" 
@@ -980,12 +981,29 @@ works_cited_type_articles_c5 <- works_cited_type_articles %>%
 works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
                                                     works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
 
+##########################################################################################
+### END OF Springer Block 
+##########################################
+
 ##########################################################################
+############# Beginning of Wiley Block
+##################################################
+### 2026-04: Wiley
+####  https://api.openalex.org/p4310320595
+### Child publishers: https://api.openalex.org/publishers?filter=parent_publisher:https://openalex.org/p4310320595
+###     None found: 
+###     After the "Hindawi disaster" (which cost them significantly in revenue and reputation), 
+###     Wiley moved to eliminate sub-brands to simplify their reporting and oversight. 
+
+publisher_str <- "Wiley" 
+
+
+############# END of Wilegy Block #############
+#########################################
+
 
 
 ######################  Filter for the PUBLISHER
-########################
-###########################
 # Only see the publisher ("publisher_str") in the host_organization. 
 works_cited_type_articles_publisher <- works_cited_type_articles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
@@ -1043,6 +1061,31 @@ print(final_p$other_data[1])
 
 
 ######### Springer:
+# final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_22, 2022)
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_22 (relative to 2022 ) ---"
+# Category Count Percentage
+# 2017-2021  7034        35%
+# 2012-2016  4938        25%
+#     -2011  7559        38%
+# Other   373         2%
+
+# final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_23, 2023)
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_23 (relative to 2023 ) ---"
+# Category Count Percentage
+# 2018-2022  7176        35%
+# 2013-2017  5186        25%
+#     -2012  7728        38%
+# Other   351         2%
+
+#  final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_24, 2024)
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_24 (relative to 2024 ) ---"
+# Category Count Percentage
+# 2019-2023  6509        36%
+# 2014-2018  4421        25%
+#     -2013  6693        37%
+# Other   265         1%
+
+##################################3 check 
 # [1] "--- Cited Works Summary for: works_cited_type_articles_springer (relative to 2022 ) ---"
 # Category Count Percentage
 # 2017-2021  5450        33%
@@ -1113,7 +1156,7 @@ print(final_p$other_data[1])
 works_cited_type_articles_publisher_22_23_24 <- bind_rows(works_cited_type_articles_publisher_22, 
                                                          works_cited_type_articles_publisher_23, 
                                                          works_cited_type_articles_publisher_24)
-saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_wiley_22_23_24.rds")
+saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_springer_22_23_24_v2.rds")
 
 
 ### comment out when loading a new publisher
@@ -1442,12 +1485,12 @@ all_field_patterns <- all_field_patterns %>%
     `Field (Level 1)`      = field_L1,
     `CITED_ARTICLE_YR_CAT` = year_category, 
     `CITING_ARTICLE_PUB_YR`= Citing_Year,
-    `CITING_ARTICLE_AGE`    = age_group_simplified,
+    `CITED_ARTICLE_AGE`    = age_group_simplified,
     
     # Add more renames as needed: `New Name` = old_name
   )
 
-excel_file_path <- "Wiley_all_field_citation_patterns.xlsx"
+excel_file_path <- "Springer_all_field_citation_patterns.xlsx"
 write_xlsx(all_field_patterns, path = excel_file_path)
 print(paste("Data successfully saved to:", excel_file_path))
 
@@ -1503,7 +1546,7 @@ for (current_field in unique_fields) {
     plot_page <- ggplot(data_subset, 
                         aes(x = factor(CITING_ARTICLE_PUB_YR), 
                             y = percent_numeric, 
-                            fill = CITING_ARTICLE_AGE)) + 
+                            fill = CITED_ARTICLE_AGE)) + 
       geom_col(position = "dodge", color = "black", alpha = 0.8) +
       geom_text(aes(label = paste0(scales::percent(percent_numeric, accuracy = 1), 
                                    "\n(", n, ")")),
@@ -1580,12 +1623,25 @@ ggplot(domain_results_2022$data, aes(x = year_category, y = n)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
+
+############# Testing CS
+
+
+library(dplyr)
+library(stringr)
+
+df <-works_cited_type_articles_publisher_yr24
+result <- df %>%
+  filter(str_detect(field_L1, regex("computer science", ignore_case = TRUE)))
+
+sample <- head(result, 10)
+
 ======================================== Stop here
 results2 <- count_cited_works_by_group(works_cited_type_articles_publisher_yr23, 2023, "field_L1", format_output = FALSE)
 
 ggplot(results2$data, aes(x = field_L1, y = n, fill = year_category)) +
   geom_col() +
-  labs(fill = paste(publisher_str, "CITING_ARTICLE_AGE")) +
+  labs(fill = paste(publisher_str, "CITED_ARTICLE_AGE")) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 ggplot(results2$data, aes(x = year_category, y = field_L1, fill = percent_numeric)) +
@@ -1595,7 +1651,7 @@ ggplot(results2$data, aes(x = year_category, y = field_L1, fill = percent_numeri
   labs(
     title = paste(publisher_str, "Citation Age Heatmap"),
     subtitle = "Darker colors indicate a higher concentration of citations",
-    x = "CITING_ARTICLE_AGE",
+    x = "CITED_ARTICLE_AGE",
     y = "Field",
     fill = "Proportion"
   ) +
