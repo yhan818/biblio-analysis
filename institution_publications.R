@@ -631,7 +631,6 @@ works_cited <- works_cited_2022 %>%
   mutate(authored_year = 2022) %>%
   select(authored_year, everything())  # This moves UA_authored_year to first position
 
-
 works_cited <- works_cited_2023
 works_cited <- works_cited_2023 %>%
   mutate(authored_year = 2023) %>%
@@ -655,18 +654,6 @@ unique(works_cited_type_nonarticles$type)
 unique_issns2 <- unique(works_cited_type_nonarticles$issn_l)
 number_of_unique_issns2 <- length(unique_issns2)
 
-####################################################################
-#########################################################################
-# Step 2.2: The other way is to filter rows where issn_l is neither NA nor an empty string
-# works_cited_source_issn_index <- !is.na(works_cited$issn_l) & works_cited$issn_l != ""
-#works_cited_source_issn <- works_cited[works_cited_source_issn_index, ]
-# works_cited_source_nonissn <- works_cited[!works_cited_source_issn_index, ]
-#############################
-# Filter records where type is "article" (excluding conference paper etc )
-# works_cited_source_issn_articles    <- works_cited_source_issn[works_cited_source_issn$type == "article", ]
-# works_cited_source_issn_nonarticles <- works_cited_source_issn[works_cited_source_issn$type != "article", ]
-# works_cited_source_nonissn_articles    <- works_cited_source_nonissn[works_cited_source_nonissn$type == "article", ]
-# works_cited_source_nonissn_nonarticles <- works_cited_source_nonissn[works_cited_source_nonissn$type != "article", ]
 
 #######################################################################
 ### Step 3: Getting analysis for publisher
@@ -896,18 +883,21 @@ publisher_str <- "Elsevier"
 
 ###############################################################
 # Only USE the block code when the publisher's child publishers in the host_organization. 
+### OpenAlex data structure changed 2025 added a couple of new fields. "host_organization" was name and is now id. 
+### OpenAlex added "host_organization_name" col
+
 # replacing grepl("[child publisher]")
 works_cited_type_articles_c1 <- works_cited_type_articles %>%
-  filter(grepl("Cell Press", host_organization_name, ignore.case = TRUE))
+  filter(grepl("Cell Press", host_organization, ignore.case = TRUE))
 
 works_cited_type_articles_c2 <- works_cited_type_articles %>%
-  filter(grepl("Academic Press", host_organization_name, ignore.case = TRUE))
+  filter(grepl("Academic Press", host_organization, ignore.case = TRUE))
 
 works_cited_type_articles_c3 <- works_cited_type_articles %>%
-  filter(grepl("Churchill Livingstone", host_organization_name, ignore.case = TRUE))
+  filter(grepl("Churchill Livingstone", host_organization, ignore.case = TRUE))
 
 works_cited_type_articles_c4 <- works_cited_type_articles %>%
-  filter(grepl("KeAi", host_organization_name, ignore.case = TRUE))
+  filter(grepl("KeAi", host_organization, ignore.case = TRUE))
 
 works_cited_type_articles_c5 <- works_cited_type_articles %>%
   filter(grepl("Saunders", host_organization, ignore.case = TRUE))
@@ -920,10 +910,9 @@ works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles
 ############# END of Elsevier Block 
 
 
-
 #################################################
-########### Springer (excluding: Nature ) Block: Begining 
-### 2026-03: Springer
+########### Springer (excluding: Nature Portfolio and Biomed Central ) Block: Beginning 
+### 2026-05: Springer
 ### "https://openalex.org/P4310319965"
 # publisher_str <- "Springer" 
 
@@ -931,7 +920,7 @@ works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles
 ### Springer Nature (Germany) is the parent
 ### Child publishers:
 ### "Springer Science+Business Media"
-### "Nature Portfolio"
+### 1: "Nature Portfolio"
 ### 2: "BioMed Central"
 ### 3: "Pleiades Publishing"
 ### 4: "Springer International Publishing"
@@ -949,8 +938,7 @@ works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles
 ### 2026-03: Nature Portfolio:  
 ### https://api.openalex.org/p4310319908
 ### None children publisher
-#publisher_str <- "Nature Portfolio" 
-
+publisher_str <- "Nature Portfolio" 
 
 # testing to see if any publisher containing a string e.g, "Physics" 
 temp_publishers <- works_cited_type_articles %>%
@@ -959,11 +947,19 @@ temp_publishers <- works_cited_type_articles %>%
   filter(str_detect(host_organization, regex("KeAi", ignore_case = TRUE))) %>%
   distinct(host_organization)
 
+################################################################
+#####   2026-04: BioMed Central
+publisher_str <- "BioMed Central"
 ###############################################################
 # Only USE the block code when the publisher's child publishers in the host_organization. 
 # replacing grepl("[child publisher]")
-works_cited_type_articles_c1 <- works_cited_type_articles %>%
-  filter(grepl("BioMed Central", host_organization, ignore.case = TRUE))
+
+
+###############################################
+######### Springer Child Publishers: 
+### 2026-05: Springer
+### "https://openalex.org/P4310319965"
+publisher_str <- "Springer" 
 
 works_cited_type_articles_c2 <- works_cited_type_articles %>%
   filter(grepl("Pleiades Publishing", host_organization, ignore.case = TRUE))
@@ -978,7 +974,7 @@ works_cited_type_articles_c5 <- works_cited_type_articles %>%
   filter(grepl("Spektrum-Verlag", host_organization, ignore.case = TRUE))
 
 ## Bind its child publishers#### 
-works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, 
+works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles_c2, 
                                                     works_cited_type_articles_c3, works_cited_type_articles_c4, works_cited_type_articles_c5)
 
 ##########################################################################################
@@ -997,13 +993,42 @@ works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles
 
 publisher_str <- "Wiley" 
 
-
 ############# END of Wilegy Block #############
 #########################################
 
 
+##########################################################################
+############# Beginning of Taylor & Francis Block
+##################################################
+### 2026-04: Taylor & Francis
+####  https://api.openalex.org/p4310320547
+### Child publishers: https://api.openalex.org/publishers?filter=parent_publisher:https://api.openalex.org/p4310320547
+###     None found: 
+###     After the "Hindawi disaster" (which cost them significantly in revenue and reputation), 
+###     Wiley moved to eliminate sub-brands to simplify their reporting and oversight. 
 
+publisher_str <- "Taylor & Francis" 
+
+######### TF Child Publishers: 
+works_cited_type_articles_c1 <- works_cited_type_articles %>%
+  filter(grepl("CRC Press", host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_c2 <- works_cited_type_articles %>%
+  filter(grepl("Heldref Publications", host_organization, ignore.case = TRUE))
+
+works_cited_type_articles_c3 <- works_cited_type_articles %>%
+  filter(grepl("Co-Action Publishing", host_organization, ignore.case = TRUE))
+
+## Bind its child publishers#### 
+works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles_c1, works_cited_type_articles_c2, works_cited_type_articles_c3) 
+
+############# END of T&F Block #############
+#########################################
+
+
+###################################################################
 ######################  Filter for the PUBLISHER
+####################################################################
 # Only see the publisher ("publisher_str") in the host_organization. 
 works_cited_type_articles_publisher <- works_cited_type_articles %>%
   filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
@@ -1020,7 +1045,10 @@ works_cited_type_articles_publisher <- bind_rows(works_cited_type_articles_child
 unique_publishers <- unique(works_cited_type_articles_publisher$host_organization)
 print(unique_publishers)
 
+############################################## NEED TO GET ALL THESE DATA BEFORE GOING NEXT STEPS
 # Get 2022 data, then 2023, then 2024
+#works_cited_type_articles_publisher <- works_cited_type_articles_c1
+
 works_cited_type_articles_publisher_22 <- works_cited_type_articles_publisher
 
 works_cited_type_articles_publisher_23 <- works_cited_type_articles_publisher
@@ -1028,6 +1056,7 @@ works_cited_type_articles_publisher_23 <- works_cited_type_articles_publisher
 works_cited_type_articles_publisher_24 <- works_cited_type_articles_publisher
 
 
+################################## NEXT STEP 
 
 final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_22, 2022)
 final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_23, 2023)
@@ -1128,6 +1157,28 @@ print(final_p$other_data[1])
 #     -2013  2846        23%
 # Other   351         3%
 
+############## BioMed Central ###################
+# "--- Cited Works Summary for: works_cited_type_articles_publisher_22 (relative to 2022 ) ---"
+# Category Count Percentage
+# 2017-2021  1479        46%
+# 2012-2016  1005        31%
+#     -2011   672        21%
+# Other    63         2%
+
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_23 (relative to 2023 ) ---"
+# Category Count Percentage
+# 2018-2022  1462        44%
+# 2013-2017  1037        31%
+#     -2012   721        22%
+# Other    73         2%
+
+# [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_24 (relative to 2024 ) ---"
+# Category Count Percentage
+# 2019-2023  1478        44%
+# 2014-2018   947        28%
+#     -2013   854        26%
+# Other    61         2%
+
 
 ############# Wiley ############################
 # [1] "--- Cited Works Summary for: works_cited_type_articles_publisher_22 (relative to 2022 ) ---"
@@ -1153,10 +1204,11 @@ print(final_p$other_data[1])
 
 
 
+
 works_cited_type_articles_publisher_22_23_24 <- bind_rows(works_cited_type_articles_publisher_22, 
                                                          works_cited_type_articles_publisher_23, 
                                                          works_cited_type_articles_publisher_24)
-saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_springer_22_23_24_v2.rds")
+saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_tf_22_23_24.rds")
 
 
 ### comment out when loading a new publisher
@@ -1179,7 +1231,7 @@ write_df_to_excel(works_cited_type_articles_publisher_yr22_23_24)
 # This will count every unique value in the 'domain_L1' column
 #df <- works_cited_type_articles_publisher_yr22_23_24
 
-df_22 <- works_cited_type_articles_publisher_yr22
+df_22 <- works_citeyd_type_articles_publisher_yr22
 df_23 <- works_cited_type_articles_publisher_yr23
 df_24 <- works_cited_type_articles_publisher_yr24
 
@@ -1383,7 +1435,7 @@ ggplot(single_domain_data,
   scale_fill_brewer(palette = "Set1") + # Using a reliable RColorBrewer palette (Set1 has 9 colors)
   
   labs(
-    title = paste("Citation Age Trend for:", domain_to_plot, "(2022-2024)"),
+    title = paste(publisher_str, ": Citation Age Trend for: ", domain_to_plot, "(2022-2024)"),
     subtitle = "Change in the proportion of citations from different age categories.",
     x = "UA ARTICLE PUB YR",
     y = "% of Citations",
@@ -1409,7 +1461,7 @@ ggplot(all_domain_patterns,
   scale_fill_brewer(palette = "Set1") + 
   
   labs(
-    title = "Cited Article Age Trend by Domain (2022-2024)",
+    title = paste(publisher_str, ": Cited Article Age Trend by Domain (2022-2024)"),
     subtitle = "Separate panels show the change for each domain over time",
     x = "UA ARTICLE PUB YR",
     y = "% of Citations",
@@ -1490,22 +1542,10 @@ all_field_patterns <- all_field_patterns %>%
     # Add more renames as needed: `New Name` = old_name
   )
 
-excel_file_path <- "Springer_all_field_citation_patterns.xlsx"
+excel_file_path <- "TF_all_field_citation_patterns.xlsx"
 write_xlsx(all_field_patterns, path = excel_file_path)
 print(paste("Data successfully saved to:", excel_file_path))
 
-############ NO NEED TO HAVE PAGE GrOUP
-# --- 3. Create Page Groups (4 fields per page) ---
-fields_to_page <- all_field_patterns %>%
-  ungroup() %>%
-  distinct(field_L1) %>%
-  arrange(field_L1) %>%
-  mutate(page_group = ceiling(row_number() / 4)) 
-
-all_field_patterns_paged <- all_field_patterns %>%
-  left_join(fields_to_page, by = "field_L1") %>%
-  filter(!is.na(field_L1))
-##########################3
 
 # --- 4. PLOT 
 
@@ -1589,22 +1629,41 @@ message("Done! PDF finalized.")
 print(p)
 
 ##################
+
+# Define the order so the lines connect chronologically
+# Do this once:
+domain_results_2022$data$year_category <- factor(
+  domain_results_2022$data$year_category,
+  levels = c("2017-2022", "2012-2016", "-2011"),
+  labels = c("0-5 years", "6-10 years", "11+ years")
+)
+
+# Now, any ggplot you make will automatically use the right order and labels!
+# Now run your ggplot code
+print(p)
 p <- ggplot(domain_results_2022$data, 
             aes(x = year_category, y = percent_numeric, 
                 group = domain_L1, color = domain_L1)) +
   geom_line(linewidth = 1.2, alpha = 0.8) +
   geom_point(size = 3) +
+  # Map the old category names to the new descriptive labels
+  scale_x_discrete(labels = c("2017-2022" = "0-5 years", 
+                              "2012-2016" = "6-10 years", 
+                              "-2011" = "11+ years")) +
   scale_y_continuous(labels = scales::percent) +
   labs(
     title = "Citation Change Rates by Domain",
-    x = "CITING ARTICLE PUB YR Category",
+    x = "CITED ARTICLE AGE",
     y = "Share of Total Citations",
     color = "Domain"
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
 
+ggsave("TF_citation_change_rates.pdf", width = 11, height = 8.5)
+
 print(p)  # <-- Force it to render
+
 
 dev.new()   # Force a new graphics window
 print(p)
@@ -1614,7 +1673,7 @@ ggplot(domain_results_2022$data, aes(x = year_category, y = n)) +
   geom_col(fill = "#4c8cb5") + # A nice steel blue
   facet_wrap(~domain_L1, scales = "free_y") + # "free_y" lets each chart have its own scale
   labs(
-    title = "Citation Volume Profiles",
+    title = paste(publisher_str, ": Citation Volume Profiles"),
     subtitle = "Note: Y-axis scales differ by domain",
     x = "CITED ARTICLE PUB YR CAT",
     y = "Count"
@@ -1622,9 +1681,11 @@ ggplot(domain_results_2022$data, aes(x = year_category, y = n)) +
   theme_light() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# 2. Save it to PDF
+ggsave("TF_citation_profiles.pdf", width = 11, height = 8.5)
 
 
-############# Testing CS
+dev.off()
 
 
 library(dplyr)
@@ -1636,67 +1697,67 @@ result <- df %>%
 
 sample <- head(result, 10)
 
-======================================== Stop here
+### HEAT map
+
+results1 <- count_cited_works_by_group(works_cited_type_articles_publisher_yr22, 2022, "field_L1", format_output = FALSE)
+results1$data$year_category <- factor(
+  results1$data$year_category,
+  levels = c("2017-2022", "2012-2016", "-2011"),
+  labels = c("0-5 years", "6-10 years", "11+ years")
+)
+
+
 results2 <- count_cited_works_by_group(works_cited_type_articles_publisher_yr23, 2023, "field_L1", format_output = FALSE)
+results2$data$year_category <- factor(
+  results2$data$year_category,
+  levels = c("2018-2023", "2013-2017", "-2012"),
+  labels = c("0-5 years", "6-10 years", "11+ years")
+)
 
-ggplot(results2$data, aes(x = field_L1, y = n, fill = year_category)) +
-  geom_col() +
-  labs(fill = paste(publisher_str, "CITED_ARTICLE_AGE")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+results3 <- count_cited_works_by_group(works_cited_type_articles_publisher_yr24, 2024, "field_L1", format_output = FALSE)
+results3$data$year_category <- factor(
+  results3$data$year_category,
+  levels = c("2019-2024", "2014-2018", "-2013"),
+  labels = c("0-5 years", "6-10 years", "11+ years")
+)
 
-ggplot(results2$data, aes(x = year_category, y = field_L1, fill = percent_numeric)) +
-  geom_tile(color = "white") + # White borders make it grid-like
-  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)), color = "black", size = 3.5) +
-  scale_fill_gradient(low = "#e5f5e0", high = "#31a354") + # Green scale (or try "Blues")
+# Add a year/source column to each data frame before merging
+results1$data$analysis_year <- "2022"
+results2$data$analysis_year <- "2023"
+results3$data$analysis_year <- "2024"
+
+# Combine the three lists properly
+combined_df <- bind_rows(results1$data, results2$data, results3$data)
+
+# Create the average_data ensuring both columns are in the 'group_by'
+average_data <- combined_df %>%
+  # Filter out NA categories to fix the 'NA' column issue in your PDF
+  filter(!is.na(year_category)) %>% 
+  group_by(field_L1, year_category) %>%
+  summarize(
+    percent_numeric = mean(percent_numeric, na.rm = TRUE), 
+    .groups = "drop" # This prevents the 'grouped_df' warning
+  )
+
+# VERIFICATION: Run this to make sure the columns exist!
+colnames(average_data)
+
+ggplot(average_data, aes(x = year_category, y = field_L1, fill = percent_numeric)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = scales::percent(percent_numeric, accuracy = 1)), 
+            color = "black", size = 3.5) +
+  scale_fill_gradient(low = "#e5f5e0", high = "#31a354") +
   labs(
-    title = paste(publisher_str, "Citation Age Heatmap"),
-    subtitle = "Darker colors indicate a higher concentration of citations",
-    x = "CITED_ARTICLE_AGE",
+    title = paste(publisher_str, "Combined Citation Age Heatmap"),
+    subtitle = "Average of 2022-2024; Percentages now reflect a true 100% total per field",
+    x = "CITED ARTICLE AGE",
     y = "Field",
     fill = "Proportion"
   ) +
   theme_minimal() +
-  theme(panel.grid = element_blank()) # Remove grid lines for a cleaner look
-
-ggplot(results2$data, aes(x = year_category, y = percent_numeric, group = field_L1, color = field_L1)) +
-  geom_line(linewidth = 1.2, alpha = 0.8) +
-  geom_point(size = 3) +
-  scale_y_continuous(labels = scales::percent) +
-  labs(
-    title = paste(publisher_str, "Citation Change Rates by Field"),
-    x = "CITED_ARTICLE_AGE",
-    y = "Share of Total Citations",
-    color = "Domain"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(panel.grid = element_blank())
 
 
-ggplot(results2$data, aes(x = year_category, y = n)) +
-  geom_col(fill = "#4c8cb5") +
-  facet_wrap(~field_L1, scales = "free_y", labeller = label_wrap_gen(width = 20)) + 
-  
-  # --- THE FIX: Limit axis to 3 breaks max ---
-  scale_y_continuous(
-    n.breaks = 3, 
-    labels = scales::label_number(scale_cut = scales::cut_short_scale())
-  ) + 
-  
-  labs(
-    title = paste(publisher_str, "Citation Volume Profiles"),
-    subtitle = "Note: Y-axis scales differ by field",
-    x = "CITED_ARTICLE_AGE",
-    y = "Count"
-  ) +
-  theme_light() +
-  theme(
-    strip.text = element_text(size = 7), 
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 7),
-    axis.text.y = element_text(size = 7) # Keep Y text small too
-  )
-
-# If using ggsave, specify a large height
-ggsave("citation_chart.png", width = 10, height = 12, dpi = 300)
 
 #### TESTING this field_result
 # Filter the data frame and print the results
@@ -1817,7 +1878,7 @@ tryCatch({
   print(e)
 })
 
-# Within a specific publisher, how many articles from the past 5 years (2020-2024), the 5-10 years (2016-2019), and the past 10 years (-2015)
+# Within a specific publisher, how many articles from the past 5 years (2020-2024), the 6-10 years (2016-2019), and the past 10 years (-2015)
 source("my_functions.R")
 final_percentages <- count_works_by_year_category(works_cited_type_articles_tf)
 
@@ -1918,7 +1979,7 @@ if (exists(actual_df) && is.data.frame(get(actual_df))) {
   }
 }
 
-# Within a specific publisher, how many articles from the past 5 years (2020-2024), the 5-10 years (2016-2019), and the past 10 years (-2015)
+# Within a specific publisher, how many articles from the past 5 years (2020-2024), the 6-10 years (2016-2019), and the past 10 years (-2015)
 final_percentages <- count_works_by_year_category(works_cited_type_articles_sn)
 
 ### 2025-09: Citation pattern (numbers: topics)

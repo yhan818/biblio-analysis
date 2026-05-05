@@ -178,7 +178,7 @@ work_cited <- "https://openalex.org/W2176010001"
 work_cited <- "https://openalex.org/W3217221255"
 work_cited <- "https://openalex.org/W576036492"
 work_cited <- "https://openalex.org/W4281394370"
-find_org_works(work_cited, works_published_2022)
+#find_org_works(work_cited, works_published_2022)
 
 ### 2024 - Springer, 
 work_cited <- "https://openalex.org/W3217039319"
@@ -190,7 +190,7 @@ work_cited <- "https://openalex.org/W4236137412"
 
 ### UA authored yr24 articles [1] "https://openalex.org/W4398144987" "https://openalex.org/W4399163438" "https://openalex.org/W4395664488
 ###    citing  "https://openalex.org/W4236137412" (yr1986) cited by 12,350
-find_org_works(work_cited, works_published_2024)
+#find_org_works(work_cited, works_published_2024)
 
 
 ##### Handling works "topic": OpenAlex's new topic has a hierarchical structure:
