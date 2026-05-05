@@ -42,10 +42,10 @@ source("my_functions.R")
 # Retrieving all publications association with UArizona's ROR (Research Organization Registry) ID.
 # UA works_published per year is ~9,000. For running 2 years data, need better computer or crashed R studio.
 # After DataCite integration 92 M records on 2025-09, it does NOT show a significant number UA publications added 
-# Year 2025:  9,067 (2026-05)
-# Year 2024:  9,383 (2026-05) <<< 7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
-# Year 2023: 11,034 (2026-05) <<< 10,625 (2025-11), <<< 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
-# Year 2022:  9,136 (2026-05) <<< 8,871 (2025-11), <<< 8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
+# Year 2025:  9,068 (2026-05)
+# Year 2024:  9,384 (2026-05) <<< 7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
+# Year 2023: 11,035 (2026-05) <<< 10,625 (2025-11), <<< 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
+# Year 2022:  9,135 (2026-05) <<< 8,871 (2025-11), <<< 8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
 # Year 2021:  9,500 (2026-05) <<< 9,336 (2025-11) (7,048 type-journal articles and reviews)
 # Year 2020: 
 # Year 2019: 8,847 
@@ -81,32 +81,23 @@ works_count <-oa_fetch(
 
   options = list("data-version" = 2), 
   
-  from_publication_date ="2021-01-01",
-  to_publication_date = "2021-12-31",
-  #type = "article",  # comment out this line to include other types 
+  from_publication_date ="2023-01-01",
+  to_publication_date = "2023-12-31",
   count_only = TRUE,
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
-works_published_2025 <-oa_fetch(
+works_published_2022 <-oa_fetch(
   entity="works",
   
   # institutions.ror=c("03efmqc40"),  # ASU
    institutions.ror=c("03m2x1q45"), # UArizona
   
   #institutions.ror=c("00cvxb145"), # University of Washington
-  #type = "article", 
-  from_publication_date ="2025-01-01",
-  to_publication_date = "2025-12-31",
+  from_publication_date ="2022-01-01",
+  to_publication_date = "2022-12-31",
   )
 
-
-# SHALL get all works, then filter them if needed. 
-# 2024-07: Works_published: openAlex changed its author df to "authorship". 
-# 2023: All works: 9,384 without type =journal (2024-09) 
-# 2023: All works: 10,559 (2025-01) 
-# 2023: journal only: 6,903 using primary_location.source.type = "journal" as a filter (not including type="repository")
-# 
 works_published_2023 <-oa_fetch(
   entity="works",
   
@@ -117,24 +108,29 @@ works_published_2023 <-oa_fetch(
   to_publication_date = "2023-12-31",
 )
 
-works_published_2022 <-oa_fetch(
+works_published_2024 <-oa_fetch(
   entity="works",
-  # institutions.ror=c("03efmqc40"),  # ASU
-  #institutions.ror=c("05hs6h993"), # MSU 
-  
   institutions.ror=c("03m2x1q45"), # U Arizona
-  # institutions.ror=c("00cvxb145"), # University of Washington
-  from_publication_date ="2022-01-01",
-  to_publication_date = "2022-12-31",
+  from_publication_date ="2024-01-01",
+  to_publication_date = "2024-12-31",
 )
 
-# Save data
+# 2026-05: 
+works_published_2025 <-oa_fetch(
+  entity="works",
+  institutions.ror=c("03m2x1q45"), # U Arizona
+  from_publication_date ="2025-01-01",
+  to_publication_date = "2025-12-31",
+)
+
 # saveRDS(works_published_2019, "../works_published_2019.rds")
 # saveRDS(works_published_2020, "../works_published_2020.rds")
-saveRDS(works_published_2021, "../works_published_2021.rds")
-saveRDS(works_published_2022, "../msu_works_published_2022.rds")
-saveRDS(works_published_2023, "../msu_works_published_2023.rds")
-saveRDS(works_published_2024, "../works_published_2024_v202510.rds")
+# saveRDS(works_published_2021, "../works_published_2021.rds")
+saveRDS(works_published_2022, "../works_published_2022.rds")
+saveRDS(works_published_2023, "../works_published_2023.rds")
+saveRDS(works_published_2024, "../works_published_2024.rds")
+saveRDS(works_published_2025, "../works_published_2025.rds")
+
 
 # Load data 
 works_published_2019 <- readRDS("../works_published_2019.rds")
@@ -152,7 +148,6 @@ works_published <- works_published_2022
 
 
 works_published_2023 <- readRDS("../works_published_2023.rds")
-# to filter "journal" works only. I feel it shall not be this restrict. (other works like grey literature are good too)
 works_published <- works_published_2023
 
 # By 2025-07, there is a data structure change such as "author" changed to "authorships"
@@ -179,10 +174,7 @@ print(paste("Do all DataFrames in matching_list have the same structure?", all_d
 
 
 works_published_2022_2024 <- bind_rows(works_published_2022, works_published_2023, works_published_2024)
-
 works_published <- works_published_2022_2024
-
-works_published <- works_published_2024
 
 ####################################################
 ##### 2. Checking and verifying data
@@ -268,41 +260,12 @@ print(index)
 
 ###########################################################
 
-##### 3. From authors' DF. 
-# Flattening authors fields from the DF (multiple authors per work). 
-# 426,000 obs (multiple authors) from 50,400 obs (works)
-works_published_since <- works_published
-
-#### Year 2022: 
-# -- works_published_authors: 75,222
-# -- works_published_UAauthors: 16,432
-# -- works_published_ua_authors_ref_combined: 656,712
-# -- works_published_ua_authors_ref_cited: 249,629
-works_published_authors<-works_published_since%>%
-  mutate(author=lapply(author, function(x){
-    names(x) <-paste0(names(x), "author")
-    return(x)
-  }))%>%
-  unnest(author)
-
-rm(list = c("works_published_authors", "na_percent" ))
-
-UAauthors <-unique(works_published_authors)
-#write_xlsx(UAauthors2, "UAauthors.xlsx")
-
-# After flattening, authors' fields (e.g. au_idauthor, institution_rorauthor) are displayed
-colnames(works_published)
-colnames(works_published_authors)
-
 #################### 3.3 TESTING!!!#################
 
 # Then extract UArizona authors only
 # 94,500 obs from 426,000 obs (UA authors only).  
 ## https://openalex.org/A5033317672 Saurav Mallik (is at two affiliations for https://api.openalex.org/works/W4389611927. Harvard and University of Arizona)
 ### https://openalex.org/W4401226694 author Renu Malhotra has two affiliations. 
-oa_fetch_test1 <-oa_fetch( entity="works",  id="https://openalex.org/W4401226694")
-oa_fetch_test1$author
-view(oa_fetch_test1[[4]][[1]])
 
 oa_fetch_test2 <-oa_fetch( entity="authors",  id="https://openalex.org/A5003933592")
 
@@ -370,9 +333,9 @@ works_cited <-data.frame()
 install.packages("profvis")
 library(profvis)
 
+### NO LONGER WORKING WITH NEW DATA STRUCTURE
 malaria_topic <- oa_fetch(entity = "topics", search = "malaria") %>% 
-  filter(display_name == "Malaria") %>% 
-  pull(id)
+  filter(display_name == "Malaria") %>% pull(id)
 malaria_topic
 #> [1] "https://openalex.org/T10091"
 system.time({
@@ -431,8 +394,72 @@ works_cited <- rbindlist(works_cited_ls, use.names=TRUE, fill=TRUE)
 works_cited <- data.frame()
 works_cited2 <-data.frame()
 
+
+
+
+library(httr)
+library(openalexR)
+library(data.table)
+
+
+Sys.getenv("OPENALEXR_APIKEY")
+
+# Check in browser or via httr:
+# GET https://api.openalex.org/rate-limit?api_key=YOUR_API_KEY
+# Ensure API key is set
+openalexR::oa_apikey("OPENALEXR_APIKEY")
+
+# Increase timeout
+httr::set_config(httr::timeout(120))
+
 fetch_number <- 50
-num_of_works <- length (works_published_ref_combined)
+num_of_works <- length(works_published_ref_combined)
+
+# Retry function with exponential backoff for 429 errors
+fetch_with_retry <- function(identifiers, max_retries = 5, wait_seconds = 10) {
+  for (attempt in 1:max_retries) {
+    result <- tryCatch({
+      oa_fetch(identifier = identifiers)
+    }, error = function(e) {
+      if (grepl("429", e$message)) {
+        wait_time <- wait_seconds * (2^(attempt - 1))  # Exponential backoff
+        message(paste("Rate limited. Waiting", wait_time, "seconds (attempt", attempt, ")"))
+        Sys.sleep(wait_time)
+      } else {
+        message(paste("Attempt", attempt, "error:", e$message))
+        Sys.sleep(wait_seconds)
+      }
+      return(NULL)
+    })
+    if (!is.null(result)) return(result)
+  }
+  return(NULL)
+}
+
+time_taken <- system.time({
+  for(i in seq(1, num_of_works, by = fetch_number)) {
+    batch_identifiers <- works_published_ref_combined[i:min(i + fetch_number - 1, num_of_works)]
+    
+    if (length(batch_identifiers) > 0 && !all(is.na(batch_identifiers))) {
+      batch_data <- fetch_with_retry(batch_identifiers)
+      
+      if (!is.null(batch_data) && nrow(batch_data) > 0) {
+        batch_data <- data.table::setDT(batch_data)[, setdiff(names(works_cited), names(batch_data)) := NA]
+        works_cited <- rbindlist(list(works_cited, batch_data), use.names = TRUE, fill = TRUE)
+      }
+    }
+    
+    if (i %% 500 == 1) message(paste("Processed", i, "of", num_of_works))
+    
+    # Key fix: increase delay to respect per-second limits
+    Sys.sleep(1)
+  }
+})
+
+
+
+
+
 
 # Loop to fetch data in batches
 time_taken <- system.time({
