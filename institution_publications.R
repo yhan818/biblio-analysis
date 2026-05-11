@@ -5,28 +5,34 @@
 ##### Search an institution authors' publication using openAlex data ####
 # OpenAlex R Documentation: https://github.com/ropensci/openalexR
 
-install.packages("dplyr")
-install.packages("tidyverse")
-install.packages("ggplot2")
+# install.packages(c("sass", "gargle", "fs"))
+
+install.packages(c("dplyr", "ggplot2", "readr", "tidyr", "tibble", "purrr", "stringr", "forcats"))
+
+# install.packages("tidyverse")
+
 install.packages('data.table')
 install.packages("openalexR")
-install.packages("remotes")
-install.packages("here")
+install.packages("openxlsx")
+install.packages("writexl")
+# install.packages("remotes")
 # remotes::install_github("ropensci/openalexR", force=TRUE) 
 
 library(openalexR)
 packageVersion("openalexR")
+
+library(tidyverse)
+# free unused obj to manage memory
+rm(list=ls())
+gc()
 
 options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
 PATH <- "/home/yhan/Documents/biblio-analysis"
 
 setwd(PATH)
 getwd()
-print(here())
+#print(here())
 
-# free unused obj to manage memory
-rm(list=ls())
-gc()
 
 source("my_functions.R")
 
@@ -79,31 +85,24 @@ works_count <-oa_fetch(
   #institutions.ror=c("05hs6h993"), # Michigan State University (MSU) 
   #institutions.ror=c("00cvxb145"), # University of Washington
 
-  options = list("data-version" = 2), 
+  # options = list("data-version" = 2), 
   
-  from_publication_date ="2023-01-01",
-  to_publication_date = "2023-12-31",
+  from_publication_date ="204-01-01",
+  to_publication_date = "2024-12-31",
   count_only = TRUE,
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
 works_published_2022 <-oa_fetch(
   entity="works",
-  
-  # institutions.ror=c("03efmqc40"),  # ASU
-   institutions.ror=c("03m2x1q45"), # UArizona
-  
-  #institutions.ror=c("00cvxb145"), # University of Washington
+  institutions.ror=c("03m2x1q45"), # UArizona
   from_publication_date ="2022-01-01",
   to_publication_date = "2022-12-31",
   )
 
 works_published_2023 <-oa_fetch(
   entity="works",
-  
-  # institutions.ror=c("03efmqc40"),  # ASU
   institutions.ror=c("03m2x1q45"), # UArizona
-  #institutions.ror=c("00cvxb145"), # University of Washington
   from_publication_date ="2023-01-01",
   to_publication_date = "2023-12-31",
 )
@@ -128,7 +127,7 @@ works_published_2025 <-oa_fetch(
 # saveRDS(works_published_2021, "../works_published_2021.rds")
 saveRDS(works_published_2022, "../works_published_2022.rds")
 saveRDS(works_published_2023, "../works_published_2023.rds")
-saveRDS(works_published_2024, "../works_published_2024.rds")
+saveRDS(works_published_2024, "../works_published_2024_ver2026.rds")
 saveRDS(works_published_2025, "../works_published_2025.rds")
 
 
@@ -317,6 +316,7 @@ works_published[indices_with_string, ]$id
 # optimize code: ... <to do> 
 
 #Creating an empty dataframe to store the results of the for loop.
+
 works_cited <-data.frame()
 
 # Getting these works' metadata. This takes long time to run. 
@@ -350,148 +350,198 @@ system.time({
 
 rm(res)
 
-fetch_number <- 100
-num_of_works <- 10000
-### The only difference from the above oa_fetch is the topics.id vs. id
-## maybe it is my network?? 
-# 2024-09-23: 10,000 works: 1.7GB data (my internet 90M/b about 155 second to download) : 766 seconds (real time): TBD in UA
-
-res <-list()
-#profvis({
-system.time({
-  batch_identifiers <-works_published_ref_unique[1:num_of_works]
-  res <-oa_fetch(identifier=batch_identifiers, 
-                 entity = "works",
-                 options= list(sample=fetch_number, seed=1), 
-                 output="list")
-})
-
-fetch_number <- 50
-num_of_works <- length (works_published_ref_combined)
-
-range_i <- seq(1, num_of_works, by=fetch_number)
-works_cited_ls <- vector("list", length = length(range_i))
-
-### Code has bugs??a lot of these have NA value???
-time_taken <-system.time({
-  for (idx in seq_along(range_i)) {
-    i <- range_i[idx]
-    batch_identifiers <-works_published_ref_combined[i:min(i+fetch_number-1, num_of_works)]
-    batch_data <-oa_fetch(identifier=batch_identifiers, primary_location.source.type = "journal", )
-                          #output="list", )
-    works_cited_ls[[idx]] <- batch_data
-  }
-})
-print(paste("fetch time: ", time_taken["elapsed"] / 60, "minutes"))
-
-tail(works_cited_ls)
-
-works_cited <- rbindlist(works_cited_ls, use.names=TRUE, fill=TRUE) 
-
 
 #########################
 # Ensure oa_fetch() is receiving the correct input and create a new dataframe for results.
 works_cited <- data.frame()
-works_cited2 <-data.frame()
+works_cited_2023 <-data.frame()
 
-
+clear(works_cited)
 
 
 library(httr)
 library(openalexR)
 library(data.table)
-
-
+################################################ CORE: Citation DATA
+###***********************************************
+################################################### CORE 
 Sys.getenv("OPENALEXR_APIKEY")
 
 # Check in browser or via httr:
 # GET https://api.openalex.org/rate-limit?api_key=YOUR_API_KEY
 # Ensure API key is set
-openalexR::oa_apikey("OPENALEXR_APIKEY")
 
-# Increase timeout
+openalexR::oa_apikey("OPENALEXR_APIKEY")
 httr::set_config(httr::timeout(120))
 
-fetch_number <- 50
+fetch_number <- 100
 num_of_works <- length(works_published_ref_combined)
 
-# Retry function with exponential backoff for 429 errors
-fetch_with_retry <- function(identifiers, max_retries = 5, wait_seconds = 10) {
-  for (attempt in 1:max_retries) {
-    result <- tryCatch({
-      oa_fetch(identifier = identifiers)
-    }, error = function(e) {
-      if (grepl("429", e$message)) {
-        wait_time <- wait_seconds * (2^(attempt - 1))  # Exponential backoff
-        message(paste("Rate limited. Waiting", wait_time, "seconds (attempt", attempt, ")"))
-        Sys.sleep(wait_time)
-      } else {
-        message(paste("Attempt", attempt, "error:", e$message))
-        Sys.sleep(wait_seconds)
-      }
-      return(NULL)
-    })
-    if (!is.null(result)) return(result)
-  }
-  return(NULL)
-}
+estimated_requests <- ceiling(num_of_works / fetch_number)
+estimated_cost <- estimated_requests * 0.0001
+message(paste("Estimated requests:", estimated_requests, "| Estimated cost: $", round(estimated_cost, 2)))
+
+# Initialize tracking objects
+missing_ids <- character(0)
+error_log <- data.table::data.table(
+  batch_start = integer(0),
+  error_message = character(0),
+  identifiers = list()
+)
 
 time_taken <- system.time({
   for(i in seq(1, num_of_works, by = fetch_number)) {
     batch_identifiers <- works_published_ref_combined[i:min(i + fetch_number - 1, num_of_works)]
     
-    if (length(batch_identifiers) > 0 && !all(is.na(batch_identifiers))) {
-      batch_data <- fetch_with_retry(batch_identifiers)
+    # Remove NAs from batch
+    valid_identifiers <- batch_identifiers[!is.na(batch_identifiers)]
+    
+    if (length(valid_identifiers) > 0) {
+      batch_data <- tryCatch({
+        oa_fetch(identifier = valid_identifiers)
+      }, error = function(e) {
+        if (grepl("429", e$message)) {
+          message("Daily budget exhausted. Stopping. Resume tomorrow.")
+          # Save progress before stopping
+          saveRDS(missing_ids, "missing_ids_progress.rds")
+          saveRDS(error_log, "error_log_progress.rds")
+          stop("Budget exhausted")
+        }
+        message("Error fetching batch starting at ", i, ": ", e$message)
+        # Log the entire failed batch
+        error_log <<- rbindlist(list(
+          error_log,
+          data.table(batch_start = i, error_message = e$message, identifiers = list(valid_identifiers))
+        ), fill = TRUE)
+        return(NULL)
+      })
       
       if (!is.null(batch_data) && nrow(batch_data) > 0) {
+        # Identify which IDs were returned vs submitted
+        returned_ids <- batch_data$id  # OpenAlex IDs in returned data
+        
+        # Normalize identifiers for comparison (ensure consistent format)
+        submitted_normalized <- ifelse(
+          grepl("^W|^https://openalex.org/", valid_identifiers),
+          gsub("^(W)", "https://openalex.org/\\1", valid_identifiers),
+          valid_identifiers
+        )
+        submitted_normalized <- ifelse(
+          !grepl("^https://", submitted_normalized),
+          paste0("https://openalex.org/", submitted_normalized),
+          submitted_normalized
+        )
+        
+        # Find missing IDs from this batch
+        batch_missing <- submitted_normalized[!submitted_normalized %in% returned_ids]
+        missing_ids <- c(missing_ids, batch_missing)
+        
+        # Append successful results
         batch_data <- data.table::setDT(batch_data)[, setdiff(names(works_cited), names(batch_data)) := NA]
         works_cited <- rbindlist(list(works_cited, batch_data), use.names = TRUE, fill = TRUE)
+        
+      } else {
+        # Entire batch returned NULL or 0 rows — all IDs are missing
+        missing_ids <- c(missing_ids, valid_identifiers)
+      }
+      
+      # Also track NAs from original batch
+      na_count <- sum(is.na(batch_identifiers))
+      if (na_count > 0) {
+        message("  Note: ", na_count, " NA identifiers skipped in batch at ", i)
       }
     }
     
-    if (i %% 500 == 1) message(paste("Processed", i, "of", num_of_works))
-    
-    # Key fix: increase delay to respect per-second limits
+    if (i %% 1000 == 1) {
+      message(paste("Processed", i, "of", num_of_works,
+                    "| works_cited:", nrow(works_cited),
+                    "| missing so far:", length(missing_ids)))
+    }
     Sys.sleep(1)
   }
 })
 
+# Save results
+message("\n=== FINAL SUMMARY ===")
+message("Total identifiers submitted: ", num_of_works)
+message("Works successfully retrieved: ", nrow(works_cited))
+message("Identifiers not found: ", length(missing_ids))
+message("Batches with errors: ", nrow(error_log))
+
+# Save missing IDs for investigation
+saveRDS(missing_ids, "2024_missing_openalex_ids.rds")
+saveRDS(error_log, "2024_error_log.rds")
+
+# Create a summary data frame of missing IDs
+missing_summary <- data.table::data.table(
+  openalex_id = missing_ids,
+  status = "not_returned"
+)
+data.table::fwrite(missing_summary, "2024_missing_records_log.csv")
 
 
 
 
 
-# Loop to fetch data in batches
-time_taken <- system.time({
-  for(i in seq(1, num_of_works, by = fetch_number)) {
-    batch_identifiers <- works_published_ref_combined[i:min(i + fetch_number - 1, num_of_works)]
-    
-    # Check if the batch_identifiers is a valid vector
-    if (length(batch_identifiers) > 0 && !all(is.na(batch_identifiers))) {
-      # Fetch data from OpenAlex using oa_fetch, ensure proper identifier input
-      batch_data <- tryCatch({
-        # Have to use "primary_location.source.type = journal" to filter out non-journal.
-        # issn_l cannot be used alone (there are book chapters which have issn per OpenAlex)
-        oa_fetch(identifier = batch_identifiers) 
-                 #, primary_location.source.type = "journal")
-      }, error = function(e) {
-        message("Error fetching data: ", e)
-        return(NULL)
-      })
-     # Only bind non-null data
-      if (!is.null(batch_data) && nrow(batch_data) >0 ) {
-        # Ensure consistent columns
-        batch_data <- data.table::setDT(batch_data)[, setdiff(names(works_cited), names(batch_data)) := NA]
-        works_cited <- rbindlist(list(works_cited, batch_data), use.names = TRUE, fill = TRUE)
-      }
-    }
+# Load missing IDs
+missing_ids <- readRDS("2024_missing_openalex_ids.rds")
+message("Total missing: ", length(missing_ids))
+
+# Try fetching missing IDs individually (singleton lookups are free) [4]
+retry_results <- list()
+still_missing <- character(0)
+
+for (j in seq_along(missing_ids)) {
+  result <- tryCatch({
+    oa_fetch(identifier = missing_ids[j])
+  }, error = function(e) {
+    return(NULL)
+  })
+  
+  if (!is.null(result) && nrow(result) > 0) {
+    retry_results[[length(retry_results) + 1]] <- result
+  } else {
+    still_missing <- c(still_missing, missing_ids[j])
   }
-})
+  
+  if (j %% 100 == 0) message("Retried ", j, " of ", length(missing_ids))
+  Sys.sleep(3)
+}
+
+message("Recovered on retry: ", length(retry_results))
+message("Permanently missing: ", length(still_missing))
+saveRDS(still_missing, "2024_permanently_missing_ids.rds")
+
+
+
+
+
+
+##############################
+library(data.table)
+works_cited_2022_ver2026  <- readRDS("../works_cited_2022_ver2026.rds")
+
+# Ensure both are data.tables for maximum speed
+setDT(works_cited)
+
+works_cited_2023 <- works_cited[368441:.N]
+
+### commonly cited. 
+nrow(works_cited_2023) 
+length(intersect(works_cited_2023$id, works_cited_2022_ver2026$id))
+
+
+
+
 print(time_taken)
 
 head(works_cited)
-setdiff(works_cited, works_cited2)
-dfdiff_2023<-setdiff(works_cited2, works_cited)
+
+# setdiff() to see the difference of data pulled in 2025 and 2026
+setdiff(works_cited$id, works_cited_2022$id)
+
+dfdiff_2023<-setdiff(works_cited2$id, works_cited$id)
+
 works_cited <- works_cited2
 
 ### For 2022 data pulled from 2025-01 and 2025-02, there is 18 / 3
@@ -508,21 +558,21 @@ works_cited <- works_cited2
 #### Step 1: Re-generate a new row if it matches (meaning; cited multiple times.)
 
 ## Save works_cited files
-saveRDS(works_cited, "../works_cited_2020.rds")
-saveRDS(works_cited, "../works_cited_2024_v202509.rds")
+saveRDS(works_cited, "../works_cited_2024_ver2026.rds")
 
+saveRDS(works_cited_2023, "../works_cited_2023_ver2026.rds")
 
 #######################################################################################
 # SECTION 2: Works cited
 ######################################################################################
 
-#  UA: 2022: 342,918 
+#  UA: 2022: 368,440 (2026),  342,918 (2025) 
 # ASU: 2022: 303,563
 # MSU: 2022: 356,486
 #  UW: 2022: 678,317 
 saveRDS(works_cited, "../msu_works_cited_2022.rds")
 
-#  UA: 2023: 353,424
+#  UA: 2023: 387,734 (2026), 353,424
 # ASU: 2023: 317,643
 # MSU: 2023: 349,299
 #  UW: 2023: 706,551
@@ -541,7 +591,7 @@ works_cited_2019 <- readRDS("../works_cited_2019.rds")
 works_cited_2020 <- readRDS("../works_cited_2020.rds")
 works_cited_2021 <- readRDS("../works_cited_2021.rds")
 
-works_cited_2022 <- readRDS("../works_cited_2022.rds")
+works_cited_2022 <- readRDS("../UA-datasets/works_cited_2022.rds")
 
 works_cited_2023 <- readRDS("../works_cited_2023.rds")
 

@@ -9,7 +9,7 @@ library(dplyr)
 library(rlang)
 library(jsonlite)
 library(openalexR)
-library(tidyverse)
+#library(tidyverse)
 library(knitr)
 library(here)
 
@@ -202,9 +202,6 @@ work_cited <- "https://openalex.org/W4236137412"
 #         level = 2, it is secondry. Most works have 1 to 3 topic-subfield-field-domains, and do not have 4th topic.
 
 # Load necessary libraries
-library(tidyverse)
-# Load necessary libraries
-library(tidyverse)
 
 extract_topics_by_level <- function(data, level = 1) {
   # --- Input Validation ---
