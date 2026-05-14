@@ -5,11 +5,8 @@
 ##### Search an institution authors' publication using openAlex data ####
 # OpenAlex R Documentation: https://github.com/ropensci/openalexR
 
-# install.packages(c("sass", "gargle", "fs"))
 
 install.packages(c("dplyr", "ggplot2", "readr", "tidyr", "tibble", "purrr", "stringr", "forcats"))
-
-# install.packages("tidyverse")
 
 install.packages('data.table')
 install.packages("openalexR")
@@ -21,7 +18,6 @@ install.packages("writexl")
 library(openalexR)
 packageVersion("openalexR")
 
-library(tidyverse)
 # free unused obj to manage memory
 rm(list=ls())
 gc()
@@ -49,7 +45,7 @@ source("my_functions.R")
 # UA works_published per year is ~9,000. For running 2 years data, need better computer or crashed R studio.
 # After DataCite integration 92 M records on 2025-09, it does NOT show a significant number UA publications added 
 # Year 2025:  9,068 (2026-05)
-# Year 2024:  9,384 (2026-05) <<< 7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
+# Year 2024:  9,492 (2026-05) <<< 7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
 # Year 2023: 11,035 (2026-05) <<< 10,625 (2025-11), <<< 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
 # Year 2022:  9,135 (2026-05) <<< 8,871 (2025-11), <<< 8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
 # Year 2021:  9,500 (2026-05) <<< 9,336 (2025-11) (7,048 type-journal articles and reviews)
@@ -125,10 +121,10 @@ works_published_2025 <-oa_fetch(
 # saveRDS(works_published_2019, "../works_published_2019.rds")
 # saveRDS(works_published_2020, "../works_published_2020.rds")
 # saveRDS(works_published_2021, "../works_published_2021.rds")
-saveRDS(works_published_2022, "../works_published_2022.rds")
-saveRDS(works_published_2023, "../works_published_2023.rds")
+saveRDS(works_published_2022, "../works_published_2022_ver2026.rds")
+saveRDS(works_published_2023, "../works_published_2023_ver2026.rds")
 saveRDS(works_published_2024, "../works_published_2024_ver2026.rds")
-saveRDS(works_published_2025, "../works_published_2025.rds")
+saveRDS(works_published_2025, "../works_published_2025_ver2026.rds")
 
 
 # Load data 
@@ -154,17 +150,9 @@ works_published_2024 <- readRDS("../works_published_2024.rds")
 works_published <- works_published_2024
 
 
-#####################################################
-# Combine desired multiple-years data for further analysis
-# compare df structure first before combine. 
+works_published_2025 <- readRDS("../works_published_2025_ver2026.rds")
+works_published <- works_published_2025
 
-# If not df col name and type are NOT 100% match, go back to fix the issue first. 
-# See how the dates are currently stored
-class(works_published_2020$publication_date)
-class(works_published_2021$publication_date)
-
-# Convert the column to the Date type
-works_published_2021$publication_date <- as.character(works_published_2021$publication_date)
 
 # compare df again before binding rows
 matching_list <- list(works_published_2020, works_published_2021, works_published_2022, works_published_2023, works_published_2024) 
@@ -172,8 +160,8 @@ all_df_match <-check_df_structure(matching_list)
 print(paste("Do all DataFrames in matching_list have the same structure?", all_df_match))
 
 
-works_published_2022_2024 <- bind_rows(works_published_2022, works_published_2023, works_published_2024)
-works_published <- works_published_2022_2024
+# works_published_2022_2024 <- bind_rows(works_published_2022, works_published_2023, works_published_2024)
+# works_published <- works_published_2022_2024
 
 ####################################################
 ##### 2. Checking and verifying data
@@ -211,8 +199,6 @@ works_published_ref <- unique(works_published_ref) # this actually also remove N
 works_na_referenced_works <- works_published %>%
   filter(is.na(referenced_works) & type == "article")
 
-#write_xlsx(works_na_referenced_works, "citations/works_journal_2023_na_referenced_works.xlsx") # send this to OpenAlex
-
 ### 2.2 Combine all the references and do further data analysis
 # Avg # of references per article: ~50
 # Year 2023 total references: 364,304: total journal article: 308,359:  unique 281,470 / 351,479: more cited: ~77,000 
@@ -222,7 +208,6 @@ works_na_referenced_works <- works_published %>%
 # Year 2020 total references: 392,992: article 
 # Year 2019 total references: 352,509: articles 329,000  
 
-# rm(works_published_ref_combined)
 works_published_ref_combined <- unlist(works_published_ref, use.names = FALSE)
 works_published_ref_combined <- works_published_ref_combined[!is.na(works_published_ref_combined)]  # Remove NA values
 
@@ -327,41 +312,15 @@ works_cited <-data.frame()
 # 2021: 384,886 (checked) out of 384,886
 # 2019: 331,657 (checked).
 ########################################
-### Testing optimization of rbind and oa_fetch
-### 2024-09-21: 10,000 works in R old version (4.1.2): 270 seconds
-### 2024-09-23: 10,000 works in R latest version (4.4.1): 112 seconds
-install.packages("profvis")
-library(profvis)
-
-### NO LONGER WORKING WITH NEW DATA STRUCTURE
-malaria_topic <- oa_fetch(entity = "topics", search = "malaria") %>% 
-  filter(display_name == "Malaria") %>% pull(id)
-malaria_topic
-#> [1] "https://openalex.org/T10091"
-system.time({
-  res <- oa_fetch(
-    topics.id = malaria_topic,
-    entity = "works",
-    verbose = TRUE,
-    options = list(sample = 10000, seed = 1),
-    output = "list"
-  )
-})
-
-rm(res)
-
 
 #########################
 # Ensure oa_fetch() is receiving the correct input and create a new dataframe for results.
 works_cited <- data.frame()
-works_cited_2023 <-data.frame()
+works_cited_2025 <-data.frame()
 
-clear(works_cited)
 
 
 library(httr)
-library(openalexR)
-library(data.table)
 ################################################ CORE: Citation DATA
 ###***********************************************
 ################################################### CORE 
@@ -457,7 +416,7 @@ time_taken <- system.time({
                     "| works_cited:", nrow(works_cited),
                     "| missing so far:", length(missing_ids)))
     }
-    Sys.sleep(1)
+    Sys.sleep(4)
   }
 })
 
@@ -469,22 +428,33 @@ message("Identifiers not found: ", length(missing_ids))
 message("Batches with errors: ", nrow(error_log))
 
 # Save missing IDs for investigation
-saveRDS(missing_ids, "2024_missing_openalex_ids.rds")
-saveRDS(error_log, "2024_error_log.rds")
+saveRDS(missing_ids, "2025_missing_openalex_ids.rds")
+saveRDS(error_log, "2025_error_log.rds")
 
 # Create a summary data frame of missing IDs
 missing_summary <- data.table::data.table(
   openalex_id = missing_ids,
   status = "not_returned"
 )
-data.table::fwrite(missing_summary, "2024_missing_records_log.csv")
+data.table::fwrite(missing_summary, "2025_missing_records_log.csv")
 
 
+########################
+### In data science and bibliometrics, seeing a 6.9% initial failure rate (28k out of 403k) 
+### followed by a 10% recovery rate on retries is quite common when dealing with massive datasets like OpenAlex.
 
+### Reasons:
+### tructural Data Decay. These records aren't just "glitching"; they are likely gone from the active index for these reasons:
 
+### ID Merges (The Most Likely Culprit): OpenAlex constantly de-duplicates data. If ID_A and ID_B are found to be the same paper, they merge them into ID_C. 
+### If your original list of 403k IDs was a few months old, many of those IDs are now "tombstoned"—they no longer exist as primary entries.
+### De-indexing: 
+### Sour mismatch
 
-# Load missing IDs
-missing_ids <- readRDS("2024_missing_openalex_ids.rds")
+# 2024: Permanently missing: 24706; recovered 2387
+
+################ Recover missing IDs ####################
+missing_ids <- readRDS("2025_missing_openalex_ids.rds")
 message("Total missing: ", length(missing_ids))
 
 # Try fetching missing IDs individually (singleton lookups are free) [4]
@@ -513,48 +483,77 @@ message("Permanently missing: ", length(still_missing))
 saveRDS(still_missing, "2024_permanently_missing_ids.rds")
 
 
+############### Recover
+# 1. Combine the list of small data frames into one 'recovered' data frame
+recovered_df <- bind_rows(retry_results)
+
+message("Total rows BEFORE merger: ", nrow(works_cited))
+works_cited_updated <- bind_rows(works_cited, recovered_df)
+message("Total rows after merger: ", nrow(works_cited_updated))
+
+saveRDS(works_published_2024, "../works_published_2024_ver2026.rds")
+
+############### Comparing ver2025 and ver2026 data #### 
+ver2025 <- readRDS("../works_cited_2024.rds")
+ver2026 <- works_cited_updated
 
 
-
-
-##############################
 library(data.table)
-works_cited_2022_ver2026  <- readRDS("../works_cited_2022_ver2026.rds")
 
-# Ensure both are data.tables for maximum speed
-setDT(works_cited)
+# 1. Ensure both are data.tables
+setDT(ver2025)
+setDT(ver2026)
 
-works_cited_2023 <- works_cited[368441:.N]
+# Ensure instance_id exists in both (if you haven't already)
+ver2025[, instance_id := rowid(id)]
+ver2026[, instance_id := rowid(id)]
 
-### commonly cited. 
-nrow(works_cited_2023) 
-length(intersect(works_cited_2023$id, works_cited_2022_ver2026$id))
+# 1. Identify rows in 2025 that DO NOT exist in 2026 (Leakage)
+leakage_rows <- ver2025[!ver2026, on = .(id, instance_id)]
+leakage_summary <- leakage_rows[, .(rows_lost = .N), by = id]
+
+# 2. Identify rows in 2026 that DO NOT exist in 2025 (Growth)
+growth_rows <- ver2026[!ver2025, on = .(id, instance_id)]
+
+# 3. Quick Verification of the Math
+cat(
+  "Audit Check:\n",
+  "Original 2025: ", nrow(ver2025), "\n",
+  "Minus Leakage: ", nrow(leakage_rows), "\n",
+  "Plus Growth:   ", nrow(growth_rows), "\n",
+  "Equals 2026:   ", nrow(ver2025) - nrow(leakage_rows) + nrow(growth_rows), "\n",
+  "Actual 2026:   ", nrow(ver2026)
+)
 
 
+# Get the 2025 counts to find the Blue Chips
+ledger_25 <- ver2025[, .(qty_2025 = .N), by = id]
+
+# Merge the losses with the original status
+impacted_top_papers <- merge(leakage_summary, ledger_25, by = "id")
+
+############## Find top 20 missing total numbers 
+# 1. Isolate the lost rows using the anti-join
+leakage_rows <- ver2025[!ver2026, on = .(id, instance_id)]
+
+# 2. Summarize the leakage by ID and get the Top 20
+top_20_missing <- leakage_rows[, .(citations_lost = .N), by = id][order(-citations_lost)][1:50]
+
+total_loss_count <- nrow(leakage_rows)
+print("--- TOP MISSING ASSETS (IDS) ---")
+print(top_20_missing)
+
+top_20_total_loss <- sum(top_20_missing$citations_lost)
+
+cat("--- TOP 20 CONCENTRATION AUDIT ---\n")
+cat("Total Loss from Top 20 IDs:      ", top_20_total_loss, "\n")
+cat("Grand Total Loss (Full Set):     ", total_loss_count, "\n")
+cat("Concentration Ratio:             ", round((top_20_total_loss / total_loss_count) * 100, 2), "%\n")
 
 
-print(time_taken)
-
-head(works_cited)
-
-# setdiff() to see the difference of data pulled in 2025 and 2026
-setdiff(works_cited$id, works_cited_2022$id)
-
-dfdiff_2023<-setdiff(works_cited2$id, works_cited$id)
-
-works_cited <- works_cited2
+##########################################################
 
 ### For 2022 data pulled from 2025-01 and 2025-02, there is 18 / 3
-
-######################################################
-### There are two types of citations 
-#
-# 1. works_cited_2022.rds --> work cited by UA authors of any type publications (e.g. journal articles, journal reviews, reports, repository items)
-############################################
-
-# 2. works_cited_source_journal_2022.rds --> source.type = journal (work cited by UA authors of only journal type such as articles and reviews.  
-# 
-
 #### Step 1: Re-generate a new row if it matches (meaning; cited multiple times.)
 
 ## Save works_cited files
