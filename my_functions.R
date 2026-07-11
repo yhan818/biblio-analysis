@@ -9,7 +9,6 @@ library(dplyr)
 library(rlang)
 library(jsonlite)
 library(openalexR)
-#library(tidyverse)
 library(knitr)
 library(here)
 

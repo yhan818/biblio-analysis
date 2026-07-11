@@ -6,7 +6,7 @@
 # OpenAlex R Documentation: https://github.com/ropensci/openalexR
 
 
-install.packages(c("dplyr", "ggplot2", "readr", "tidyr", "tibble", "purrr", "stringr", "forcats"))
+install.packages(c("dplyr", "ggplot2", "readr", "tibble", "purrr", "stringr", "forcats"))
 
 install.packages('data.table')
 install.packages("openalexR")
@@ -48,7 +48,7 @@ source("my_functions.R")
 # Year 2024:  9,492 (2026-05) <<< 7,951 (2025-11), <<< 7,949 (2025-10) <<<  7,899 (2025-07) <<< 7,861 (2025-04)
 # Year 2023: 11,035 (2026-05) <<< 10,625 (2025-11), <<< 10,625 (2025-10) <<< 10,561 (2025-02) <<< 10,559 (2025-01) <<< 9,384 (2024-10)
 # Year 2022:  9,135 (2026-05) <<< 8,871 (2025-11), <<< 8,871 (2025-10) <<<  8,825 (2025-02) <<<  8,833 (2024-10) <<< 8,674 (2024-09)
-# Year 2021:  9,500 (2026-05) <<< 9,336 (2025-11) (7,048 type-journal articles and reviews)
+# Year 2021:  9,500 (2026-05) <<< 9,336 (2025-11)
 # Year 2020: 
 # Year 2019: 8,847 
 # 2023-current: 14,660 works : 5 min to get UAworks with 3 GB mem, 264 mins to pull 372,000 reference's data with 8.6 GB  
@@ -138,8 +138,10 @@ works_published_2021 <- readRDS("../works_published_2021.rds")
 #works_published_2021_journal <- readRDS("../works_published_journal_2021.rds")
 works_published <- works_published_2021
 
+works_published_2022_ver2026 <- readRDS("../works_published_2022_ver2026.rds")
 works_published_2022 <- readRDS("../works_published_2022.rds")
 works_published <- works_published_2022
+
 
 
 works_published_2023 <- readRDS("../works_published_2023.rds")
@@ -150,7 +152,7 @@ works_published_2024 <- readRDS("../works_published_2024.rds")
 works_published <- works_published_2024
 
 
-works_published_2025 <- readRDS("../works_published_2025_ver2026.rds")
+works_published_2025_ver202606 <- readRDS("../works_published_2025_ver2026.rds")
 works_published <- works_published_2025
 
 
@@ -416,7 +418,7 @@ time_taken <- system.time({
                     "| works_cited:", nrow(works_cited),
                     "| missing so far:", length(missing_ids)))
     }
-    Sys.sleep(4)
+    Sys.sleep(8) # adjust this value because openalex has free credit $1. For 400k records, you need long sleep time
   }
 })
 
@@ -428,15 +430,15 @@ message("Identifiers not found: ", length(missing_ids))
 message("Batches with errors: ", nrow(error_log))
 
 # Save missing IDs for investigation
-saveRDS(missing_ids, "2025_missing_openalex_ids.rds")
-saveRDS(error_log, "2025_error_log.rds")
+saveRDS(missing_ids, "2022_missing_openalex_ids.rds")
+saveRDS(error_log, "2022_error_log.rds")
 
 # Create a summary data frame of missing IDs
 missing_summary <- data.table::data.table(
   openalex_id = missing_ids,
   status = "not_returned"
 )
-data.table::fwrite(missing_summary, "2025_missing_records_log.csv")
+data.table::fwrite(missing_summary, "2022_missing_records_log.csv")
 
 
 ########################
@@ -451,11 +453,15 @@ data.table::fwrite(missing_summary, "2025_missing_records_log.csv")
 ### De-indexing: 
 ### Sour mismatch
 
-# 2024: Permanently missing: 24706; recovered 2387
+# 2022: Permanently missing: 26013; recovered: 1479
+# 2023: 
+# 2024: Permanently missing: 24,706; recovered 2387
+# 2025: Permanently missing: 11,417; recovered 998
 
 ################ Recover missing IDs ####################
-missing_ids <- readRDS("2025_missing_openalex_ids.rds")
+missing_ids <- readRDS("2022_missing_openalex_ids.rds")
 message("Total missing: ", length(missing_ids))
+
 
 # Try fetching missing IDs individually (singleton lookups are free) [4]
 retry_results <- list()
@@ -475,12 +481,12 @@ for (j in seq_along(missing_ids)) {
   }
   
   if (j %% 100 == 0) message("Retried ", j, " of ", length(missing_ids))
-  Sys.sleep(3)
+  Sys.sleep(4)
 }
 
 message("Recovered on retry: ", length(retry_results))
 message("Permanently missing: ", length(still_missing))
-saveRDS(still_missing, "2024_permanently_missing_ids.rds")
+saveRDS(still_missing, "2022_permanently_missing_ids.rds")
 
 
 ############### Recover
@@ -491,64 +497,107 @@ message("Total rows BEFORE merger: ", nrow(works_cited))
 works_cited_updated <- bind_rows(works_cited, recovered_df)
 message("Total rows after merger: ", nrow(works_cited_updated))
 
-saveRDS(works_published_2024, "../works_published_2024_ver2026.rds")
+saveRDS(works_cited_updated, "../works_cited_2022_ver2026.rds")
 
+#################################################################
 ############### Comparing ver2025 and ver2026 data #### 
-ver2025 <- readRDS("../works_cited_2024.rds")
-ver2026 <- works_cited_updated
+#### Date: 2026-05-20
+#################################################################
 
+##### UA published articles
+### 2022: 
+# IDs -> Stable Core: 8445 | Growth: 0 | Leaked: 388 | New: 690 | Total Unique: 9523
+# Citations -> Retained Base: 8445 | Pure Growth: 690 | Pure Leakage: 388
 
-library(data.table)
+### 2023
+# IDs -> Stable Core: 10384 | Growth: 0 | Leaked: 177 | New: 651 | Total Unique: 11212
+# Citations -> Retained Base: 10384 | Pure Growth: 651 | Pure Leakage: 177
+
+### 2024
+# IDs -> Stable Core: 7632 | Growth: 0 | Leaked: 228 | New: 1859 | Total Unique: 9719
+# Citations -> Retained Base: 7633 | Pure Growth: 1859 | Pure Leakage: 228
+
+##### UA Cited aritcles 
+### Yr 2022: 368,067 (2026) >>> 342,918 (2025)
+### Yr 2023: 375,256 (2026) >>> 353,424 (2025)
+### Yr 2024: 375,526 (2026) >>> 305,670 (2025)
+### Yr 2025: 387,734 (2026)
+
+### 2022: 
+# IDs -> Stable Core: 261675 | Growth: 4895 | Leaked: 11827 | New: 24526 | Total Unique: 302923
+# Citations -> Retained Base: 327541 | Pure Growth: 42005 | Pure Leakage: 15377
+
+### 2023: 
+# IDs -> Stable Core: 268359 | Growth: 5137 | Leaked: 9942 | New: 28140 | Total Unique: 311578
+# Citations -> Retained Base: 339294 | Pure Growth: 48440 | Pure Leakage: 14130
+
+### 2024: 
+# IDs -> Stable Core: 226131 | Growth: 11784 | Leaked: 13711 | New: 56974 | Total Unique: 308600
+# Citations -> Retained Base: 289681 | Pure Growth: 85575 | Pure Leakage: 15989
+
+######################################################
+rm (ver2025)
+rm (ver2026)
+ver2025 <- readRDS("../works_cited_2022_ver2025.rds")
+ver2026 <- readRDS("../works_cited_2022_ver2026.rds")
 
 # 1. Ensure both are data.tables
 setDT(ver2025)
 setDT(ver2026)
 
-# Ensure instance_id exists in both (if you haven't already)
-ver2025[, instance_id := rowid(id)]
-ver2026[, instance_id := rowid(id)]
-
-# 1. Identify rows in 2025 that DO NOT exist in 2026 (Leakage)
-leakage_rows <- ver2025[!ver2026, on = .(id, instance_id)]
-leakage_summary <- leakage_rows[, .(rows_lost = .N), by = id]
-
-# 2. Identify rows in 2026 that DO NOT exist in 2025 (Growth)
-growth_rows <- ver2026[!ver2025, on = .(id, instance_id)]
-
-# 3. Quick Verification of the Math
-cat(
-  "Audit Check:\n",
-  "Original 2025: ", nrow(ver2025), "\n",
-  "Minus Leakage: ", nrow(leakage_rows), "\n",
-  "Plus Growth:   ", nrow(growth_rows), "\n",
-  "Equals 2026:   ", nrow(ver2025) - nrow(leakage_rows) + nrow(growth_rows), "\n",
-  "Actual 2026:   ", nrow(ver2026)
+#### Same cited articles by side-by-side 
+# 1. Create the side-by-side ledger
+reconciliation_ledger <- merge(
+  ver2025[, .(Count_2025 = .N), by = id],
+  ver2026[, .(Count_2026 = .N), by = id],
+  by = "id",
+  all = TRUE
 )
 
+# 2. Handle NAs
+reconciliation_ledger[is.na(Count_2025), Count_2025 := 0]
+reconciliation_ledger[is.na(Count_2026), Count_2026 := 0]
 
-# Get the 2025 counts to find the Blue Chips
-ledger_25 <- ver2025[, .(qty_2025 = .N), by = id]
+# 3. Calculate Variance
+reconciliation_ledger[, Variance := Count_2026 - Count_2025]
 
-# Merge the losses with the original status
-impacted_top_papers <- merge(leakage_summary, ledger_25, by = "id")
+# 4. FIX: Sort by 2025 volume and strictly pull the Top 100 records
+top_100_heavy_hitters <- reconciliation_ledger[order(-Count_2025)][1:100]
 
-############## Find top 20 missing total numbers 
-# 1. Isolate the lost rows using the anti-join
-leakage_rows <- ver2025[!ver2026, on = .(id, instance_id)]
+print("--- TRUE TOP 100 SIDE-BY-SIDE VERIFICATION ---")
+print(top_100_heavy_hitters, nrows = 100)
 
-# 2. Summarize the leakage by ID and get the Top 20
-top_20_missing <- leakage_rows[, .(citations_lost = .N), by = id][order(-citations_lost)][1:50]
+######### The difference
+# 1. Ensure inputs are data.tables and calculate baseline frequencies
+dt_25 <- ver2025[, .(Count_2025 = .N), by = id]
+dt_26 <- ver2026[, .(Count_2026 = .N), by = id]
 
-total_loss_count <- nrow(leakage_rows)
-print("--- TOP MISSING ASSETS (IDS) ---")
-print(top_20_missing)
+# 2. Merge on unique IDs to create the Master Audit Ledger
+change_ledger <- merge(dt_25, dt_26, by = "id", all = TRUE)
 
-top_20_total_loss <- sum(top_20_missing$citations_lost)
+# 3. Fill NAs with 0 (essential for mathematical operations)
+change_ledger[is.na(Count_2025), Count_2025 := 0]
+change_ledger[is.na(Count_2026), Count_2026 := 0]
 
-cat("--- TOP 20 CONCENTRATION AUDIT ---\n")
-cat("Total Loss from Top 20 IDs:      ", top_20_total_loss, "\n")
-cat("Grand Total Loss (Full Set):     ", total_loss_count, "\n")
-cat("Concentration Ratio:             ", round((top_20_total_loss / total_loss_count) * 100, 2), "%\n")
+# 4. Calculate Individual and Absolute Variances
+change_ledger[, Net_Variance := Count_2026 - Count_2025]
+
+# 5. Classify the Portfolio Assets
+stable_core  <- change_ledger[Count_2025 > 0  & Net_Variance == 0]
+growth_pool  <- change_ledger[Count_2025 > 0  & Net_Variance > 0]
+leakage_pool <- change_ledger[Count_2025 > 0  & Net_Variance < 0]
+new_listings <- change_ledger[Count_2025 == 0 & Count_2026 > 0]
+
+# --- CONSOLE REPORT ---
+cat("=================== OPENALEX ANNUAL DELTA REPORT =========================\n")
+cat(sprintf("IDs -> Stable Core: %d | Growth: %d | Leaked: %d | New: %d | Total Unique: %d\n", 
+            nrow(stable_core), nrow(growth_pool), nrow(leakage_pool), nrow(new_listings), nrow(change_ledger)))
+
+cat(sprintf("Citations -> Retained Base: %d | Pure Growth: %d | Pure Leakage: %d\n", 
+            sum(change_ledger[, pmin(Count_2025, Count_2026)]), 
+            sum(growth_pool$Net_Variance) + sum(new_listings$Count_2026), 
+            sum(abs(leakage_pool$Net_Variance))))
+
 
 
 ##########################################################

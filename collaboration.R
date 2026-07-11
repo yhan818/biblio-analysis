@@ -62,6 +62,8 @@ works_published_type_articles_authors <- works_published_type_articles %>%
 ##### Step 3: Split it into two works df: US and nonUS authors
 # works_published_multi_authors has a new column:
 ### Step 3.1: nonus_author: TRUE if at least one author is from a non-US country, FALSE otherwise.
+
+### 2026-07-07: may not work for 2026-07 new data strucutre
 works_published_type_articles_authors_nonus <- works_published_type_articles_authors %>%
   mutate(
     nonus_author = map_lgl(authorships, function(author_df) {
