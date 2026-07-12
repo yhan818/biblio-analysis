@@ -1,0 +1,2033 @@
+"topic","num_papers","pct"
+"Contact Dermatitis and Allergies",138,1.9
+"Stellar, planetary, and galactic studies",100,1.4
+"Galaxies: Formation, Evolution, Phenomena",82,1.2
+"Astro and Planetary Science",71,1
+"Particle physics theoretical and experimental studies",71,1
+"Astrophysics and Star Formation Studies",45,0.6
+"Dementia and Cognitive Impairment Research",41,0.6
+"Geological and Geochemical Analysis",37,0.5
+"Business and Management Studies",35,0.5
+"Adaptive optics and wavefront sensing",34,0.5
+"Pulmonary Hypertension Research and Treatments",34,0.5
+"Sleep and related disorders",34,0.5
+"Geology and Paleoclimatology Research",33,0.5
+"Fungal Infections and Studies",32,0.4
+"Astrophysical Phenomena and Observations",31,0.4
+"Planetary Science and Exploration",31,0.4
+"Plant Water Relations and Carbon Dynamics",31,0.4
+"Gamma-ray bursts and supernovae",30,0.4
+"Liver Disease Diagnosis and Treatment",28,0.4
+"Species Distribution and Climate Change",28,0.4
+"Astronomy and Astrophysical Research",27,0.4
+"Hydrology and Watershed Management Studies",26,0.4
+"Alzheimer's disease research and treatments",23,0.3
+"Cardiomyopathy and Myosin Studies",23,0.3
+"Plant and animal studies",22,0.3
+"Atmospheric aerosols and clouds",21,0.3
+"Global Cancer Incidence and Screening",20,0.3
+"Opioid Use Disorder Treatment",20,0.3
+"Quantum Computing Algorithms and Architecture",20,0.3
+"Quantum Information and Cryptography",20,0.3
+"Tree-ring climate responses",20,0.3
+"Cryospheric studies and observations",19,0.3
+"Mechanical Circulatory Support Devices",19,0.3
+"Cancer survivorship and care",18,0.3
+"Cervical Cancer and HPV Research",18,0.3
+"Fire effects on ecosystems",18,0.3
+"Meta-analysis and systematic reviews",18,0.3
+"Per- and polyfluoroalkyl substances research",18,0.3
+"Shoulder Injury and Treatment",18,0.3
+"Solar and Space Plasma Dynamics",18,0.3
+"Artificial Intelligence in Healthcare and Education",17,0.2
+"Cosmology and Gravitation Theories",17,0.2
+"Pain Management and Treatment",17,0.2
+"Atrial Fibrillation Management and Outcomes",16,0.2
+"Mechanical and Optical Resonators",16,0.2
+"Photovoltaic Systems and Sustainability",16,0.2
+"Advanced MRI Techniques and Applications",15,0.2
+"Climate Change and Health Impacts",15,0.2
+"Fluid Dynamics and Turbulent Flows",15,0.2
+"Long-Term Effects of COVID-19",15,0.2
+"Obstructive Sleep Apnea Research",15,0.2
+"Pain Mechanisms and Treatments",15,0.2
+"Traumatic Brain Injury Research",15,0.2
+"Alcohol Consumption and Health Effects",14,0.2
+"Archaeology and ancient environmental studies",14,0.2
+"Atmospheric chemistry and aerosols",14,0.2
+"Cardiac Valve Diseases and Treatments",14,0.2
+"Colorectal Cancer Screening and Detection",14,0.2
+"Congenital Heart Disease Studies",14,0.2
+"Esophageal Cancer Research and Treatment",14,0.2
+"Microplastics and Plastic Pollution",14,0.2
+"Neurological disorders and treatments",14,0.2
+"Software System Performance and Reliability",14,0.2
+"Asthma and respiratory diseases",13,0.2
+"Climate variability and models",13,0.2
+"Functional Brain Connectivity Studies",13,0.2
+"Lymphoma Diagnosis and Treatment",13,0.2
+"Ultrasonics and Acoustic Wave Propagation",13,0.2
+"Wildlife Ecology and Conservation",13,0.2
+"Advanced Neuroimaging Techniques and Applications",12,0.2
+"Cancer Genomics and Diagnostics",12,0.2
+"Cannabis and Cannabinoid Research",12,0.2
+"Critical Race Theory in Education",12,0.2
+"Flood Risk Assessment and Management",12,0.2
+"Human-Animal Interaction Studies",12,0.2
+"Migraine and Headache Studies",12,0.2
+"Multilingual Education and Policy",12,0.2
+"Nonmelanoma Skin Cancer Studies",12,0.2
+"Pancreatic and Hepatic Oncology Research",12,0.2
+"Photonic and Optical Devices",12,0.2
+"Research Data Management Practices",12,0.2
+"Atmospheric and Environmental Gas Dynamics",11,0.2
+"CAR-T cell therapy research",11,0.2
+"Cardiovascular Function and Risk Factors",11,0.2
+"Diabetes Treatment and Management",11,0.2
+"Ecology and Vegetation Dynamics Studies",11,0.2
+"Infrared Target Detection Methodologies",11,0.2
+"Innovations in Medical Education",11,0.2
+"Machine Learning in Materials Science",11,0.2
+"Meteorological Phenomena and Simulations",11,0.2
+"Occupational Health and Performance",11,0.2
+"Osteoarthritis Treatment and Mechanisms",11,0.2
+"Phonetics and Phonology Research",11,0.2
+"Pulsars and Gravitational Waves Research",11,0.2
+"Remote Sensing in Agriculture",11,0.2
+"Respiratory viral infections research",11,0.2
+"Simulation-Based Education in Healthcare",11,0.2
+"Sleep and Wakefulness Research",11,0.2
+"Topic Modeling",11,0.2
+"Traffic and Road Safety",11,0.2
+"Advanced Optical Imaging Technologies",10,0.1
+"Antenna Design and Analysis",10,0.1
+"Building Energy and Comfort Optimization",10,0.1
+"COVID-19 Clinical Research Studies",10,0.1
+"Dermatology and Skin Diseases",10,0.1
+"Diversity and Career in Medicine",10,0.1
+"Geophysics and Gravity Measurements",10,0.1
+"Health Systems, Economic Evaluations, Quality of Life",10,0.1
+"Health disparities and outcomes",10,0.1
+"Healthcare professionals’ stress and burnout",10,0.1
+"Heart Failure Treatment and Management",10,0.1
+"Laser-induced spectroscopy and plasma",10,0.1
+"Mental Health Research Topics",10,0.1
+"Microbial Community Ecology and Physiology",10,0.1
+"Mosquito-borne diseases and control",10,0.1
+"Organic Electronics and Photovoltaics",10,0.1
+"Perovskite Materials and Applications",10,0.1
+"Plant Virus Research Studies",10,0.1
+"Renal Transplantation Outcomes and Treatments",10,0.1
+"Resilience and Mental Health",10,0.1
+"Single-cell and spatial transcriptomics",10,0.1
+"Transplantation: Methods and Outcomes",10,0.1
+"Additive Manufacturing Materials and Processes",9,0.1
+"Air Quality and Health Impacts",9,0.1
+"Amyloidosis: Diagnosis, Treatment, Outcomes",9,0.1
+"Attachment and Relationship Dynamics",9,0.1
+"Auditing, Earnings Management, Governance",9,0.1
+"Cancer Immunotherapy and Biomarkers",9,0.1
+"Cardiac electrophysiology and arrhythmias",9,0.1
+"Cerebrovascular and Carotid Artery Diseases",9,0.1
+"Circadian rhythm and melatonin",9,0.1
+"Computational Drug Discovery Methods",9,0.1
+"Environmental Education and Sustainability",9,0.1
+"Epigenetics and DNA Methylation",9,0.1
+"Health Literacy and Information Accessibility",9,0.1
+"Healthcare Policy and Management",9,0.1
+"Heart Rate Variability and Autonomic Control",9,0.1
+"Hematopoietic Stem Cell Transplantation",9,0.1
+"Intracranial Aneurysms: Treatment and Complications",9,0.1
+"Language Development and Disorders",9,0.1
+"Membrane Separation Technologies",9,0.1
+"Memory and Neural Mechanisms",9,0.1
+"Neonatal Respiratory Health Research",9,0.1
+"Neural Networks and Reservoir Computing",9,0.1
+"Optical Polarization and Ellipsometry",9,0.1
+"Peripheral Artery Disease Management",9,0.1
+"Pleistocene-Era Hominins and Archaeology",9,0.1
+"Primate Behavior and Ecology",9,0.1
+"Smoking Behavior and Cessation",9,0.1
+"Strong Light-Matter Interactions",9,0.1
+"Surgical Simulation and Training",9,0.1
+"Transcranial Magnetic Stimulation Studies",9,0.1
+"Trauma, Hemostasis, Coagulopathy, Resuscitation",9,0.1
+"Treatment of Major Depression",9,0.1
+"earthquake and tectonic studies",9,0.1
+"AI in cancer detection",8,0.1
+"Advanced Malware Detection Techniques",8,0.1
+"Antibiotic Resistance in Bacteria",8,0.1
+"Bone fractures and treatments",8,0.1
+"Cardiac Arrest and Resuscitation",8,0.1
+"Cardiac Fibrosis and Remodeling",8,0.1
+"Chromosomal and Genetic Variations",8,0.1
+"Cleft Lip and Palate Research",8,0.1
+"Computational Fluid Dynamics and Aerodynamics",8,0.1
+"Cutaneous Melanoma Detection and Management",8,0.1
+"Digital Transformation in Industry",8,0.1
+"EFL/ESL Teaching and Learning",8,0.1
+"Food Security and Health in Diverse Populations",8,0.1
+"Frailty in Older Adults",8,0.1
+"Genetic Associations and Epidemiology",8,0.1
+"Hepatocellular Carcinoma Treatment and Prognosis",8,0.1
+"High-Energy Particle Collisions Research",8,0.1
+"Infection Control and Ventilation",8,0.1
+"Insect Resistance and Genetics",8,0.1
+"Isotope Analysis in Ecology",8,0.1
+"Liver Disease and Transplantation",8,0.1
+"Machine Learning in Healthcare",8,0.1
+"Neuroscience and Neuropharmacology Research",8,0.1
+"Quantum Mechanics and Applications",8,0.1
+"Rangeland and Wildlife Management",8,0.1
+"Seismic Waves and Analysis",8,0.1
+"Sleep and Work-Related Fatigue",8,0.1
+"Soil Carbon and Nitrogen Dynamics",8,0.1
+"Soil and Unsaturated Flow",8,0.1
+"Spacecraft Design and Technology",8,0.1
+"Spine and Intervertebral Disc Pathology",8,0.1
+"Stress Responses and Cortisol",8,0.1
+"Urban Transport and Accessibility",8,0.1
+"Vaccine Coverage and Hesitancy",8,0.1
+"Academic Research in Diverse Fields",7,0.1
+"Acute Ischemic Stroke Management",7,0.1
+"Advanced Fluorescence Microscopy Techniques",7,0.1
+"Advanced optical system design",7,0.1
+"Amyotrophic Lateral Sclerosis Research",7,0.1
+"Archaeology and Natural History",7,0.1
+"Astrophysics and Cosmic Phenomena",7,0.1
+"Autoimmune Bullous Skin Diseases",7,0.1
+"Bacteriophages and microbial interactions",7,0.1
+"Balance, Gait, and Falls Prevention",7,0.1
+"Calibration and Measurement Techniques",7,0.1
+"Cardiovascular Health and Risk Factors",7,0.1
+"Cerebrospinal fluid and hydrocephalus",7,0.1
+"Chronic Disease Management Strategies",7,0.1
+"Chronic Obstructive Pulmonary Disease (COPD) Research",7,0.1
+"Connective tissue disorders research",7,0.1
+"Cytomegalovirus and herpesvirus research",7,0.1
+"Diet and metabolism studies",7,0.1
+"Discourse Analysis in Language Studies",7,0.1
+"Environmental Justice and Health Disparities",7,0.1
+"Epilepsy research and treatment",7,0.1
+"Ethics in Clinical Research",7,0.1
+"Financial Literacy, Pension, Retirement Analysis",7,0.1
+"Genetics, Aging, and Longevity in Model Organisms",7,0.1
+"Genomics and Rare Diseases",7,0.1
+"Geochemistry and Geologic Mapping",7,0.1
+"Global Health and Surgery",7,0.1
+"Health and Medical Research Impacts",7,0.1
+"Hearing, Cochlea, Tinnitus, Genetics",7,0.1
+"Indigenous Health, Education, and Rights",7,0.1
+"Ionosphere and magnetosphere dynamics",7,0.1
+"Landslides and related hazards",7,0.1
+"Laser-Matter Interactions and Applications",7,0.1
+"MXene and MAX Phase Materials",7,0.1
+"Maternal and Perinatal Health Interventions",7,0.1
+"Medical Imaging Techniques and Applications",7,0.1
+"Migration, Health and Trauma",7,0.1
+"Mitochondrial Function and Pathology",7,0.1
+"Multiple Myeloma Research and Treatments",7,0.1
+"Musculoskeletal pain and rehabilitation",7,0.1
+"Numerical methods in engineering",7,0.1
+"Optical Imaging and Spectroscopy Techniques",7,0.1
+"Optical Systems and Laser Technology",7,0.1
+"Organ Transplantation Techniques and Outcomes",7,0.1
+"Physical Activity and Health",7,0.1
+"Posttraumatic Stress Disorder Research",7,0.1
+"Prenatal Substance Exposure Effects",7,0.1
+"Reproductive tract infections research",7,0.1
+"Respiratory Support and Mechanisms",7,0.1
+"Systems Engineering Methodologies and Applications",7,0.1
+"Trauma and Emergency Care Studies",7,0.1
+"Traumatic Brain Injury and Neurovascular Disturbances",7,0.1
+"Ultrasound in Clinical Applications",7,0.1
+"Venomous Animal Envenomation and Studies",7,0.1
+"Wireless Communication Security Techniques",7,0.1
+"2D Materials and Applications",6,0.1
+"AI in Service Interactions",6,0.1
+"Acute Myeloid Leukemia Research",6,0.1
+"Acute Myocardial Infarction Research",6,0.1
+"Adversarial Robustness in Machine Learning",6,0.1
+"Agricultural risk and resilience",6,0.1
+"Anomaly Detection Techniques and Applications",6,0.1
+"Artificial Intelligence in Healthcare",6,0.1
+"CRISPR and Genetic Engineering",6,0.1
+"Cardiac pacing and defibrillation studies",6,0.1
+"Cell Adhesion Molecules Research",6,0.1
+"Child and Adolescent Psychosocial and Emotional Development",6,0.1
+"Cholangiocarcinoma and Gallbladder Cancer Studies",6,0.1
+"Chronic Kidney Disease and Diabetes",6,0.1
+"Clostridium difficile and Clostridium perfringens research",6,0.1
+"Complementary and Alternative Medicine Studies",6,0.1
+"Concrete and Cement Materials Research",6,0.1
+"Data Visualization and Analytics",6,0.1
+"Disaster Management and Resilience",6,0.1
+"Ethics and Social Impacts of AI",6,0.1
+"Evolution and Paleontology Studies",6,0.1
+"Gas Dynamics and Kinetic Theory",6,0.1
+"Gender Politics and Representation",6,0.1
+"Genomics and Phylogenetic Studies",6,0.1
+"Hearing Loss and Rehabilitation",6,0.1
+"Heavy metals in environment",6,0.1
+"High-pressure geophysics and materials",6,0.1
+"Homelessness and Social Issues",6,0.1
+"Immunotherapy and Immune Responses",6,0.1
+"Information and Cyber Security",6,0.1
+"Insect and Pesticide Research",6,0.1
+"Interdisciplinary Research and Collaboration",6,0.1
+"Menopause: Health Impacts and Treatments",6,0.1
+"Methane Hydrates and Related Phenomena",6,0.1
+"Mindfulness and Compassion Interventions",6,0.1
+"Misinformation and Its Impacts",6,0.1
+"Network Security and Intrusion Detection",6,0.1
+"Neural Networks and Applications",6,0.1
+"Neuroinflammation and Neurodegeneration Mechanisms",6,0.1
+"Organic Food and Agriculture",6,0.1
+"Orthopaedic implants and arthroplasty",6,0.1
+"Orthopedic Surgery and Rehabilitation",6,0.1
+"Paleontology and Stratigraphy of Fossils",6,0.1
+"Parallel Computing and Optimization Techniques",6,0.1
+"Photoacoustic and Ultrasonic Imaging",6,0.1
+"Photocathodes and Microchannel Plates",6,0.1
+"Pituitary Gland Disorders and Treatments",6,0.1
+"Plant Pathogens and Fungal Diseases",6,0.1
+"Precipitation Measurement and Analysis",6,0.1
+"Prostate Cancer Treatment and Research",6,0.1
+"Psoriasis: Treatment and Pathogenesis",6,0.1
+"Psychosomatic Disorders and Their Treatments",6,0.1
+"Racial and Ethnic Identity Research",6,0.1
+"Radiomics and Machine Learning in Medical Imaging",6,0.1
+"Systemic Lupus Erythematosus Research",6,0.1
+"Takotsubo Cardiomyopathy and Associated Phenomena",6,0.1
+"Traffic Prediction and Management Techniques",6,0.1
+"Transboundary Water Resource Management",6,0.1
+"Ultrasound and Hyperthermia Applications",6,0.1
+"Urban Heat Island Mitigation",6,0.1
+"Virtual Reality Applications and Impacts",6,0.1
+"Adaptive Control of Nonlinear Systems",5,0.1
+"Additive Manufacturing and 3D Printing Technologies",5,0.1
+"Advanced Fiber Optic Sensors",5,0.1
+"Advanced Measurement and Metrology Techniques",5,0.1
+"Advanced Surface Polishing Techniques",5,0.1
+"Air Quality Monitoring and Forecasting",5,0.1
+"Anesthesia and Pain Management",5,0.1
+"Aortic Disease and Treatment Approaches",5,0.1
+"Arsenic contamination and mitigation",5,0.1
+"Atmospheric Ozone and Climate",5,0.1
+"Attention Deficit Hyperactivity Disorder",5,0.1
+"Biomedical Text Mining and Ontologies",5,0.1
+"Bone health and osteoporosis research",5,0.1
+"COVID-19 and Mental Health",5,0.1
+"COVID-19 epidemiological studies",5,0.1
+"Cardiac Structural Anomalies and Repair",5,0.1
+"Cardiovascular Disease and Adiposity",5,0.1
+"Cardiovascular Issues in Pregnancy",5,0.1
+"Career Development and Diversity",5,0.1
+"Child Nutrition and Water Access",5,0.1
+"Community Health and Development",5,0.1
+"Complex Systems and Decision Making",5,0.1
+"Composting and Vermicomposting Techniques",5,0.1
+"Conducting polymers and applications",5,0.1
+"Congenital heart defects research",5,0.1
+"Coronary Interventions and Diagnostics",5,0.1
+"Creativity in Education and Neuroscience",5,0.1
+"Cystic Fibrosis Research Advances",5,0.1
+"DNA and Nucleic Acid Chemistry",5,0.1
+"Diabetes and associated disorders",5,0.1
+"Dialysis and Renal Disease Management",5,0.1
+"Endometrial and Cervical Cancer Treatments",5,0.1
+"Endometriosis Research and Treatment",5,0.1
+"Engineering Education and Curriculum Development",5,0.1
+"Estrogen and related hormone effects",5,0.1
+"Experimental Behavioral Economics Studies",5,0.1
+"Groundwater and Isotope Geochemistry",5,0.1
+"Groundwater flow and contamination studies",5,0.1
+"Gut microbiota and health",5,0.1
+"Health Sciences Research and Education",5,0.1
+"Heavy Metal Exposure and Toxicity",5,0.1
+"Higher Education Research Studies",5,0.1
+"Historical, Literary, and Cultural Studies",5,0.1
+"Human auditory perception and evaluation",5,0.1
+"Indigenous Cultures and Socio-Education",5,0.1
+"Indigenous Studies and Ecology",5,0.1
+"Infrastructure Maintenance and Monitoring",5,0.1
+"Inhalation and Respiratory Drug Delivery",5,0.1
+"International Student and Expatriate Challenges",5,0.1
+"Invertebrate Immune Response Mechanisms",5,0.1
+"Knee injuries and reconstruction techniques",5,0.1
+"Machine Learning in Bioinformatics",5,0.1
+"Metal Forming Simulation Techniques",5,0.1
+"Mining Techniques and Economics",5,0.1
+"Muscle Physiology and Disorders",5,0.1
+"Natural Language Processing Techniques",5,0.1
+"Neuroendocrine Tumor Research Advances",5,0.1
+"Neuroscience of respiration and sleep",5,0.1
+"Non-Invasive Vital Sign Monitoring",5,0.1
+"Online Learning and Analytics",5,0.1
+"Opinion Dynamics and Social Influence",5,0.1
+"Optical measurement and interference techniques",5,0.1
+"Pancreatic function and diabetes",5,0.1
+"Parental Involvement in Education",5,0.1
+"Patient-Provider Communication in Healthcare",5,0.1
+"Peatlands and Wetlands Ecology",5,0.1
+"Pharmaceutical Practices and Patient Outcomes",5,0.1
+"Pharmacogenetics and Drug Metabolism",5,0.1
+"Photoreceptor and optogenetics research",5,0.1
+"Plant Pathogenic Bacteria Studies",5,0.1
+"Privacy-Preserving Technologies in Data",5,0.1
+"RNA modifications and cancer",5,0.1
+"Radioactive element chemistry and processing",5,0.1
+"Radiology practices and education",5,0.1
+"Reconstructive Surgery and Microvascular Techniques",5,0.1
+"Renal cell carcinoma treatment",5,0.1
+"S100 Proteins and Annexins",5,0.1
+"SARS-CoV-2 and COVID-19 Research",5,0.1
+"SARS-CoV-2 detection and testing",5,0.1
+"Social Media and Politics",5,0.1
+"Social and Intergroup Psychology",5,0.1
+"Solar Thermal and Photovoltaic Systems",5,0.1
+"Space Satellite Systems and Control",5,0.1
+"Spacecraft Dynamics and Control",5,0.1
+"Spectroscopy and Laser Applications",5,0.1
+"Spinal Dysraphism and Malformations",5,0.1
+"Subterranean biodiversity and taxonomy",5,0.1
+"Synthesis and Properties of Aromatic Compounds",5,0.1
+"Synthesis and properties of polymers",5,0.1
+"Thyroid Cancer Diagnosis and Treatment",5,0.1
+"Toxoplasma gondii Research Studies",5,0.1
+"Tropical and Extratropical Cyclones Research",5,0.1
+"Tuberculosis Research and Epidemiology",5,0.1
+"Urban Green Space and Health",5,0.1
+"Vestibular and auditory disorders",5,0.1
+"Viral Infections and Immunology Research",5,0.1
+"Water Systems and Optimization",5,0.1
+"Zoonotic diseases and public health",5,0.1
+"3D Printing in Biomedical Research",4,0.1
+"Acute Kidney Injury Research",4,0.1
+"Adipose Tissue and Metabolism",4,0.1
+"Advanced Glycation End Products research",4,0.1
+"Advanced Optical Sensing Technologies",4,0.1
+"Advanced Semiconductor Detectors and Materials",4,0.1
+"Algebraic Geometry and Number Theory",4,0.1
+"Amphibian and Reptile Biology",4,0.1
+"Appendicitis Diagnosis and Management",4,0.1
+"Aquaculture disease management and microbiota",4,0.1
+"Art Education and Development",4,0.1
+"Astronomical Observations and Instrumentation",4,0.1
+"Atomic and Molecular Physics",4,0.1
+"Autism Spectrum Disorder Research",4,0.1
+"Big Data and Business Intelligence",4,0.1
+"Birth, Development, and Health",4,0.1
+"Blockchain Technology Applications and Security",4,0.1
+"Bullying, Victimization, and Aggression",4,0.1
+"Cardiac Imaging and Diagnostics",4,0.1
+"Cerebral Palsy and Movement Disorders",4,0.1
+"Climate change impacts on agriculture",4,0.1
+"Complex Network Analysis Techniques",4,0.1
+"Coral and Marine Ecosystems Studies",4,0.1
+"Corneal surgery and disorders",4,0.1
+"Counseling Practices and Supervision",4,0.1
+"Crystal Structures and Properties",4,0.1
+"Delphi Technique in Research",4,0.1
+"Digital Economy and Work Transformation",4,0.1
+"Dysphagia Assessment and Management",4,0.1
+"EEG and Brain-Computer Interfaces",4,0.1
+"Early Childhood Education and Development",4,0.1
+"Education and Public Policy",4,0.1
+"Education and experiences of immigrants and refugees",4,0.1
+"Education, Achievement, and Giftedness",4,0.1
+"Electronic Health Records Systems",4,0.1
+"Embedded Systems Design Techniques",4,0.1
+"Employment and Welfare Studies",4,0.1
+"Enhanced Oil Recovery Techniques",4,0.1
+"Explainable Artificial Intelligence (XAI)",4,0.1
+"Fish Ecology and Management Studies",4,0.1
+"Foot and Ankle Surgery",4,0.1
+"Forest Management and Policy",4,0.1
+"Game Theory and Applications",4,0.1
+"Gastrointestinal motility and disorders",4,0.1
+"Gene expression and cancer classification",4,0.1
+"Genetics and Neurodevelopmental Disorders",4,0.1
+"Geriatric Care and Nursing Homes",4,0.1
+"Glioma Diagnosis and Treatment",4,0.1
+"Global Peace and Security Dynamics",4,0.1
+"Grief, Bereavement, and Mental Health",4,0.1
+"Grit, Self-Efficacy, and Motivation",4,0.1
+"Gun Ownership and Violence Research",4,0.1
+"Head and Neck Surgical Oncology",4,0.1
+"Health and Wellbeing Research",4,0.1
+"Hearing Impairment and Communication",4,0.1
+"High Entropy Alloys Studies",4,0.1
+"History and Developments in Astronomy",4,0.1
+"Identity, Memory, and Therapy",4,0.1
+"Immunodeficiency and Autoimmune Disorders",4,0.1
+"Inflammasome and immune disorders",4,0.1
+"Influenza Virus Research Studies",4,0.1
+"LGBTQ Health, Identity, and Policy",4,0.1
+"Land Use and Ecosystem Services",4,0.1
+"Laser Material Processing Techniques",4,0.1
+"Legal principles and applications",4,0.1
+"Lymphatic System and Diseases",4,0.1
+"Maternal Mental Health During Pregnancy and Postpartum",4,0.1
+"Mathematics Education and Teaching Techniques",4,0.1
+"Media Influence and Health",4,0.1
+"Model Reduction and Neural Networks",4,0.1
+"Multimodal Machine Learning Applications",4,0.1
+"Music Technology and Sound Studies",4,0.1
+"Neural and Behavioral Psychology Studies",4,0.1
+"Neurobiology of Language and Bilingualism",4,0.1
+"Neuroendocrine regulation and behavior",4,0.1
+"Neurological Disease Mechanisms and Treatments",4,0.1
+"Nursing Education, Practice, and Leadership",4,0.1
+"Nutrition, Genetics, and Disease",4,0.1
+"Ophthalmology and Visual Impairment Studies",4,0.1
+"Optical Coatings and Gratings",4,0.1
+"Optical Coherence Tomography Applications",4,0.1
+"Optical Wireless Communication Technologies",4,0.1
+"Oral Health Pathology and Treatment",4,0.1
+"Orbital Angular Momentum in Optics",4,0.1
+"Pain Management and Opioid Use",4,0.1
+"Palliative Care and End-of-Life Issues",4,0.1
+"Parasites and Host Interactions",4,0.1
+"Parathyroid Disorders and Treatments",4,0.1
+"Pelvic floor disorders treatments",4,0.1
+"Photodynamic Therapy Research Studies",4,0.1
+"Phytoplasmas and Hemiptera pathogens",4,0.1
+"Plant-Microbe Interactions and Immunity",4,0.1
+"Pluripotent Stem Cells Research",4,0.1
+"Posthumanist Ethics and Activism",4,0.1
+"Public Health Policies and Education",4,0.1
+"Qualitative Research Methods and Ethics",4,0.1
+"RNA and protein synthesis mechanisms",4,0.1
+"Race, Genetics, and Society",4,0.1
+"Race, History, and American Society",4,0.1
+"Radiation Detection and Scintillator Technologies",4,0.1
+"Radical Photochemical Reactions",4,0.1
+"Radio Astronomy Observations and Technology",4,0.1
+"Random Matrices and Applications",4,0.1
+"Rangeland Management and Livestock Ecology",4,0.1
+"Reading and Literacy Development",4,0.1
+"Regulation of Appetite and Obesity",4,0.1
+"Retinal Diseases and Treatments",4,0.1
+"Science Education and Pedagogy",4,0.1
+"Science, Research, and Medicine",4,0.1
+"Second Language Acquisition and Learning",4,0.1
+"Seismic Performance and Analysis",4,0.1
+"Soil Moisture and Remote Sensing",4,0.1
+"Soil erosion and sediment transport",4,0.1
+"Space Science and Extraterrestrial Life",4,0.1
+"Spatial Cognition and Navigation",4,0.1
+"Stroke Rehabilitation and Recovery",4,0.1
+"Teacher Education and Leadership Studies",4,0.1
+"Tensor decomposition and applications",4,0.1
+"Total Knee Arthroplasty Outcomes",4,0.1
+"Tracheal and airway disorders",4,0.1
+"Transportation Planning and Optimization",4,0.1
+"Urban Agriculture and Sustainability",4,0.1
+"Urban Stormwater Management Solutions",4,0.1
+"Vascular Anomalies and Treatments",4,0.1
+"Vehicular Ad Hoc Networks (VANETs)",4,0.1
+"Wastewater Treatment and Reuse",4,0.1
+"Wound Healing and Treatments",4,0.1
+"melanin and skin pigmentation",4,0.1
+"3D Surveying and Cultural Heritage",3,0
+"Advanced Breast Cancer Therapies",3,0
+"Advanced Fiber Laser Technologies",3,0
+"Advanced MEMS and NEMS Technologies",3,0
+"Advanced Memory and Neural Computing",3,0
+"Advanced Photocatalysis Techniques",3,0
+"Advanced Steganography and Watermarking Techniques",3,0
+"Advanced X-ray Imaging Techniques",3,0
+"Advancements in Photolithography Techniques",3,0
+"Advances in Oncology and Radiotherapy",3,0
+"Aerodynamics and Fluid Dynamics Research",3,0
+"Agriculture and Rural Development Research",3,0
+"Algebraic structures and combinatorial models",3,0
+"Anaerobic Digestion and Biogas Production",3,0
+"Anatomy and Medical Technology",3,0
+"Anesthesia and Neurotoxicity Research",3,0
+"Angiogenesis and VEGF in Cancer",3,0
+"Animal Behavior and Reproduction",3,0
+"Antibiotic Use and Resistance",3,0
+"Antibiotics Pharmacokinetics and Efficacy",3,0
+"Antifungal resistance and susceptibility",3,0
+"Antiplatelet Therapy and Cardiovascular Diseases",3,0
+"Aortic aneurysm repair treatments",3,0
+"Aquaculture Nutrition and Growth",3,0
+"Archaeology and Rock Art Studies",3,0
+"Augmented Reality Applications",3,0
+"Autoimmune and Inflammatory Disorders Research",3,0
+"BIM and Construction Integration",3,0
+"Bariatric Surgery and Outcomes",3,0
+"Bat Biology and Ecology Studies",3,0
+"Bladder and Urothelial Cancer Treatments",3,0
+"Blood Coagulation and Thrombosis Mechanisms",3,0
+"Blood transfusion and management",3,0
+"Bone Metabolism and Diseases",3,0
+"Botulinum Toxin and Related Neurological Disorders",3,0
+"Brain Tumor Detection and Classification",3,0
+"Breast Implant and Reconstruction",3,0
+"Breastfeeding Practices and Influences",3,0
+"CCD and CMOS Imaging Sensors",3,0
+"COVID-19 and healthcare impacts",3,0
+"Cancer Risks and Factors",3,0
+"Cancer, Hypoxia, and Metabolism",3,0
+"Carbon Dioxide Capture Technologies",3,0
+"Cardiac Health and Mental Health",3,0
+"Cardiac tumors and thrombi",3,0
+"Cardiovascular Effects of Exercise",3,0
+"Cardiovascular and exercise physiology",3,0
+"Cell Image Analysis Techniques",3,0
+"Cellular Mechanics and Interactions",3,0
+"Central Venous Catheters and Hemodialysis",3,0
+"Chemotherapy-induced cardiotoxicity and mitigation",3,0
+"Childhood Cancer Survivors' Quality of Life",3,0
+"Cholesterol and Lipid Metabolism",3,0
+"Climate Change Communication and Perception",3,0
+"Climate change and permafrost",3,0
+"Cloud Computing and Resource Management",3,0
+"Coffee research and impacts",3,0
+"Color perception and design",3,0
+"Colorectal and Anal Carcinomas",3,0
+"Complement system in diseases",3,0
+"Computer Graphics and Visualization Techniques",3,0
+"Consumer Retail Behavior Studies",3,0
+"Corporate Finance and Governance",3,0
+"Craniofacial Disorders and Treatments",3,0
+"Criminal Justice and Corrections Analysis",3,0
+"Cultural Competency in Health Care",3,0
+"Cultural Industries and Urban Development",3,0
+"Dark Matter and Cosmic Phenomena",3,0
+"Diabetes Management and Education",3,0
+"Diabetes Management and Research",3,0
+"Diabetes, Cardiovascular Risks, and Lipoproteins",3,0
+"Digital Holography and Microscopy",3,0
+"Digital Mental Health Interventions",3,0
+"Digital Storytelling and Education",3,0
+"Diverse Educational Innovations Studies",3,0
+"Doctoral Education Challenges and Solutions",3,0
+"Down syndrome and intellectual disability research",3,0
+"Drug-Induced Hepatotoxicity and Protection",3,0
+"E-commerce and Technology Innovations",3,0
+"Economic and Environmental Valuation",3,0
+"Educational Leadership and Practices",3,0
+"Eicosanoids and Hypertension Pharmacology",3,0
+"Elasticity and Material Modeling",3,0
+"Electric Vehicles and Infrastructure",3,0
+"Empathy and Medical Education",3,0
+"Endoplasmic Reticulum Stress and Disease",3,0
+"Energy, Environment, Economic Growth",3,0
+"Energy, Environment, and Transportation Policies",3,0
+"Environmental DNA in Biodiversity Studies",3,0
+"Environmental Monitoring and Data Management",3,0
+"Eosinophilic Esophagitis",3,0
+"Epistemology, Ethics, and Metaphysics",3,0
+"Error Correcting Code Techniques",3,0
+"Erythrocyte Function and Pathophysiology",3,0
+"Esophageal and GI Pathology",3,0
+"Evolutionary Game Theory and Cooperation",3,0
+"Family and Patient Care in Intensive Care Units",3,0
+"Fecal contamination and water quality",3,0
+"Fluorine in Organic Chemistry",3,0
+"Folate and B Vitamins Research",3,0
+"Fullerene Chemistry and Applications",3,0
+"Fungal Biology and Applications",3,0
+"Gallbladder and Bile Duct Disorders",3,0
+"Gastric Cancer Management and Outcomes",3,0
+"Gaze Tracking and Assistive Technology",3,0
+"Generative Adversarial Networks and Image Synthesis",3,0
+"Genetic Mapping and Diversity in Plants and Animals",3,0
+"Genetic Neurodegenerative Diseases",3,0
+"Genetic and Kidney Cyst Diseases",3,0
+"Genetic and phenotypic traits in livestock",3,0
+"Genetics, Bioinformatics, and Biomedical Research",3,0
+"Genomics, phytochemicals, and oxidative stress",3,0
+"Geographic Information Systems Studies",3,0
+"Glaucoma and retinal disorders",3,0
+"Global Energy and Sustainability Research",3,0
+"Global Health Care Issues",3,0
+"Global Public Health Policies and Epidemiology",3,0
+"Growth Hormone and Insulin-like Growth Factors",3,0
+"HIV Research and Treatment",3,0
+"HIV/AIDS Research and Interventions",3,0
+"Health Policy Implementation Science",3,0
+"Health and Well-being Studies",3,0
+"Heat shock proteins research",3,0
+"Heparin-Induced Thrombocytopenia and Thrombosis",3,0
+"Hernia repair and management",3,0
+"Hidradenitis Suppurativa and Treatments",3,0
+"High Temperature Alloys and Creep",3,0
+"Hormonal Regulation and Hypertension",3,0
+"Image and Signal Denoising Methods",3,0
+"Impact of Technology on Adolescents",3,0
+"Industrial Vision Systems and Defect Detection",3,0
+"Infant Health and Development",3,0
+"Infection Control in Healthcare",3,0
+"Infective Endocarditis Diagnosis and Management",3,0
+"Inflammatory mediators and NSAID effects",3,0
+"Innovation and Knowledge Management",3,0
+"Innovative Teaching Methods",3,0
+"Insect and Arachnid Ecology and Behavior",3,0
+"Insect symbiosis and bacterial influences",3,0
+"Insurance, Mortality, Demography, Risk Management",3,0
+"Intellectual Property Law",3,0
+"Intensive Care Unit Cognitive Disorders",3,0
+"Interstitial Lung Diseases and Idiopathic Pulmonary Fibrosis",3,0
+"Intracerebral and Subarachnoid Hemorrhage Research",3,0
+"Ion channel regulation and function",3,0
+"Irrigation Practices and Water Management",3,0
+"Job Satisfaction and Organizational Behavior",3,0
+"Karst Systems and Hydrogeology",3,0
+"Kidney Stones and Urolithiasis Treatments",3,0
+"Language, Metaphor, and Cognition",3,0
+"Legume Nitrogen Fixing Symbiosis",3,0
+"Library Science and Information Systems",3,0
+"Lipoproteins and Cardiovascular Health",3,0
+"Literacy, Media, and Education",3,0
+"Luminescence and Fluorescent Materials",3,0
+"Lung Cancer Diagnosis and Treatment",3,0
+"Lung Cancer Treatments and Mutations",3,0
+"Machine Learning and Data Classification",3,0
+"Malaria Research and Control",3,0
+"Mass Spectrometry Techniques and Applications",3,0
+"Media Studies and Communication",3,0
+"Medical Imaging and Analysis",3,0
+"Mental Health via Writing",3,0
+"Metabolism, Diabetes, and Cancer",3,0
+"Metabolomics and Mass Spectrometry Studies",3,0
+"Metal-Organic Frameworks: Synthesis and Applications",3,0
+"Mine drainage and remediation techniques",3,0
+"Mineralogy and Gemology Studies",3,0
+"Mining and Resource Management",3,0
+"Molecular Spectroscopy and Structure",3,0
+"Monetary Policy and Economic Impact",3,0
+"Muscle activation and electromyography studies",3,0
+"Music Therapy and Health",3,0
+"Mycorrhizal Fungi and Plant Interactions",3,0
+"Myeloproliferative Neoplasms: Diagnosis and Treatment",3,0
+"Nanoparticle-Based Drug Delivery",3,0
+"Nanoplatforms for cancer theranostics",3,0
+"Nerve injury and regeneration",3,0
+"Neurosurgical Procedures and Complications",3,0
+"Neutrino Physics Research",3,0
+"Nursing education and management",3,0
+"Nutritional Studies and Diet",3,0
+"Ocular Surface and Contact Lens",3,0
+"Online and Blended Learning",3,0
+"Oral History, Memory, Narrative Analysis",3,0
+"Organic Light-Emitting Diodes Research",3,0
+"Ovarian cancer diagnosis and treatment",3,0
+"PI3K/AKT/mTOR signaling in cancer",3,0
+"Parasitic Infections and Diagnostics",3,0
+"Parkinson's Disease Mechanisms and Treatments",3,0
+"Particle Detector Development and Performance",3,0
+"Perfectionism, Procrastination, Anxiety Studies",3,0
+"Personality Disorders and Psychopathology",3,0
+"Phagocytosis and Immune Regulation",3,0
+"Phase-change materials and chalcogenides",3,0
+"Photosynthetic Processes and Mechanisms",3,0
+"Plant Diversity and Evolution",3,0
+"Plant Molecular Biology Research",3,0
+"Plant Reproductive Biology",3,0
+"Plant nutrient uptake and metabolism",3,0
+"Pneumonia and Respiratory Infections",3,0
+"Political Philosophy and Ethics",3,0
+"Politics and Society in Latin America",3,0
+"Polyomavirus and related diseases",3,0
+"Pregnancy and Medication Impact",3,0
+"Pregnancy and preeclampsia studies",3,0
+"Probabilistic and Robust Engineering Design",3,0
+"Psychedelics and Drug Studies",3,0
+"Psychological Well-being and Life Satisfaction",3,0
+"Psychology of Moral and Emotional Judgment",3,0
+"Quantum many-body systems",3,0
+"Radiopharmaceutical Chemistry and Applications",3,0
+"Railway Engineering and Dynamics",3,0
+"Regional Development and Innovation",3,0
+"Religion, Spirituality, and Psychology",3,0
+"Remote-Sensing Image Classification",3,0
+"Renal Diseases and Glomerulopathies",3,0
+"Renal and related cancers",3,0
+"Reproductive Health and Contraception",3,0
+"Risk and Portfolio Optimization",3,0
+"Robotic Path Planning Algorithms",3,0
+"Rock Mechanics and Modeling",3,0
+"Rocket and propulsion systems research",3,0
+"Sarcoidosis and Beryllium Toxicity Research",3,0
+"Scientific Computing and Data Management",3,0
+"Scoliosis diagnosis and treatment",3,0
+"Semiconductor Quantum Structures and Devices",3,0
+"Service-Learning and Community Engagement",3,0
+"Sexuality, Behavior, and Technology",3,0
+"Smart Agriculture and AI",3,0
+"Smart Grid Energy Management",3,0
+"Social Power and Status Dynamics",3,0
+"Solid State Laser Technologies",3,0
+"Spacecraft and Cryogenic Technologies",3,0
+"Sparse and Compressive Sensing Techniques",3,0
+"Spectroscopy and Chemometric Analyses",3,0
+"Sphingolipid Metabolism and Signaling",3,0
+"Statistical Methods and Inference",3,0
+"Stoma care and complications",3,0
+"Structural Health Monitoring Techniques",3,0
+"Suicide and Self-Harm Studies",3,0
+"Target Tracking and Data Fusion in Sensor Networks",3,0
+"Telemedicine and Telehealth Implementation",3,0
+"Terrorism, Counterterrorism, and Political Violence",3,0
+"Therapeutic Uses of Natural Elements",3,0
+"TiO2 Photocatalysis and Solar Cells",3,0
+"Time Series Analysis and Forecasting",3,0
+"Tissue Engineering and Regenerative Medicine",3,0
+"Topological Materials and Phenomena",3,0
+"Trace Elements in Health",3,0
+"Trauma Management and Diagnosis",3,0
+"Tree Root and Stability Studies",3,0
+"Urban Arborization and Environmental Studies",3,0
+"Urban, Neighborhood, and Segregation Studies",3,0
+"Urinary Bladder and Prostate Research",3,0
+"Vascular Malformations Diagnosis and Treatment",3,0
+"Vascular Procedures and Complications",3,0
+"Vehicle Routing Optimization Methods",3,0
+"Venous Thromboembolism Diagnosis and Management",3,0
+"Veterinary Equine Medical Research",3,0
+"Viral gastroenteritis research and epidemiology",3,0
+"Visual perception and processing mechanisms",3,0
+"Water Quality Monitoring and Analysis",3,0
+"Water resources management and optimization",3,0
+"Water-Energy-Food Nexus Studies",3,0
+"Youth Development and Social Support",3,0
+"interferon and immune responses",3,0
+"Abdominal Trauma and Injuries",2,0
+"Academic Publishing and Open Access",2,0
+"Acoustic Wave Resonator Technologies",2,0
+"Acute Lymphoblastic Leukemia research",2,0
+"Advanced Antenna and Metasurface Technologies",2,0
+"Advanced Data Storage Technologies",2,0
+"Advanced Image Processing Techniques",2,0
+"Advanced Image and Video Retrieval Techniques",2,0
+"Advanced Materials and Mechanics",2,0
+"Advanced Optical Network Technologies",2,0
+"Advanced Proteomics Techniques and Applications",2,0
+"Advanced SAR Imaging Techniques",2,0
+"Advanced Thermodynamics and Statistical Mechanics",2,0
+"Advanced materials and composites",2,0
+"Advancements in Battery Materials",2,0
+"Advancements in Transdermal Drug Delivery",2,0
+"Advances in Cucurbitaceae Research",2,0
+"Aeolian processes and effects",2,0
+"African Sexualities and LGBTQ+ Issues",2,0
+"African history and culture studies",2,0
+"Aging and Gerontology Research",2,0
+"Agriculture Sustainability and Environmental Impact",2,0
+"Agriculture and Farm Safety",2,0
+"Agriculture, Land Use, Rural Development",2,0
+"Algal biology and biofuel production",2,0
+"American Environmental and Regional History",2,0
+"Animal Ecology and Behavior Studies",2,0
+"Animal Vocal Communication and Behavior",2,0
+"Antioxidant Activity and Oxidative Stress",2,0
+"Aquatic Ecosystems and Biodiversity",2,0
+"Arctic and Russian Policy Studies",2,0
+"Atomic and Subatomic Physics Research",2,0
+"Autophagy in Disease and Therapy",2,0
+"Avian ecology and behavior",2,0
+"BRCA gene mutations in cancer",2,0
+"Bacterial Genetics and Biotechnology",2,0
+"Bacterial Infections and Vaccines",2,0
+"Behavioral Health and Interventions",2,0
+"Behavioral and Psychological Studies",2,0
+"Biocrusts and Microbial Ecology",2,0
+"Biodiesel Production and Applications",2,0
+"Biofuel production and bioconversion",2,0
+"Bioinformatics and Genomic Networks",2,0
+"Biomedical and Engineering Education",2,0
+"Bipolar Disorder and Treatment",2,0
+"Body Composition Measurement Techniques",2,0
+"Botanical Research and Applications",2,0
+"Botany and Geology in Latin America and Caribbean",2,0
+"Breast Cancer Treatment Studies",2,0
+"Business Strategy and Innovation",2,0
+"COVID-19 Digital Contact Tracing",2,0
+"COVID-19 Impact on Reproduction",2,0
+"Cancer Mechanisms and Therapy",2,0
+"Cancer Research and Treatments",2,0
+"Cancer and Skin Lesions",2,0
+"Cancer, Stress, Anesthesia, and Immune Response",2,0
+"Cancer-related molecular mechanisms research",2,0
+"Cardiac Arrhythmias and Treatments",2,0
+"Cardiac and Coronary Surgery Techniques",2,0
+"Cardiac, Anesthesia and Surgical Outcomes",2,0
+"Cellular transport and secretion",2,0
+"Cervical and Thoracic Myelopathy",2,0
+"Chemical Reactions and Isotopes",2,0
+"Chemistry and Chemical Engineering",2,0
+"Chemokine receptors and signaling",2,0
+"Child Abuse and Trauma",2,0
+"Children's Rights and Participation",2,0
+"Click Chemistry and Applications",2,0
+"Clinical Laboratory Practices and Quality Control",2,0
+"Clinical Reasoning and Diagnostic Skills",2,0
+"Clinical practice guidelines implementation",2,0
+"Coagulation, Bradykinin, Polyphosphates, and Angioedema",2,0
+"Coal Properties and Utilization",2,0
+"Coal and Its By-products",2,0
+"Cognitive Abilities and Testing",2,0
+"Cold Atom Physics and Bose-Einstein Condensates",2,0
+"Collaborative Teaching and Inclusion",2,0
+"Competency Development and Evaluation",2,0
+"Complex Systems and Time Series Analysis",2,0
+"Computational Physics and Python Applications",2,0
+"Congenital Diaphragmatic Hernia Studies",2,0
+"Congenital gastrointestinal and neural anomalies",2,0
+"Congenital limb and hand anomalies",2,0
+"Context-Aware Activity Recognition Systems",2,0
+"Corneal Surgery and Treatments",2,0
+"Crime Patterns and Interventions",2,0
+"Crime, Illicit Activities, and Governance",2,0
+"Crustacean biology and ecology",2,0
+"Cryptography and Data Security",2,0
+"Cultural Differences and Values",2,0
+"Cultural Heritage Management and Preservation",2,0
+"Data Management and Algorithms",2,0
+"Dental Implant Techniques and Outcomes",2,0
+"Dermatologic Treatments and Research",2,0
+"Diabetic Foot Ulcer Assessment and Management",2,0
+"Dietary Effects on Health",2,0
+"Digital Humanities and Scholarship",2,0
+"Digital Radiography and Breast Imaging",2,0
+"Digital and Traditional Archives Management",2,0
+"Disability Education and Employment",2,0
+"Distributed Control Multi-Agent Systems",2,0
+"Distributed systems and fault tolerance",2,0
+"Diverticular Disease and Complications",2,0
+"Drug-Induced Adverse Reactions",2,0
+"Dust and Plasma Wave Phenomena",2,0
+"Eating Disorders and Behaviors",2,0
+"Education Systems and Policy",2,0
+"Education and Critical Thinking Development",2,0
+"Education and Digital Technologies",2,0
+"Education and Military Integration",2,0
+"Electoral Systems and Political Participation",2,0
+"Electrocatalysts for Energy Conversion",2,0
+"Electron and X-Ray Spectroscopy Techniques",2,0
+"Energy Harvesting in Wireless Networks",2,0
+"Energy Load and Power Forecasting",2,0
+"Energy and Environment Impacts",2,0
+"Engineering Education and Pedagogy",2,0
+"Entrepreneurship Studies and Influences",2,0
+"Environmental Impact and Sustainability",2,0
+"Environmental Sustainability and Education",2,0
+"Environmental and Social Impact Assessments",2,0
+"Eosinophilic Disorders and Syndromes",2,0
+"Ethics in Business and Education",2,0
+"Evolution and Genetic Dynamics",2,0
+"Exercise and Physiological Responses",2,0
+"Experimental Learning in Engineering",2,0
+"FOXO transcription factor regulation",2,0
+"Face Recognition and Perception",2,0
+"Facial Trauma and Fracture Management",2,0
+"Fern and Epiphyte Biology",2,0
+"Ferroptosis and cancer prognosis",2,0
+"Fibromyalgia and Chronic Fatigue Syndrome Research",2,0
+"FinTech, Crowdfunding, Digital Finance",2,0
+"Finite Group Theory Research",2,0
+"Fluid Dynamics and Heat Transfer",2,0
+"Freshwater macroinvertebrate diversity and ecology",2,0
+"Gender Diversity and Inequality",2,0
+"Gender, Feminism, and Media",2,0
+"Genetic Syndromes and Imprinting",2,0
+"Genetic diversity and population structure",2,0
+"Geochemistry and Elemental Analysis",2,0
+"Geographies of human-animal interactions",2,0
+"Geological and Tectonic Studies in Latin America",2,0
+"Geological formations and processes",2,0
+"Geomagnetism and Paleomagnetism Studies",2,0
+"Geophysical and Geoelectrical Methods",2,0
+"Geophysics and Sensor Technology",2,0
+"German Literature and Culture Studies",2,0
+"Global Health Workforce Issues",2,0
+"Global Security and Public Health",2,0
+"Global Trade and Competitiveness",2,0
+"Glycogen Storage Diseases and Myoclonus",2,0
+"Gold and Silver Nanoparticles Synthesis and Applications",2,0
+"Guidance and Control Systems",2,0
+"Gynecological conditions and treatments",2,0
+"HIV, Drug Use, Sexual Risk",2,0
+"HIV-related health complications and treatments",2,0
+"Hair Growth and Disorders",2,0
+"Hate Speech and Cyberbullying Detection",2,0
+"Head and Neck Cancer Studies",2,0
+"Health and Conflict Studies",2,0
+"Health and Lifestyle Studies",2,0
+"Health, Environment, Cognitive Aging",2,0
+"Healthcare Decision-Making and Restraints",2,0
+"Healthcare and Environmental Waste Management",2,0
+"Helicobacter pylori-related gastroenterology studies",2,0
+"Hemiptera Insect Studies",2,0
+"Hepatitis B Virus Studies",2,0
+"High Altitude and Hypoxia",2,0
+"Higher Education Practises and Engagement",2,0
+"Higher Education and Employability",2,0
+"Hippo pathway signaling and YAP/TAZ",2,0
+"Historical Economic and Social Studies",2,0
+"Historical Geography and Geographical Thought",2,0
+"Historical Studies and Socio-cultural Analysis",2,0
+"Human Rights and Development",2,0
+"Hydrocarbon exploration and reservoir analysis",2,0
+"Hydrological Forecasting Using AI",2,0
+"ICT Impact and Policies",2,0
+"Ichthyology and Marine Biology",2,0
+"Image Processing Techniques and Applications",2,0
+"Impact of Light on Environment and Health",2,0
+"Inclusive Education and Diversity",2,0
+"Indigenous and Place-Based Education",2,0
+"Infant Nutrition and Health",2,0
+"Infectious Encephalopathies and Encephalitis",2,0
+"Inflammatory Bowel Disease",2,0
+"Inflammatory Myopathies and Dermatomyositis",2,0
+"Innovations in Concrete and Construction Materials",2,0
+"Innovative Approaches in Technology and Social Development",2,0
+"Innovative Teaching and Learning Methods",2,0
+"Innovative concrete reinforcement materials",2,0
+"Insect behavior and control techniques",2,0
+"Insect-Plant Interactions and Control",2,0
+"Intelligence, Security, War Strategy",2,0
+"Intelligent Tutoring Systems and Adaptive Learning",2,0
+"Intergenerational Family Dynamics and Caregiving",2,0
+"International Business and FDI",2,0
+"International Development and Aid",2,0
+"Interpreting and Communication in Healthcare",2,0
+"Intimate Partner and Family Violence",2,0
+"Intraocular Surgery and Lenses",2,0
+"Ionic liquids properties and applications",2,0
+"Jewish and Middle Eastern Studies",2,0
+"Language and cultural evolution",2,0
+"Language, Discourse, Communication Strategies",2,0
+"Laser-Plasma Interactions and Diagnostics",2,0
+"Latin American Literature Studies",2,0
+"Latin American and Latino Studies",2,0
+"Legal Education and Practice Innovations",2,0
+"Lepidoptera: Biology and Taxonomy",2,0
+"Lipid Membrane Structure and Behavior",2,0
+"Lipid metabolism and disorders",2,0
+"Literature and Cultural Memory",2,0
+"Lung Cancer Research Studies",2,0
+"Management and Organizational Studies",2,0
+"Management of metastatic bone disease",2,0
+"Marine and coastal ecosystems",2,0
+"Marine and coastal plant biology",2,0
+"Marine and environmental studies",2,0
+"Marine animal studies overview",2,0
+"Mast cells and histamine",2,0
+"Material Selection and Properties",2,0
+"Maternal and fetal healthcare",2,0
+"Medical Education and Admissions",2,0
+"Medication Adherence and Compliance",2,0
+"Membrane-based Ion Separation Techniques",2,0
+"Memory Processes and Influences",2,0
+"Meningioma and schwannoma management",2,0
+"Metabolism and Genetic Disorders",2,0
+"MicroRNA in disease regulation",2,0
+"Microbial Inactivation Methods",2,0
+"Middle East and Rwanda Conflicts",2,0
+"Migration and Labor Dynamics",2,0
+"Migration, Refugees, and Integration",2,0
+"Mind wandering and attention",2,0
+"Minimally Invasive Surgical Techniques",2,0
+"Mobile Health and mHealth Applications",2,0
+"Molecular Junctions and Nanostructures",2,0
+"Moyamoya disease diagnosis and treatment",2,0
+"Mycobacterium research and diagnosis",2,0
+"Mycotoxins in Agriculture and Food",2,0
+"Myofascial pain diagnosis and treatment",2,0
+"Nanopore and Nanochannel Transport Studies",2,0
+"Neonatal Health and Biochemistry",2,0
+"Neural dynamics and brain function",2,0
+"Neurobiology and Insect Physiology Research",2,0
+"Neurofibromatosis and Schwannoma Cases",2,0
+"Neurogenetic and Muscular Disorders Research",2,0
+"Neurological diseases and metabolism",2,0
+"Neurology and Historical Studies",2,0
+"Neuroscience and Music Perception",2,0
+"Neuroscience and Neural Engineering",2,0
+"Neuroscience, Education and Cognitive Function",2,0
+"Nicotinic Acetylcholine Receptors Study",2,0
+"Nitric Oxide and Endothelin Effects",2,0
+"Nonlinear Dynamics and Pattern Formation",2,0
+"Nuclear Structure and Function",2,0
+"Nuclear physics research studies",2,0
+"Numerical methods in inverse problems",2,0
+"Nursing Roles and Practices",2,0
+"Nutrition and Health in Aging",2,0
+"Occupational and environmental lung diseases",2,0
+"Oceanographic and Atmospheric Processes",2,0
+"Ocular and Laser Science Research",2,0
+"Open Source Software Innovations",2,0
+"Optimal Experimental Design Methods",2,0
+"Optimism, Hope, and Well-being",2,0
+"Organ Donation and Transplantation",2,0
+"Organic and Molecular Conductors Research",2,0
+"Osteomyelitis and Bone Disorders Research",2,0
+"Ovarian function and disorders",2,0
+"Pacific and Southeast Asian Studies",2,0
+"Pain Management and Placebo Effect",2,0
+"Paleontology and Evolutionary Biology",2,0
+"Patient Safety and Medication Errors",2,0
+"Patient Satisfaction in Healthcare",2,0
+"Peptidase Inhibition and Analysis",2,0
+"Pericarditis and Cardiac Tamponade",2,0
+"Peripheral Nerve Disorders",2,0
+"Pharmaceutical and Antibiotic Environmental Impacts",2,0
+"Pharmaceutical studies and practices",2,0
+"Pharmacological Effects of Natural Compounds",2,0
+"Philosophy and Theoretical Science",2,0
+"Photography and Visual Culture",2,0
+"Physical Unclonable Functions (PUFs) and Hardware Security",2,0
+"Plant Pathogens and Resistance",2,0
+"Plant Physiology and Cultivation Studies",2,0
+"Plant biochemistry and biosynthesis",2,0
+"Plasmonic and Surface Plasmon Research",2,0
+"Poisoning and overdose treatments",2,0
+"Populism, Right-Wing Movements",2,0
+"Preterm Birth and Chorioamnionitis",2,0
+"Privacy, Security, and Data Protection",2,0
+"Problem and Project Based Learning",2,0
+"Prostate Cancer Diagnosis and Treatment",2,0
+"Prosthetics and Rehabilitation Robotics",2,0
+"Protein Degradation and Inhibitors",2,0
+"Protein Structure and Dynamics",2,0
+"Protist diversity and phylogeny",2,0
+"Qualitative Comparative Analysis Research",2,0
+"Quantum and electron transport phenomena",2,0
+"Quantum optics and atomic interactions",2,0
+"RNA Research and Splicing",2,0
+"Rabies epidemiology and control",2,0
+"Radiation Dose and Imaging",2,0
+"Random lasers and scattering media",2,0
+"Receptor Mechanisms and Signaling",2,0
+"Redox biology and oxidative stress",2,0
+"Reformation and Early Modern Christianity",2,0
+"Regional Economic and Spatial Analysis",2,0
+"Reinforcement Learning in Robotics",2,0
+"Renal and Vascular Pathologies",2,0
+"Renin-Angiotensin System Studies",2,0
+"Respiratory and Cough-Related Research",2,0
+"Restless Legs Syndrome Research",2,0
+"Retinal Development and Disorders",2,0
+"Retinal Imaging and Analysis",2,0
+"Retinal and Macular Surgery",2,0
+"Rhetoric and Communication Studies",2,0
+"Rheumatoid Arthritis Research and Therapies",2,0
+"Rice Cultivation and Yield Improvement",2,0
+"Robotics and Sensor-Based Localization",2,0
+"Salivary Gland Tumors Diagnosis and Treatment",2,0
+"Salmonella and Campylobacter epidemiology",2,0
+"Sarcoma Diagnosis and Treatment",2,0
+"Scientific Research and Discoveries",2,0
+"Seismic Imaging and Inversion Techniques",2,0
+"Semiconductor Lasers and Optical Devices",2,0
+"Sensor Technology and Measurement Systems",2,0
+"Sepsis Diagnosis and Treatment",2,0
+"Sexual Assault and Victimization Studies",2,0
+"Simulation Techniques and Applications",2,0
+"Sinusitis and nasal conditions",2,0
+"Sirtuins and Resveratrol in Medicine",2,0
+"Skin Diseases and Diabetes",2,0
+"Skin Protection and Aging",2,0
+"Skin and Cellular Biology Research",2,0
+"Smart Grid Security and Resilience",2,0
+"Social Media in Health Education",2,0
+"Social Policy and Reform Studies",2,0
+"Sodium Intake and Health",2,0
+"Soft Robotics and Applications",2,0
+"Software Engineering Research",2,0
+"Software Reliability and Analysis Research",2,0
+"Software Testing and Debugging Techniques",2,0
+"Software-Defined Networks and 5G",2,0
+"Solar-Powered Water Purification Methods",2,0
+"Spam and Phishing Detection",2,0
+"Spanish Linguistics and Language Studies",2,0
+"Spectroscopy Techniques in Biomedical and Chemical Research",2,0
+"Spectroscopy and Quantum Chemical Studies",2,0
+"Sports, Gender, and Society",2,0
+"Stochastic processes and financial applications",2,0
+"Stochastic processes and statistical mechanics",2,0
+"Stock Market Forecasting Methods",2,0
+"Streptococcal Infections and Treatments",2,0
+"Student Assessment and Feedback",2,0
+"Substance Abuse Treatment and Outcomes",2,0
+"Superconducting and THz Device Technology",2,0
+"Supply Chain Resilience and Risk Management",2,0
+"Survey Methodology and Nonresponse",2,0
+"Sustainability and Climate Change Governance",2,0
+"Synthesis and Reactions of Organic Compounds",2,0
+"Team Dynamics and Performance",2,0
+"Telomeres, Telomerase, and Senescence",2,0
+"Thermal Radiation and Cooling Technologies",2,0
+"Thermoregulation and physiological responses",2,0
+"Transportation and Mobility Innovations",2,0
+"Tunneling and Rock Mechanics",2,0
+"Turfgrass Adaptation and Management",2,0
+"Turkey's Politics and Society",2,0
+"Turtle Biology and Conservation",2,0
+"UAV Applications and Optimization",2,0
+"University-Industry-Government Innovation Models",2,0
+"Urinary Tract Infections Management",2,0
+"Uterine Myomas and Treatments",2,0
+"Vagus Nerve Stimulation Research",2,0
+"Vascular Malformations and Hemangiomas",2,0
+"Vector-borne infectious diseases",2,0
+"Veterinary Practice and Education Studies",2,0
+"Vietnamese History and Culture Studies",2,0
+"Viral Infections and Vectors",2,0
+"Viral-associated cancers and disorders",2,0
+"Visual and Cognitive Learning Processes",2,0
+"Vitamin D Research Studies",2,0
+"Water Governance and Infrastructure",2,0
+"Water Quality Monitoring Technologies",2,0
+"Water Treatment and Disinfection",2,0
+"Wheat and Barley Genetics and Pathology",2,0
+"Wine Industry and Tourism",2,0
+"Wireless Body Area Networks",2,0
+"Wood Treatment and Properties",2,0
+"ZnO doping and properties",2,0
+"bioluminescence and chemiluminescence research",2,0
+"scientometrics and bibliometrics research",2,0
+"3D Modeling in Geospatial Applications",1,0
+"3D Shape Modeling and Analysis",1,0
+"AI-based Problem Solving and Planning",1,0
+"Abdominal Surgery and Complications",1,0
+"Academic Freedom and Politics",1,0
+"Academic Writing and Publishing",1,0
+"Academic integrity and plagiarism",1,0
+"Access Control and Trust",1,0
+"Accounting Education and Careers",1,0
+"Accounting and Organizational Management",1,0
+"Acne and Rosacea Treatments and Effects",1,0
+"Acoustic Wave Phenomena Research",1,0
+"Adhesion, Friction, and Surface Interactions",1,0
+"Adipokines, Inflammation, and Metabolic Diseases",1,0
+"Adolescent and Pediatric Healthcare",1,0
+"Adrenal Hormones and Disorders",1,0
+"Adrenal and Paraganglionic Tumors",1,0
+"Adsorption and biosorption for pollutant removal",1,0
+"Advanced Adaptive Filtering Techniques",1,0
+"Advanced Algebra and Geometry",1,0
+"Advanced Algorithms and Applications",1,0
+"Advanced Banach Space Theory",1,0
+"Advanced Bandit Algorithms Research",1,0
+"Advanced Biosensing Techniques and Applications",1,0
+"Advanced Chemical Physics Studies",1,0
+"Advanced Chemical Sensor Technologies",1,0
+"Advanced Clustering Algorithms Research",1,0
+"Advanced Computational Techniques and Applications",1,0
+"Advanced Computational Techniques in Science and Engineering",1,0
+"Advanced Condensed Matter Physics",1,0
+"Advanced Database Systems and Queries",1,0
+"Advanced Differential Geometry Research",1,0
+"Advanced Electrical Measurement Techniques",1,0
+"Advanced Electron Microscopy Techniques and Applications",1,0
+"Advanced Frequency and Time Standards",1,0
+"Advanced Graph Neural Networks",1,0
+"Advanced Image Fusion Techniques",1,0
+"Advanced Mathematical Identities",1,0
+"Advanced Mathematical Modeling in Engineering",1,0
+"Advanced Multi-Objective Optimization Algorithms",1,0
+"Advanced Neural Network Applications",1,0
+"Advanced Numerical Analysis Techniques",1,0
+"Advanced Operator Algebra Research",1,0
+"Advanced Optimization Algorithms Research",1,0
+"Advanced Radiotherapy Techniques",1,0
+"Advanced Sensor and Energy Harvesting Materials",1,0
+"Advanced Software Engineering Methodologies",1,0
+"Advanced Statistical Methods and Models",1,0
+"Advanced Statistical Modeling Techniques",1,0
+"Advanced Vision and Imaging",1,0
+"Advanced Wireless Communication Techniques",1,0
+"Advanced X-ray and CT Imaging",1,0
+"Advanced ceramic materials synthesis",1,0
+"Advanced oxidation water treatment",1,0
+"Advancements in Semiconductor Devices and Circuit Design",1,0
+"Adventure Sports and Sensation Seeking",1,0
+"Advertising and Communication Studies",1,0
+"Aerospace Engineering and Control Systems",1,0
+"Aerospace Engineering and Energy Systems",1,0
+"African Botany and Ecology Studies",1,0
+"African history and culture analysis",1,0
+"Agricultural Economics and Practices",1,0
+"Agricultural Innovations and Practices",1,0
+"Agroforestry and silvopastoral systems",1,0
+"Agronomic Practices and Intercropping Systems",1,0
+"Alcoholism and Thiamine Deficiency",1,0
+"Alexander von Humboldt Studies",1,0
+"Alkaline Phosphatase Research Studies",1,0
+"Allelopathy and phytotoxic interactions",1,0
+"Allergic Rhinitis and Sensitization",1,0
+"American History and Culture",1,0
+"American and British Literature Analysis",1,0
+"Analog and Mixed-Signal Circuit Design",1,0
+"Analytical chemistry methods development",1,0
+"Ancient Egypt and Archaeology",1,0
+"Ancient Near East History",1,0
+"Anesthesia and Sedative Agents",1,0
+"Animal Behavior and Welfare Studies",1,0
+"Animal Nutrition and Physiology",1,0
+"Animal Virus Infections Studies",1,0
+"Animal and Plant Science Education",1,0
+"Animal testing and alternatives",1,0
+"Anthropological Studies and Insights",1,0
+"Anthropology: Ethics, History, Culture",1,0
+"Antimicrobial Resistance in Staphylococcus",1,0
+"Anxiety, Depression, Psychometrics, Treatment, Cognitive Processes",1,0
+"Aquatic Invertebrate Ecology and Behavior",1,0
+"Aquatic and Environmental Studies",1,0
+"Aquatic life and conservation",1,0
+"Archaeological Research and Protection",1,0
+"Archaeology and Historical Studies",1,0
+"Architecture, Modernity, and Design",1,0
+"Arctic and Antarctic ice dynamics",1,0
+"Art Therapy and Mental Health",1,0
+"Artificial Intelligence Applications",1,0
+"Artificial Intelligence in Law",1,0
+"Artistic and Creative Research",1,0
+"Asian Studies and History",1,0
+"Atherosclerosis and Cardiovascular Diseases",1,0
+"Auction Theory and Applications",1,0
+"Autoimmune and Inflammatory Disorders",1,0
+"Autonomous Vehicle Technology and Safety",1,0
+"Bacterial biofilms and quorum sensing",1,0
+"Balkan and Eastern European Studies",1,0
+"Bamboo properties and applications",1,0
+"Banana Cultivation and Research",1,0
+"Banking stability, regulation, efficiency",1,0
+"Barrier Structure and Function Studies",1,0
+"Bee Products Chemical Analysis",1,0
+"Beetle Biology and Toxicology Studies",1,0
+"Biblical Studies and Interpretation",1,0
+"Bioactive Compounds and Antitumor Agents",1,0
+"Biochemical Analysis and Sensing Techniques",1,0
+"Biochemical and Molecular Research",1,0
+"Bioeconomy and Sustainability Development",1,0
+"Biological Research and Disease Studies",1,0
+"Biomarkers in Disease Mechanisms",1,0
+"Biomedical Ethics and Regulation",1,0
+"Biomedical Research and Pathophysiology",1,0
+"Biosensors and Analytical Detection",1,0
+"Biosimilars and Bioanalytical Methods",1,0
+"Biotechnology and Related Fields",1,0
+"Bird parasitology and diseases",1,0
+"Black Holes and Theoretical Physics",1,0
+"Blood Pressure and Hypertension Studies",1,0
+"Blood donation and transfusion practices",1,0
+"Blood groups and transfusion",1,0
+"Bluetooth and Wireless Communication Technologies",1,0
+"Bone Tumor Diagnosis and Treatments",1,0
+"Bone and Dental Protein Studies",1,0
+"Bone and Joint Diseases",1,0
+"Bone health and treatments",1,0
+"Botany, Ecology, and Taxonomy Studies",1,0
+"Brain Metastases and Treatment",1,0
+"CNS Lymphoma Diagnosis and Treatment",1,0
+"CO2 Reduction Techniques and Catalysts",1,0
+"CO2 Sequestration and Geologic Interactions",1,0
+"COVID-19 diagnosis using AI",1,0
+"Caching and Content Delivery",1,0
+"Calcium Carbonate Crystallization and Inhibition",1,0
+"Calcium signaling and nucleotide metabolism",1,0
+"Cancer Cells and Metastasis",1,0
+"Cancer Treatment and Pharmacology",1,0
+"Cancer therapeutics and mechanisms",1,0
+"Cancer, Lipids, and Metabolism",1,0
+"Cancer-related Molecular Pathways",1,0
+"Cancer-related cognitive impairment studies",1,0
+"Carcinogens and Genotoxicity Assessment",1,0
+"Cardiovascular Conditions and Treatments",1,0
+"Cardiovascular and Diving-Related Complications",1,0
+"Caribbean history, culture, and politics",1,0
+"Catalytic Cross-Coupling Reactions",1,0
+"Categorization, perception, and language",1,0
+"Caveolin-1 and cellular processes",1,0
+"Cerebral Venous Sinus Thrombosis",1,0
+"Cerebrovascular and genetic disorders",1,0
+"Chalcogenide Semiconductor Thin Films",1,0
+"Chaos-based Image/Signal Encryption",1,0
+"Characterization and Applications of Magnetic Nanoparticles",1,0
+"Chemical Synthesis and Analysis",1,0
+"Chemical Thermodynamics and Molecular Structure",1,0
+"Chemical and Environmental Engineering Research",1,0
+"Chemistry Education and Research",1,0
+"Chemotherapy-induced organ toxicity mitigation",1,0
+"Child Abuse and Related Trauma",1,0
+"Child Development and Digital Technology",1,0
+"Child Nutrition and Feeding Issues",1,0
+"Child and Adolescent Health",1,0
+"Child and Animal Learning Development",1,0
+"Children's Physical and Motor Development",1,0
+"China's Global Influence and Migration",1,0
+"Cholinesterase and Neurodegenerative Diseases",1,0
+"Chromatin Remodeling and Cancer",1,0
+"Chromium effects and bioremediation",1,0
+"Circular RNAs in diseases",1,0
+"Classical Antiquity Studies",1,0
+"Classical Philosophy and Thought",1,0
+"Climate Change Policy and Economics",1,0
+"Climate Change, Adaptation, Migration",1,0
+"Clinical Nutrition and Gastroenterology",1,0
+"Cloud Data Security Solutions",1,0
+"Coastal and Marine Dynamics",1,0
+"Coastal wetland ecosystem dynamics",1,0
+"Coconut Research and Applications",1,0
+"Cognitive Computing and Networks",1,0
+"Cognitive Radio Networks and Spectrum Sensing",1,0
+"Cognitive Science and Mapping",1,0
+"Cognitive and developmental aspects of mathematical skills",1,0
+"Cold Fusion and Nuclear Reactions",1,0
+"Collaboration in agile enterprises",1,0
+"Colorectal Cancer Surgical Treatments",1,0
+"Colorectal Cancer Treatments and Studies",1,0
+"Combustion and Detonation Processes",1,0
+"Comics and Graphic Narratives",1,0
+"Computational and Text Analysis Methods",1,0
+"Concrete Corrosion and Durability",1,0
+"Conferences and Exhibitions Management",1,0
+"Conflict, Peace, and Violence in Colombia",1,0
+"Connexins and lens biology",1,0
+"Conservation, Biodiversity, and Resource Management",1,0
+"Consumer Behavior in Brand Consumption and Identification",1,0
+"Consumer Perception and Purchasing Behavior",1,0
+"Contemporary Sociological Theory and Practice",1,0
+"Control Systems and Identification",1,0
+"Control and Dynamics of Mobile Robots",1,0
+"Coronary Artery Anomalies",1,0
+"Corporate Taxation and Avoidance",1,0
+"Corruption and Economic Development",1,0
+"Counseling, Therapy, and Family Dynamics",1,0
+"Crime, Deviance, and Social Control",1,0
+"Criminal Law and Evidence",1,0
+"Crystallography and Radiation Phenomena",1,0
+"Crystallography and molecular interactions",1,0
+"Culinary Culture and Tourism",1,0
+"Cultural Identity and Heritage",1,0
+"Cultural and Social Studies in Latin America",1,0
+"Cyberloafing and Workplace Behavior",1,0
+"Data-Driven Disease Surveillance",1,0
+"Decision-Making and Behavioral Economics",1,0
+"Demographic Trends and Gender Preferences",1,0
+"Dental Health and Care Utilization",1,0
+"Dental Radiography and Imaging",1,0
+"Dental Research and COVID-19",1,0
+"Dental Trauma and Treatments",1,0
+"Dermatological and Skeletal Disorders",1,0
+"Dermatological diseases and infestations",1,0
+"Design Education and Practice",1,0
+"Developmental Biology and Gene Regulation",1,0
+"Diamond and Carbon-based Materials Research",1,0
+"Diatoms and Algae Research",1,0
+"Diet, Metabolism, and Disease",1,0
+"Dietetics, Nutrition, and Education",1,0
+"Digital Communication and Language",1,0
+"Digital Education and Society",1,0
+"Digital Games and Media",1,0
+"Digital Imaging for Blood Diseases",1,0
+"Digital Imaging in Medicine",1,0
+"Digital Marketing and Social Media",1,0
+"Digital and Cyber Forensics",1,0
+"Disability Rights and Representation",1,0
+"Disaster Response and Management",1,0
+"Distributed and Parallel Computing Systems",1,0
+"Diverse Aspects of Tourism Research",1,0
+"Diverse Music Education Insights",1,0
+"Drug Transport and Resistance Mechanisms",1,0
+"E-Learning and Knowledge Management",1,0
+"ECG Monitoring and Analysis",1,0
+"Ear Surgery and Otitis Media",1,0
+"Early Modern Women Writers",1,0
+"Earth Systems and Cosmic Evolution",1,0
+"Ecology and Conservation Studies",1,0
+"Ecology and biodiversity studies",1,0
+"Economic Growth and Productivity",1,0
+"Economic and Financial Impacts of Cancer",1,0
+"Economic and Technological Developments in Russia",1,0
+"Economics of Agriculture and Food Markets",1,0
+"Ecosystem dynamics and resilience",1,0
+"Ectopic Pregnancy Diagnosis and Management",1,0
+"Edible Oils Quality and Analysis",1,0
+"Education Discipline and Inequality",1,0
+"Education and Learning Interventions",1,0
+"Education during COVID-19 pandemic",1,0
+"Education, Safety, and Science Studies",1,0
+"Education, sociology, and vocational training",1,0
+"Educational Assessment and Pedagogy",1,0
+"Educational Games and Gamification",1,0
+"Educational Methods and Impacts",1,0
+"Educational Strategies and Epistemologies",1,0
+"Educational Systems and Policies",1,0
+"Educational Theory and Curriculum Studies",1,0
+"Educational and Social Studies",1,0
+"Educator Training and Historical Pedagogy",1,0
+"Effects and risks of endocrine disrupting chemicals",1,0
+"Effects of Environmental Stressors on Livestock",1,0
+"Elbow and Forearm Trauma Treatment",1,0
+"Electric Power System Optimization",1,0
+"Electrohydrodynamics and Fluid Dynamics",1,0
+"Electromagnetic Scattering and Analysis",1,0
+"Electron Spin Resonance Studies",1,0
+"Electrospun Nanofibers in Biomedical Applications",1,0
+"Electrowetting and Microfluidic Technologies",1,0
+"Emergency and Acute Care Studies",1,0
+"Emotion and Mood Recognition",1,0
+"Emotional Intelligence and Performance",1,0
+"Emotions and Moral Behavior",1,0
+"Engineering Applied Research",1,0
+"Engineering Education and Technology",1,0
+"Engineering and Test Systems",1,0
+"Entomopathogenic Microorganisms in Pest Control",1,0
+"Environmental and Cultural Studies in Latin America and Beyond",1,0
+"Enzyme Catalysis and Immobilization",1,0
+"Enzyme Production and Characterization",1,0
+"Enzyme Structure and Function",1,0
+"Erythropoietin and Anemia Treatment",1,0
+"Ethics and Legal Issues in Pediatric Healthcare",1,0
+"Ethics in medical practice",1,0
+"Ethics, Aesthetics, and Art",1,0
+"Eurasian Exchange Networks",1,0
+"European Criminal Justice and Data Protection",1,0
+"European Union Policy and Governance",1,0
+"European and International Contract Law",1,0
+"European and Russian Geopolitical Military Strategies",1,0
+"Evacuation and Crowd Dynamics",1,0
+"Evaluation and Performance Assessment",1,0
+"Evaluation of Teaching Practices",1,0
+"Evasion and Academic Success Factors",1,0
+"Evolution and Science Education",1,0
+"Evolutionary Algorithms and Applications",1,0
+"Evolutionary Psychology and Human Behavior",1,0
+"Experimental and Theoretical Physics Studies",1,0
+"Extracellular vesicles in disease",1,0
+"Extraction and Separation Processes",1,0
+"Face and Expression Recognition",1,0
+"Facial Nerve Paralysis Treatment and Research",1,0
+"Facial Rejuvenation and Surgery Techniques",1,0
+"Families in Therapy and Culture",1,0
+"Family Dynamics and Relationships",1,0
+"Family Support in Illness",1,0
+"Fatigue and fracture mechanics",1,0
+"Fatty Acid Research and Health",1,0
+"Fault Detection and Control Systems",1,0
+"Female Genital Mutilation/Cutting Issues",1,0
+"Feminism, Gender, and Social Issues",1,0
+"Feminist Epistemology and Gender Studies",1,0
+"Fibroblast Growth Factor Research",1,0
+"Financial Markets and Investment Strategies",1,0
+"Financial Reporting and Valuation Research",1,0
+"Financial Risk and Volatility Modeling",1,0
+"Fire Detection and Safety Systems",1,0
+"Fish biology, ecology, and behavior",1,0
+"Flannery O'Connor and Thomas Merton",1,0
+"Focus Groups and Qualitative Methods",1,0
+"Food Chemistry and Fat Analysis",1,0
+"Food Safety and Hygiene",1,0
+"Food composition and properties",1,0
+"Force Microscopy Techniques and Applications",1,0
+"Foreign Body Medical Cases",1,0
+"Forensic Anthropology and Bioarchaeology Studies",1,0
+"Forest ecology and management",1,0
+"Fractional Differential Equations Solutions",1,0
+"Fungal and yeast genetics research",1,0
+"GDF15 and Related Biomarkers",1,0
+"GNSS positioning and interference",1,0
+"Gait Recognition and Analysis",1,0
+"Galectins and Cancer Biology",1,0
+"Game Theory and Voting Systems",1,0
+"Gastrointestinal Bleeding Diagnosis and Treatment",1,0
+"Gastrointestinal Tumor Research and Treatment",1,0
+"Gastrointestinal disorders and treatments",1,0
+"Gender Studies in Language",1,0
+"Generational Differences and Trends",1,0
+"Genetic factors in colorectal cancer",1,0
+"Genetically Modified Organisms Research",1,0
+"Genital Health and Disease",1,0
+"Genomic variations and chromosomal abnormalities",1,0
+"Genomics and Chromatin Dynamics",1,0
+"Geography and Environmental Studies",1,0
+"Geological Formations and Processes Exploration",1,0
+"Geological and Geophysical Studies",1,0
+"Geometric Analysis and Curvature Flows",1,0
+"Geotechnical Engineering and Soil Stabilization",1,0
+"Geotechnical Engineering and Underground Structures",1,0
+"Geotechnical and Geomechanical Engineering",1,0
+"Gestational Diabetes Research and Management",1,0
+"Ginger and Zingiberaceae research",1,0
+"Global Healthcare and Medical Tourism",1,0
+"Glutathione Transferases and Polymorphisms",1,0
+"Glycosylation and Glycoproteins Research",1,0
+"Granular flow and fluidized beds",1,0
+"Graph theory and applications",1,0
+"Graphene research and applications",1,0
+"Green IT and Sustainability",1,0
+"Groundwater and Watershed Analysis",1,0
+"Grouting, Rheology, and Soil Mechanics",1,0
+"HER2/EGFR in Cancer Research",1,0
+"HIV/AIDS drug development and treatment",1,0
+"Hallucinations in medical conditions",1,0
+"Handwritten Text Recognition Techniques",1,0
+"Head and Neck Anomalies",1,0
+"Health Promotion and Cardiovascular Prevention",1,0
+"Health and Medical Studies",1,0
+"Health, Education, and Aging",1,0
+"Health, Medicine and Society",1,0
+"Healthcare Operations and Scheduling Optimization",1,0
+"Healthcare Systems and Reforms",1,0
+"Healthcare Technology and Patient Monitoring",1,0
+"Healthcare and Venom Research",1,0
+"Healthcare cost, quality, practices",1,0
+"Healthcare during COVID-19 Pandemic",1,0
+"Heat Transfer Mechanisms",1,0
+"Heat Transfer and Boiling Studies",1,0
+"Heat Transfer and Optimization",1,0
+"Hedgehog Signaling Pathway Studies",1,0
+"Heme Oxygenase-1 and Carbon Monoxide",1,0
+"Hemispheric Asymmetry in Neuroscience",1,0
+"Hepatitis C virus research",1,0
+"Hereditary Neurological Disorders",1,0
+"High-Temperature Coating Behaviors",1,0
+"Higher Education Governance and Development",1,0
+"Histiocytic Disorders and Treatments",1,0
+"Histone Deacetylase Inhibitors Research",1,0
+"Historical Astronomy and Related Studies",1,0
+"Historical Geography and Cartography",1,0
+"Historical Medical Research and Treatments",1,0
+"Historical Studies in Central America",1,0
+"Historical Studies on Reproduction, Gender, Health, and Societal Changes",1,0
+"Historical and Architectural Studies",1,0
+"History and advancements in chemistry",1,0
+"History of Computing Technologies",1,0
+"History of Medicine Studies",1,0
+"History of Science and Medicine",1,0
+"Homotopy and Cohomology in Algebraic Topology",1,0
+"Hong Kong and Taiwan Politics",1,0
+"Hormonal and reproductive studies",1,0
+"Horticultural and Viticultural Research",1,0
+"Hospital Admissions and Outcomes",1,0
+"Housing Market and Economics",1,0
+"Housing, Finance, and Neoliberalism",1,0
+"Human Mobility and Location-Based Analysis",1,0
+"Human Pose and Action Recognition",1,0
+"Human Resource and Talent Management",1,0
+"Human-Automation Interaction and Safety",1,0
+"Hybrid Renewable Energy Systems",1,0
+"Hydraulic Fracturing and Reservoir Analysis",1,0
+"Hydrogels: synthesis, properties, applications",1,0
+"Hydrology and Drought Analysis",1,0
+"Hydrology and Sediment Transport Processes",1,0
+"Hyperglycemia and glycemic control in critically ill and hospitalized patients",1,0
+"ICT in Developing Communities",1,0
+"IL-33, ST2, and ILC Pathways",1,0
+"Identification and Quantification in Food",1,0
+"Image Enhancement Techniques",1,0
+"Image Retrieval and Classification Techniques",1,0
+"Immune Cell Function and Interaction",1,0
+"Immune Response and Inflammation",1,0
+"Immune cells in cancer",1,0
+"Impact of AI and Big Data on Business and Society",1,0
+"Indoor Air Quality and Microbial Exposure",1,0
+"Industrial Automation and Control Systems",1,0
+"Industrial Gas Emission Control",1,0
+"Inertial Sensor and Navigation",1,0
+"Infections and bacterial resistance",1,0
+"Infectious Aortic and Vascular Conditions",1,0
+"Infectious Diseases and Mycology",1,0
+"Inflammatory Biomarkers in Disease Prognosis",1,0
+"Information Architecture and Usability",1,0
+"Infrared Thermography in Medicine",1,0
+"Injury Epidemiology and Prevention",1,0
+"Innovation Diffusion and Forecasting",1,0
+"Innovations in Educational Methods",1,0
+"Innovative Educational Techniques",1,0
+"Innovative Microfluidic and Catalytic Techniques Innovation",1,0
+"Insect Pheromone Research and Control",1,0
+"Integrated Circuits and Semiconductor Failure Analysis",1,0
+"Integrated Energy Systems Optimization",1,0
+"Interconnection Networks and Systems",1,0
+"Intermetallics and Advanced Alloy Properties",1,0
+"International Arbitration and Investment Law",1,0
+"International Law and Human Rights",1,0
+"International Maritime Law Issues",1,0
+"International Relations and Foreign Policy",1,0
+"International Relations in Latin America",1,0
+"International Science and Diplomacy",1,0
+"Internet of Things and AI",1,0
+"Interprofessional Education and Collaboration",1,0
+"Intestinal Malrotation and Obstruction Disorders",1,0
+"IoT and Edge/Fog Computing",1,0
+"IoT-based Smart Home Systems",1,0
+"Ion Channels and Receptors",1,0
+"Ion Transport and Channel Regulation",1,0
+"Ion-surface interactions and analysis",1,0
+"Irish and British Studies",1,0
+"Iron-based superconductors research",1,0
+"Islamic Studies and History",1,0
+"Iterative Learning Control Systems",1,0
+"Judicial and Constitutional Studies",1,0
+"Knowledge Management and Sharing",1,0
+"Laser Applications in Dentistry and Medicine",1,0
+"Latin American Urban Studies",1,0
+"Latin American history and culture",1,0
+"Lattice Boltzmann Simulation Studies",1,0
+"Law in Society and Culture",1,0
+"Law, AI, and Intellectual Property",1,0
+"Law, Economics, and Judicial Systems",1,0
+"Legionella and Acanthamoeba research",1,0
+"Library Science and Information Literacy",1,0
+"Lichen and fungal ecology",1,0
+"Light effects on plants",1,0
+"Linguistic Variation and Morphology",1,0
+"Listeria monocytogenes in Food Safety",1,0
+"Local Governance and Development",1,0
+"Logic, Reasoning, and Knowledge",1,0
+"Logic, programming, and type systems",1,0
+"Logistics and Infrastructure Analysis",1,0
+"Lysosomal Storage Disorders Research",1,0
+"Machine Learning and ELM",1,0
+"Magnetic confinement fusion research",1,0
+"Magnetic properties of thin films",1,0
+"Management and Marketing Education",1,0
+"Manufacturing Process and Optimization",1,0
+"Marine Bivalve and Aquaculture Studies",1,0
+"Marine Invertebrate Physiology and Ecology",1,0
+"Marine and fisheries research",1,0
+"Maritime and Coastal Archaeology",1,0
+"Marriage and Sexual Relationships",1,0
+"Masonry and Concrete Structural Analysis",1,0
+"Material Dynamics and Properties",1,0
+"Mathematical Dynamics and Fractals",1,0
+"Mathematical and Theoretical Epidemiology and Ecology Models",1,0
+"Meat and Animal Product Quality",1,0
+"Media, Gender, and Advertising",1,0
+"Medical Image Segmentation Techniques",1,0
+"Medical Imaging and Pathology Studies",1,0
+"Medical and Agricultural Research Studies",1,0
+"Medical and Biological Sciences",1,0
+"Medicine and Dermatology Studies History",1,0
+"Medieval Literature and History",1,0
+"Medieval Philosophy and Theology",1,0
+"Medieval and Early Modern Justice",1,0
+"Memory, Trauma, and Commemoration",1,0
+"Menstrual Health and Disorders",1,0
+"Mental Health and Patient Involvement",1,0
+"Mental Health and Psychiatry",1,0
+"Mentoring and Academic Development",1,0
+"Merger and Competition Analysis",1,0
+"Mesenchymal stem cell research",1,0
+"Metaheuristic Optimization Algorithms Research",1,0
+"Metal and Thin Film Mechanics",1,0
+"Metal-Catalyzed Oxygenation Mechanisms",1,0
+"Metallurgical Processes and Thermodynamics",1,0
+"Metallurgy and Material Forming",1,0
+"Metamaterials and Metasurfaces Applications",1,0
+"Microbial Applications in Construction Materials",1,0
+"Microbial Metabolic Engineering and Bioproduction",1,0
+"Microbial Natural Products and Biosynthesis",1,0
+"Microbial bioremediation and biosurfactants",1,0
+"Microfluidic and Bio-sensing Technologies",1,0
+"Microtubule and mitosis dynamics",1,0
+"Middle East Politics and Society",1,0
+"Migration, Ethnicity, and Economy",1,0
+"Mineral Processing and Grinding",1,0
+"Mobile Learning in Education",1,0
+"Modular Robots and Swarm Intelligence",1,0
+"Molecular Sensors and Ion Detection",1,0
+"Molecular spectroscopy and chirality",1,0
+"Mormonism, Religion, and History",1,0
+"Motor Control and Adaptation",1,0
+"Multi-Agent Systems and Negotiation",1,0
+"Multicomponent Synthesis of Heterocycles",1,0
+"Municipal Solid Waste Management",1,0
+"Muscle and Compartmental Disorders",1,0
+"Muscle metabolism and nutrition",1,0
+"Musculoskeletal Disorders and Rehabilitation",1,0
+"Myasthenia Gravis and Thymoma",1,0
+"Myxozoan Parasites in Aquatic Species",1,0
+"Names, Identity, and Discrimination Research",1,0
+"Nanofabrication and Lithography Techniques",1,0
+"Nanomaterials for catalytic reactions",1,0
+"Nanoparticles: synthesis and applications",1,0
+"Narrative Theory and Analysis",1,0
+"Natural Products and Biological Research",1,0
+"Natural Resources and Economic Development",1,0
+"Natural product bioactivities and synthesis",1,0
+"Nausea and vomiting management",1,0
+"Navier-Stokes equation solutions",1,0
+"Neuroblastoma Research and Treatments",1,0
+"Neurological Disorders and Treatments",1,0
+"Neurological and metabolic disorders",1,0
+"Neuropeptides and Animal Physiology",1,0
+"Neurotransmitter Receptor Influence on Behavior",1,0
+"Neutropenia and Cancer Infections",1,0
+"Noise Effects and Management",1,0
+"Nonlinear Optical Materials Research",1,0
+"Nonlinear Optical Materials Studies",1,0
+"Nonprofit Sector and Volunteering",1,0
+"Nosocomial Infections in ICU",1,0
+"Nostalgia and Consumer Behavior",1,0
+"Nuclear Issues and Defense",1,0
+"Nuclear Physics and Applications",1,0
+"Nuclear and radioactivity studies",1,0
+"Nuclear reactor physics and engineering",1,0
+"Nursing Diagnosis and Documentation",1,0
+"Obesity and Health Practices",1,0
+"Obesity, Physical Activity, Diet",1,0
+"Obsessive-Compulsive Spectrum Disorders",1,0
+"Occupational Health and Safety Research",1,0
+"Occupational Health and Safety in Workplaces",1,0
+"Ocean Waves and Remote Sensing",1,0
+"Ocular Infections and Treatments",1,0
+"Olfactory and Sensory Function Studies",1,0
+"Open Education and E-Learning",1,0
+"Ophthalmology and Eye Disorders",1,0
+"Ophthalmology and Visual Health Research",1,0
+"Optical Network Technologies",1,0
+"Optical properties and cooling technologies in crystalline materials",1,0
+"Optimization and Mathematical Programming",1,0
+"Optimization and Packing Problems",1,0
+"Organizational Learning and Leadership",1,0
+"Origins and Evolution of Life",1,0
+"Orthopedic Infections and Treatments",1,0
+"Otolaryngology and Infectious Diseases",1,0
+"Outsourcing and Supply Chain Management",1,0
+"Paleopathology and ancient diseases",1,0
+"Pancreatitis Pathology and Treatment",1,0
+"Paraquat toxicity studies and treatments",1,0
+"Parasite Biology and Host Interactions",1,0
+"Participatory Visual Research Methods",1,0
+"Pasture and Agricultural Systems",1,0
+"Pediatric Pain Management Techniques",1,0
+"Pediatric health and respiratory diseases",1,0
+"Pelvic and Acetabular Injuries",1,0
+"Periodontal Regeneration and Treatments",1,0
+"Peripheral Neuropathies and Disorders",1,0
+"Persona Design and Applications",1,0
+"Personal Information Management and User Behavior",1,0
+"Personality Traits and Psychology",1,0
+"Pesticide Exposure and Toxicity",1,0
+"Pesticide and Herbicide Environmental Studies",1,0
+"Pharmaceutical industry and healthcare",1,0
+"Pharmacological Effects and Toxicity Studies",1,0
+"Pharmacy and Medical Practices",1,0
+"Phase Change Materials Research",1,0
+"Philosophical Ethics and Theory",1,0
+"Philosophy, Ethics, and Existentialism",1,0
+"Philosophy, History, and Historiography",1,0
+"Phosphorus and nutrient management",1,0
+"Photonic Crystals and Applications",1,0
+"Physiological and biochemical adaptations",1,0
+"Phytochemicals and Medicinal Plants",1,0
+"Piperaceae Chemical and Biological Studies",1,0
+"Planarian Biology and Electrostimulation",1,0
+"Plant Ecology and Taxonomy Studies",1,0
+"Plant Micronutrient Interactions and Effects",1,0
+"Plant Stress Responses and Tolerance",1,0
+"Plant Surface Properties and Treatments",1,0
+"Plant and Biological Electrophysiology Studies",1,0
+"Plasma and Flow Control in Aerodynamics",1,0
+"Pleural and Pulmonary Diseases",1,0
+"Pneumocystis jirovecii pneumonia detection and treatment",1,0
+"Polar Research and Ecology",1,0
+"Political Economy and Marxism",1,0
+"Political Systems and Governance",1,0
+"Political Theology and Sovereignty",1,0
+"Political and Economic history of UK and US",1,0
+"Political and Social Dynamics in Chile and Latin America",1,0
+"Politics and Conflicts in Afghanistan, Pakistan, and Middle East",1,0
+"Polyamine Metabolism and Applications",1,0
+"Polymer composites and self-healing",1,0
+"Postharvest Quality and Shelf Life Management",1,0
+"Potassium and Related Disorders",1,0
+"Potato Plant Research",1,0
+"Power Quality and Harmonics",1,0
+"Power Transformer Diagnostics and Insulation",1,0
+"Poxvirus research and outbreaks",1,0
+"Prenatal Screening and Diagnostics",1,0
+"Primary Care and Health Outcomes",1,0
+"Prion Diseases and Protein Misfolding",1,0
+"Probiotics and Fermented Foods",1,0
+"Process Optimization and Integration",1,0
+"Product Development and Customization",1,0
+"Protein Hydrolysis and Bioactive Peptides",1,0
+"Protein Kinase Regulation and GTPase Signaling",1,0
+"Psychiatric care and mental health services",1,0
+"Psychometric Methodologies and Testing",1,0
+"Public Health and Social Inequalities",1,0
+"Publishing and Scholarly Communication",1,0
+"Pulsed Power Technology Applications",1,0
+"Quality and Supply Management",1,0
+"Quantum Chromodynamics and Particle Interactions",1,0
+"Quantum Electrodynamics and Casimir Effect",1,0
+"Quantum Mechanics and Non-Hermitian Physics",1,0
+"Quantum chaos and dynamical systems",1,0
+"RFID technology advancements",1,0
+"RNA Interference and Gene Delivery",1,0
+"RNA regulation and disease",1,0
+"Rabbits: Nutrition, Reproduction, Health",1,0
+"Radiation Effects in Electronics",1,0
+"Radio, Podcasts, and Digital Media",1,0
+"Recommender Systems and Techniques",1,0
+"Recycled Aggregate Concrete Performance",1,0
+"Regional Development and Environment",1,0
+"Relativity and Gravitational Theory",1,0
+"Reliability and Maintenance Optimization",1,0
+"Religion and Society Interactions",1,0
+"Religion, Ecology, and Ethics",1,0
+"Religion, Society, and Development",1,0
+"Renaissance and Early Modern Studies",1,0
+"Renal function and acid-base balance",1,0
+"Reproductive Biology and Fertility",1,0
+"Research in Cotton Cultivation",1,0
+"Reservoir Engineering and Simulation Methods",1,0
+"Retinoids in leukemia and cellular processes",1,0
+"Retinopathy of Prematurity Studies",1,0
+"Rings, Modules, and Algebras",1,0
+"Risk Management in Financial Firms",1,0
+"Risk Perception and Management",1,0
+"Risk and Safety Analysis",1,0
+"Robotic Process Automation Applications",1,0
+"Ruminant Nutrition and Digestive Physiology",1,0
+"Saffron Plant Research Studies",1,0
+"Salivary Gland Disorders and Functions",1,0
+"Satellite Communication Systems",1,0
+"Satellite Image Processing and Photogrammetry",1,0
+"Scheduling and Optimization Algorithms",1,0
+"Scheduling and Timetabling Solutions",1,0
+"Schizophrenia research and treatment",1,0
+"School Choice and Performance",1,0
+"School Health and Nursing Education",1,0
+"Science Education and Perceptions",1,0
+"Science and Climate Studies",1,0
+"Scientific Measurement and Uncertainty Evaluation",1,0
+"Scientific Research and Philosophical Inquiry",1,0
+"Security and Verification in Computing",1,0
+"Seismology and Earthquake Studies",1,0
+"Semantic Web and Ontologies",1,0
+"Semiconductor materials and devices",1,0
+"Sexual Differentiation and Disorders",1,0
+"Silicon Effects in Agriculture",1,0
+"Slime Mold and Myxomycetes Research",1,0
+"Smart Cities and Technologies",1,0
+"Smart Materials for Construction",1,0
+"Social and Cultural Dynamics",1,0
+"Social and Political Issues",1,0
+"Sociopolitical Dynamics in Russia",1,0
+"Soft tissue tumor case studies",1,0
+"Soil Geostatistics and Mapping",1,0
+"Soil Mechanics and Vehicle Dynamics",1,0
+"Soil and Environmental Studies",1,0
+"Soil and Water Nutrient Dynamics",1,0
+"Solar Radiation and Photovoltaics",1,0
+"Solid-state spectroscopy and crystallography",1,0
+"South African History and Culture",1,0
+"South Asian Cinema and Culture",1,0
+"Soviet and Russian History",1,0
+"Soybean genetics and cultivation",1,0
+"Space Exploration and Technology",1,0
+"Space exploration and regulation",1,0
+"Spaceflight effects on biology",1,0
+"Speech Recognition and Synthesis",1,0
+"Speech and Audio Processing",1,0
+"Spinal Cord Injury Research",1,0
+"Spinal Fractures and Fixation Techniques",1,0
+"Sport Psychology and Performance",1,0
+"Sport and Mega-Event Impacts",1,0
+"Sports Analytics and Performance",1,0
+"Sports Dynamics and Biomechanics",1,0
+"Stability and Controllability of Differential Equations",1,0
+"Statistical Distribution Estimation and Applications",1,0
+"Statistics Education and Methodologies",1,0
+"Steroid Chemistry and Biochemistry",1,0
+"Strategic Planning and Analysis",1,0
+"Structural Analysis and Optimization",1,0
+"Studies on Chitinases and Chitosanases",1,0
+"Study and Philosophy of Religion",1,0
+"Stuttering Research and Treatment",1,0
+"Subtitles and Audiovisual Media",1,0
+"Supercapacitor Materials and Fabrication",1,0
+"Superconducting Materials and Applications",1,0
+"Surface Modification and Superhydrophobicity",1,0
+"Surface and Thin Film Phenomena",1,0
+"Surgical Sutures and Adhesives",1,0
+"Sustainability and Ecological Systems Analysis",1,0
+"Sustainable Agricultural Systems Analysis",1,0
+"Sustainable Development and Environmental Policy",1,0
+"Sustainable Supply Chain Management",1,0
+"Sympathectomy and Hyperhidrosis Treatments",1,0
+"Syntax, Semantics, Linguistic Variation",1,0
+"Synthesis and Biological Evaluation",1,0
+"Synthesis and Characterization of Heterocyclic Compounds",1,0
+"Synthesis and biological activity",1,0
+"Synthesis and characterization of novel inorganic/organometallic compounds",1,0
+"Synthesis of Indole Derivatives",1,0
+"Syphilis Diagnosis and Treatment",1,0
+"T-cell and B-cell Immunology",1,0
+"T-cell and Retrovirus Studies",1,0
+"TGF-β signaling in diseases",1,0
+"Tailings Management and Properties",1,0
+"Teaching and Learning Programming",1,0
+"Technology Assessment and Management",1,0
+"Technology Use by Older Adults",1,0
+"Technology and Human Factors in Education and Health",1,0
+"Technology-Enhanced Education Studies",1,0
+"Temporomandibular Joint Disorders",1,0
+"Testicular diseases and treatments",1,0
+"Text Readability and Simplification",1,0
+"Text and Document Classification Technologies",1,0
+"Theatre and Performance Studies",1,0
+"Theoretical and Computational Physics",1,0
+"Thermal Regulation in Medicine",1,0
+"Thermal and Kinetic Analysis",1,0
+"Thermal properties of materials",1,0
+"Thin-Film Transistor Technologies",1,0
+"Thyroid and Parathyroid Surgery",1,0
+"Toxic Organic Pollutants Impact",1,0
+"Traffic control and management",1,0
+"Translation Studies and Practices",1,0
+"Traumatic Ocular and Foreign Body Injuries",1,0
+"Travel Writing and Literature",1,0
+"Trypanosoma species research and implications",1,0
+"Tryptophan and brain disorders",1,0
+"Tumors and Oncological Cases",1,0
+"Ubiquitin and proteasome pathways",1,0
+"Ukrainian Cultural and Linguistic Studies",1,0
+"Ultrasound Imaging and Elastography",1,0
+"University Challenges and Reforms",1,0
+"Urban Planning and Governance",1,0
+"Urban and Freight Transport Logistics",1,0
+"Ureteral procedures and complications",1,0
+"User Authentication and Security Systems",1,0
+"VLSI and Analog Circuit Testing",1,0
+"Vascular anomalies and interventions",1,0
+"Vasculitis and related conditions",1,0
+"Vector-Borne Animal Diseases",1,0
+"Vehicle Dynamics and Control Systems",1,0
+"Vibrio bacteria research studies",1,0
+"Viral Infectious Diseases and Gene Expression in Insects",1,0
+"Virology and Viral Diseases",1,0
+"Visual Attention and Saliency Detection",1,0
+"Vitamin C and Antioxidants Research",1,0
+"Voice and Speech Disorders",1,0
+"War, Ethics, and Justification",1,0
+"Water Quality and Pollution Assessment",1,0
+"Water management and technologies",1,0
+"Weber, Simmel, Sociological Theory",1,0
+"Weed Control and Herbicide Applications",1,0
+"Wikis in Education and Collaboration",1,0
+"Wildlife Conservation and Criminology Analyses",1,0
+"Wildlife-Road Interactions and Conservation",1,0
+"Wind and Air Flow Studies",1,0
+"Wittgensteinian philosophy and applications",1,0
+"Wnt/β-catenin signaling in development and cancer",1,0
+"Workplace Health and Well-being",1,0
+"X-ray Diffraction in Crystallography",1,0
+"X-ray Spectroscopy and Fluorescence Analysis",1,0
+"Youth Education and Societal Dynamics",1,0
+"biodegradable polymer synthesis and properties",1,0
+"demographic modeling and climate adaptation",1,0
+"vaccines and immunoinformatics approaches",1,0

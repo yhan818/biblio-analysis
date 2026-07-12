@@ -1,0 +1,27 @@
+"field","num_papers","n_funded","pct_funded"
+"Medicine",2109,764,36.2
+"Physics and Astronomy",748,504,67.4
+"Engineering",649,274,42.2
+"Environmental Science",514,347,67.5
+"Social Sciences",510,119,23.3
+"Biochemistry, Genetics and Molecular Biology",431,255,59.2
+"Computer Science",370,137,37
+"Earth and Planetary Sciences",268,196,73.1
+"Psychology",268,113,42.2
+"Agricultural and Biological Sciences",211,133,63
+"Neuroscience",185,96,51.9
+"Health Professions",165,59,35.8
+"Arts and Humanities",103,9,8.7
+"Decision Sciences",101,29,28.7
+"Materials Science",81,56,69.1
+"Immunology and Microbiology",80,46,57.5
+"Business, Management and Accounting",78,13,16.7
+"Chemistry",57,46,80.7
+"Economics, Econometrics and Finance",52,13,25
+"Mathematics",51,17,33.3
+"Energy",25,9,36
+"Nursing",25,8,32
+"Pharmacology, Toxicology and Pharmaceutics",22,10,45.5
+"Dentistry",9,0,0
+"Veterinary",6,2,33.3
+"Chemical Engineering",2,1,50

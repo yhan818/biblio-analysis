@@ -411,9 +411,706 @@ write.csv(as.data.frame(summary_report), "UA_2025_summary_report.csv", row.names
 write.csv(impact_by_collab, "UA_2025_impact_by_collaboration.csv", row.names = FALSE)
 
 #######################################################
- 
+
+# ============================================================
+# VERIFICATION METHOD 1: Collaboration Classification
+# Original: map_lgl checking all_countries for non-US
+# Alternative: unnest everything first, then classify
+# ============================================================
+
+# --- Alternative approach: unnest all authorships globally ---
+all_authorships_flat <- works_published %>%
+  select(work_id = id, authorships) %>%
+  mutate(row_num = row_number()) %>%
+  mutate(
+    all_countries_per_work = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      df <- author_df %>%
+        unnest(affiliations, names_sep = "_", keep_empty = TRUE)
+      df %>%
+        pull(affiliations_country_code) %>%
+        na.omit() %>%
+        unique()
+    }),
+    all_institutions_per_work = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      df <- author_df %>%
+        unnest(affiliations, names_sep = "_", keep_empty = TRUE)
+      df %>%
+        pull(affiliations_display_name) %>%
+        na.omit() %>%
+        unique()
+    }),
+    all_rors_per_work = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      df <- author_df %>%
+        unnest(affiliations, names_sep = "_", keep_empty = TRUE)
+      df %>%
+        pull(affiliations_ror) %>%
+        na.omit() %>%
+        unique()
+    })
+  )
+
+# Classify using alternative logic
+collab_classified_alt <- all_authorships_flat %>%
+  mutate(
+    n_countries = map_int(all_countries_per_work, length),
+    n_institutions = map_int(all_institutions_per_work, length),
+    has_us = map_lgl(all_countries_per_work, ~ "US" %in% .x),
+    has_nonus = map_lgl(all_countries_per_work, ~ any(.x != "US")),
+    has_ua = map_lgl(all_rors_per_work, ~ any(grepl("03m2x1q45", .x))),
+    
+    # Is UA the only institution?
+    ua_solo_alt = map_lgl(all_institutions_per_work, function(insts) {
+      length(insts) == 1 && grepl("Arizona", insts[1])
+    }),
+    
+    collab_detail_alt = case_when(
+      ua_solo_alt ~ "UA solo",
+      has_nonus ~ "International collaboration",
+      TRUE ~ "US collaboration"
+    )
+  )
+
+# Compare classification
+cat("=== VERIFICATION 1: Collaboration Classification ===\n\n")
+
+collab_counts_alt <- collab_classified_alt %>%
+  count(collab_detail_alt, name = "n_alt")
+
+collab_counts_orig <- works_classified %>%
+  count(collab_detail, name = "n_orig")
+
+comparison_collab <- collab_counts_orig %>%
+  rename(collab_detail_alt = collab_detail) %>%
+  left_join(collab_counts_alt, by = "collab_detail_alt")
+
+print(comparison_collab)
+cat("Match:", all(comparison_collab$n_orig == comparison_collab$n_alt), "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 2: Countries Distinct
+# Original: map_int with unnest_authors helper
+# Alternative: use pre-computed all_countries_per_work
+# ============================================================
+
+countries_alt <- collab_classified_alt %>%
+  transmute(
+    work_id,
+    countries_distinct_alt = n_countries,
+    country_codes_alt = map_chr(all_countries_per_work, function(codes) {
+      if (length(codes) == 0) return(NA_character_)
+      paste(codes, collapse = "; ")
+    })
+  )
+
+# Compare with original
+countries_comparison <- countries_info %>%
+  left_join(countries_alt, by = "work_id")
+
+cat("=== VERIFICATION 2: Countries Distinct ===\n")
+cat("Correlation:", 
+    cor(countries_comparison$countries_distinct, 
+        countries_comparison$countries_distinct_alt, 
+        use = "complete.obs"), "\n")
+cat("Exact match:", 
+    sum(countries_comparison$countries_distinct == countries_comparison$countries_distinct_alt, na.rm = TRUE),
+    "out of", nrow(countries_comparison), "\n")
+
+# Show any mismatches
+mismatches_countries <- countries_comparison %>%
+  filter(countries_distinct != countries_distinct_alt)
+cat("Mismatches:", nrow(mismatches_countries), "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 3: Institutions Distinct
+# Original: map_int with unnest_authors helper
+# Alternative: use pre-computed all_institutions_per_work
+# ============================================================
+
+institutions_alt <- collab_classified_alt %>%
+  transmute(
+    work_id,
+    institutions_distinct_alt = n_institutions
+  )
+
+# Compare with original
+institutions_comparison <- institutions_info %>%
+  left_join(institutions_alt, by = "work_id")
+
+cat("=== VERIFICATION 3: Institutions Distinct ===\n")
+cat("Correlation:", 
+    cor(institutions_comparison$institutions_distinct, 
+        institutions_comparison$institutions_distinct_alt, 
+        use = "complete.obs"), "\n")
+cat("Exact match:", 
+    sum(institutions_comparison$institutions_distinct == institutions_comparison$institutions_distinct_alt, na.rm = TRUE),
+    "out of", nrow(institutions_comparison), "\n")
+
+mismatches_inst <- institutions_comparison %>%
+  filter(institutions_distinct != institutions_distinct_alt)
+cat("Mismatches:", nrow(mismatches_inst), "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 4: UA Author Names
+# Original: map_chr filtering by ROR "03m2x1q45"
+# Alternative: different filtering approach
+# ============================================================
+
+ua_authors_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    ua_author_names_alt = map_chr(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(NA_character_)
+      
+      # For each author, check if any affiliation has UA ROR
+      ua_mask <- map_lgl(author_df$affiliations, function(aff) {
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) return(FALSE)
+        any(grepl("03m2x1q45", aff$ror), na.rm = TRUE)
+      })
+      
+      ua_names <- author_df$display_name[ua_mask]
+      ua_names <- unique(ua_names[!is.na(ua_names)])
+      
+      if (length(ua_names) == 0) return(NA_character_)
+      paste(ua_names, collapse = "; ")
+    })
+  )
+
+# Compare with original
+ua_authors_comparison <- ua_authors_info %>%
+  left_join(ua_authors_alt, by = "work_id")
+
+# Count matches
+exact_match_ua <- sum(
+  ua_authors_comparison$ua_author_names == ua_authors_comparison$ua_author_names_alt,
+  na.rm = TRUE
+)
+both_na <- sum(
+  is.na(ua_authors_comparison$ua_author_names) & is.na(ua_authors_comparison$ua_author_names_alt)
+)
+
+cat("=== VERIFICATION 4: UA Author Names ===\n")
+cat("Exact match:", exact_match_ua, "\n")
+cat("Both NA:", both_na, "\n")
+cat("Total matching:", exact_match_ua + both_na, "out of", nrow(ua_authors_comparison), "\n")
+
+# Show mismatches
+mismatches_ua <- ua_authors_comparison %>%
+  filter(
+    (ua_author_names != ua_author_names_alt) |
+      (is.na(ua_author_names) & !is.na(ua_author_names_alt)) |
+      (!is.na(ua_author_names) & is.na(ua_author_names_alt))
+  )
+cat("Mismatches:", nrow(mismatches_ua), "\n\n")
+
+if (nrow(mismatches_ua) > 0) {
+  cat("Sample mismatches:\n")
+  print(head(mismatches_ua %>% select(work_id, ua_author_names, ua_author_names_alt), 5))
+}
+
+# ============================================================
+# VERIFICATION METHOD 5: Corresponding Author Institution
+# Original: map_chr filtering is_corresponding == TRUE
+# Alternative: different access pattern
+# ============================================================
+
+corresponding_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    corresponding_author_alt = map_chr(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(NA_character_)
+      
+      # Find corresponding authors
+      corr_mask <- author_df$is_corresponding == TRUE
+      corr_mask[is.na(corr_mask)] <- FALSE
+      
+      if (!any(corr_mask)) return(NA_character_)
+      paste(unique(author_df$display_name[corr_mask]), collapse = "; ")
+    }),
+    corresponding_institution_alt = map_chr(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(NA_character_)
+      
+      corr_mask <- author_df$is_corresponding == TRUE
+      corr_mask[is.na(corr_mask)] <- FALSE
+      
+      if (!any(corr_mask)) return(NA_character_)
+      
+      # Get institutions of corresponding authors
+      corr_affs <- author_df$affiliations[corr_mask]
+      
+      inst_names <- map(corr_affs, function(aff) {
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) return(character(0))
+        aff$display_name[!is.na(aff$display_name)]
+      }) %>%
+        unlist() %>%
+        unique()
+      
+      if (length(inst_names) == 0) return(NA_character_)
+      paste(inst_names, collapse = "; ")
+    })
+  )
+
+# Compare
+corresponding_comparison <- corresponding_info %>%
+  left_join(corresponding_alt, by = "work_id")
+
+exact_match_corr_author <- sum(
+  corresponding_comparison$corresponding_author == corresponding_comparison$corresponding_author_alt,
+  na.rm = TRUE
+)
+exact_match_corr_inst <- sum(
+  corresponding_comparison$corresponding_institution == corresponding_comparison$corresponding_institution_alt,
+  na.rm = TRUE
+)
+
+cat("=== VERIFICATION 5: Corresponding Author ===\n")
+cat("Author name match:", exact_match_corr_author, "out of", nrow(corresponding_comparison), "\n")
+cat("Institution match:", exact_match_corr_inst, "out of", nrow(corresponding_comparison), "\n")
+
+mismatches_corr <- corresponding_comparison %>%
+  filter(corresponding_institution != corresponding_institution_alt)
+cat("Institution mismatches:", nrow(mismatches_corr), "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 6: Top US Partners
+# Original: filter country_code == "US", exclude UA ROR
+# Alternative: different approach
+# ============================================================
+
+us_partners_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    us_partner_list = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      
+      # Get all institutions per author
+      all_insts <- map_dfr(seq_len(nrow(author_df)), function(j) {
+        aff <- author_df$affiliations[[j]]
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) {
+          return(tibble(display_name = character(0), country_code = character(0), ror = character(0)))
+        }
+        aff %>% select(display_name, country_code, ror)
+      })
+      
+      # Filter US, exclude UA
+      us_non_ua <- all_insts %>%
+        filter(country_code == "US") %>%
+        filter(!grepl("03m2x1q45", ror)) %>%
+        pull(display_name) %>%
+        na.omit() %>%
+        unique()
+      
+      us_non_ua
+    })
+  ) %>%
+  unnest(us_partner_list, keep_empty = TRUE) %>%
+  filter(!is.na(us_partner_list)) %>%
+  count(us_partner_list, sort = TRUE, name = "num_papers") %>%
+  rename(partners = us_partner_list)
+
+cat("=== VERIFICATION 6: Top US Partners ===\n")
+cat("Original top 10:\n")
+print(head(us_partners, 10))
+cat("\nAlternative top 10:\n")
+print(head(us_partners_alt, 10))
+
+# Check match
+partners_match <- all.equal(
+  us_partners %>% head(10) %>% pull(num_papers),
+  us_partners_alt %>% head(10) %>% pull(num_papers)
+)
+cat("\nTop 10 US partners match:", partners_match, "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 7: Top International Partners
+# ============================================================
+
+intl_partners_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    intl_partner_list = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      
+      all_insts <- map_dfr(seq_len(nrow(author_df)), function(j) {
+        aff <- author_df$affiliations[[j]]
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) {
+          return(tibble(display_name = character(0), country_code = character(0)))
+        }
+        aff %>% select(display_name, country_code)
+      })
+      
+      # Filter non-US
+      intl <- all_insts %>%
+        filter(country_code != "US") %>%
+        pull(display_name) %>%
+        na.omit() %>%
+        unique()
+      
+      intl
+    })
+  ) %>%
+  unnest(intl_partner_list, keep_empty = TRUE) %>%
+  filter(!is.na(intl_partner_list)) %>%
+  count(intl_partner_list, sort = TRUE, name = "num_papers") %>%
+  rename(partners = intl_partner_list)
+
+cat("=== VERIFICATION 7: Top International Partners ===\n")
+cat("Original top 10:\n")
+print(head(intl_partners, 10))
+cat("\nAlternative top 10:\n")
+print(head(intl_partners_alt, 10))
+
+partners_intl_match <- all.equal(
+  intl_partners %>% head(10) %>% pull(num_papers),
+  intl_partners_alt %>% head(10) %>% pull(num_papers)
+)
+cat("\nTop 10 intl partners match:", partners_intl_match, "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 8: Top Collaborating Countries
+# ============================================================
+
+country_collabs_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    country_list = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      
+      all_countries <- map(author_df$affiliations, function(aff) {
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) return(character(0))
+        aff$country_code[!is.na(aff$country_code)]
+      }) %>%
+        unlist() %>%
+        unique()
+      
+      # Exclude US
+      all_countries[all_countries != "US"]
+    })
+  ) %>%
+  unnest(country_list, keep_empty = TRUE) %>%
+  filter(!is.na(country_list)) %>%
+  count(country_list, sort = TRUE, name = "num_papers") %>%
+  rename(countries = country_list)
+
+cat("=== VERIFICATION 8: Top Collaborating Countries ===\n")
+cat("Original top 10:\n")
+print(head(country_collabs, 10))
+cat("\nAlternative top 10:\n")
+print(head(country_collabs_alt, 10))
+
+countries_match <- all.equal(
+  country_collabs %>% head(10) %>% pull(num_papers),
+  country_collabs_alt %>% head(10) %>% pull(num_papers)
+)
+cat("\nTop 10 countries match:", countries_match, "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 9: UA as Corresponding Author %
+# Original: grepl("Arizona") on corresponding_institution
+# Alternative: check ROR directly
+# ============================================================
+
+corresponding_ua_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    ua_is_corresponding_alt = map_lgl(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(FALSE)
+      
+      corr_mask <- author_df$is_corresponding == TRUE
+      corr_mask[is.na(corr_mask)] <- FALSE
+      
+      if (!any(corr_mask)) return(FALSE)
+      
+      # Check if any corresponding author has UA affiliation
+      corr_affs <- author_df$affiliations[corr_mask]
+      
+      any(map_lgl(corr_affs, function(aff) {
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) return(FALSE)
+        any(grepl("03m2x1q45", aff$ror), na.rm = TRUE)
+      }))
+    })
+  )
+
+# Compare with original (which used grepl("Arizona") on institution name)
+cat("=== VERIFICATION 9: UA as Corresponding Author ===\n")
+cat("Original (by name 'Arizona'):", 
+    sum(corresponding_ua$ua_is_corresponding, na.rm = TRUE), "\n")
+cat("Alternative (by ROR):", 
+    sum(corresponding_ua_alt$ua_is_corresponding_alt, na.rm = TRUE), "\n")
+cat("Original %:", 
+    round(mean(corresponding_ua$ua_is_corresponding, na.rm = TRUE) * 100, 1), "%\n")
+cat("Alternative %:", 
+    round(mean(corresponding_ua_alt$ua_is_corresponding_alt, na.rm = TRUE) * 100, 1), "%\n\n")
+
+# Check discrepancies
+corr_compare <- corresponding_ua %>%
+  left_join(corresponding_ua_alt, by = "work_id")
+
+disagree <- corr_compare %>%
+  filter(ua_is_corresponding != ua_is_corresponding_alt)
+
+cat("Disagreements:", nrow(disagree), "\n")
+if (nrow(disagree) > 0) {
+  cat("Cases where name-match says YES but ROR says NO (or vice versa):\n")
+  print(head(disagree %>% select(work_id, ua_is_corresponding, ua_is_corresponding_alt), 10))
+}
+
+# ============================================================
+# VERIFICATION METHOD 10: Unique UA Authors Count
+# Original: separate_rows on ua_author_names, count distinct
+# Alternative: extract directly from authorships
+# ============================================================
+
+ua_unique_authors_alt <- works_published %>%
+  transmute(
+    ua_names = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      
+      ua_mask <- map_lgl(author_df$affiliations, function(aff) {
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) return(FALSE)
+        any(grepl("03m2x1q45", aff$ror), na.rm = TRUE)
+      })
+      
+      author_df$display_name[ua_mask] %>% na.omit()
+    })
+  ) %>%
+  unnest(ua_names, keep_empty = TRUE) %>%
+  filter(!is.na(ua_names)) %>%
+  distinct(ua_names)
+
+cat("=== VERIFICATION 10: Unique UA Authors ===\n")
+cat("Original:", nrow(ua_unique_authors), "\n")
+cat("Alternative:", nrow(ua_unique_authors_alt), "\n")
+cat("Match:", nrow(ua_unique_authors) == nrow(ua_unique_authors_alt), "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 11: Unique Countries & Institutions
+# ============================================================
 
 
+cat("=== VERIFICATION 11: Unique Countries & Institutions ===\n")
+cat("Unique countries (original):", unique_countries_count, "\n")
+cat("Unique countries (alternative):", unique_countries_alt, "\n")
+cat("Unique institutions (original):", unique_institutions_count, "\n")
+cat("Unique institutions (alternative):", unique_institutions_alt, "\n\n")
+
+# ============================================================
+# DEBUG: Unique Countries (162 vs 10539)
+# ============================================================
+
+# Original approach:
+cat("Original unique countries:", unique_countries_count, "\n")
+
+unique_countries_alt_fixed <- collab_classified_alt %>%
+  mutate(nonus_countries = map(all_countries_per_work, ~ .x[.x != "US"])) %>%
+  unnest(nonus_countries, keep_empty = TRUE) %>%
+  filter(!is.na(nonus_countries)) %>%
+  pull(nonus_countries) %>%
+  n_distinct()
+
+cat("Alternative unique countries (fixed):", unique_countries_alt_fixed, "\n")
+cat("Match:", unique_countries_count == unique_countries_alt_fixed, "\n\n")
+
+# ============================================================
+# DEBUG: Unique Institutions (9005 vs 7933)
+# ============================================================
+# The difference is likely in how "excluding UA" is done
+# Original: excluded by ROR pattern "03m2x1q45"
+# Alternative: excluded by name "University of Arizona"
+
+# But UA might appear with slightly different names in the data
+# Let's check both methods
+
+# Method A: Exclude by ROR (more accurate)
+unique_institutions_alt_by_ror <- works_published %>%
+  transmute(
+    work_id = id,
+    partner_insts = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      
+      all_insts <- map_dfr(seq_len(nrow(author_df)), function(j) {
+        aff <- author_df$affiliations[[j]]
+        if (is.null(aff) || !is.data.frame(aff) || nrow(aff) == 0) {
+          return(tibble(display_name = character(0), ror = character(0)))
+        }
+        aff %>% select(display_name, ror)
+      })
+      
+      # Exclude UA by ROR
+      non_ua <- all_insts %>%
+        filter(!grepl("03m2x1q45", ror) | is.na(ror)) %>%
+        pull(display_name) %>%
+        na.omit() %>%
+        unique()
+      
+      non_ua
+    })
+  ) %>%
+  unnest(partner_insts, keep_empty = TRUE) %>%
+  filter(!is.na(partner_insts)) %>%
+  pull(partner_insts) %>%
+  n_distinct()
+
+cat("Original unique institutions:", unique_institutions_count, "\n")
+cat("Alternative (exclude by name 'University of Arizona'):", unique_institutions_alt, "\n")
+cat("Alternative (exclude by ROR):", unique_institutions_alt_by_ror, "\n\n")
+
+# Method B: Check what the original method actually counted
+# The original used all_partners which excluded by ROR
+cat("Let's verify original was computed from all_partners:\n")
+cat("n_distinct(all_partners$partners):", n_distinct(all_partners$partners), "\n\n")
+
+# ============================================================
+# The difference in institutions is likely because:
+# 1. Original includes ALL institutions (including UA sub-units?)
+# 2. Name-based exclusion misses UA variations
+# ============================================================
+
+# Check: What UA-related names exist in the data?
+ua_related_names <- collab_classified_alt %>%
+  unnest(all_institutions_per_work, keep_empty = TRUE) %>%
+  filter(grepl("Arizona", all_institutions_per_work, ignore.case = TRUE)) %>%
+  distinct(all_institutions_per_work)
+
+cat("Institutions with 'Arizona' in name:\n")
+print(ua_related_names, n = 30)
+
+# ============================================================
+# CORRECTED FINAL COMPARISON
+# ============================================================
+
+cat("\n\n========================================\n")
+cat("CORRECTED FINAL VERIFICATION SUMMARY\n")
+cat("========================================\n\n")
+
+final_comparison_v2 <- tibble(
+  Metric = c(
+    "UA solo papers",
+    "US collaboration papers",
+    "International collaboration papers",
+    "Unique UA authors",
+    "Unique countries (non-US)",
+    "Unique partner institutions",
+    "UA as corresponding author %"
+  ),
+  Original = as.character(c(
+    sum(works_classified$collab_detail == "UA solo"),
+    sum(works_classified$collab_detail == "US collaboration"),
+    sum(works_classified$collab_detail == "International collaboration"),
+    nrow(ua_unique_authors),
+    unique_countries_count,
+    unique_institutions_count,
+    round(mean(corresponding_ua$ua_is_corresponding, na.rm = TRUE) * 100, 1)
+  )),
+  Alternative = as.character(c(
+    sum(collab_classified_alt$collab_detail_alt == "UA solo"),
+    sum(collab_classified_alt$collab_detail_alt == "US collaboration"),
+    sum(collab_classified_alt$collab_detail_alt == "International collaboration"),
+    nrow(ua_unique_authors_alt),
+    unique_countries_alt_fixed,
+    unique_institutions_alt_by_ror,
+    round(mean(corresponding_ua_alt$ua_is_corresponding_alt, na.rm = TRUE) * 100, 1)
+  )),
+  Note = c(
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Slight diff may be due to NA ROR handling",
+    "ROR method (28.9%) is more accurate"
+  )
+)
+
+final_comparison_v2 <- final_comparison_v2 %>%
+  mutate(Match = Original == Alternative)
+
+print(final_comparison_v2)
+
+cat("\nCore metrics match:", 
+    all(final_comparison_v2$Match[1:4]), "\n")
+
+
+
+# ============================================================
+# VERIFICATION METHOD 12: Impact by Collaboration Type
+# Alternative: merge differently
+# ============================================================
+
+impact_collab_alt <- collab_classified_alt %>%
+  select(work_id, collab_detail_alt) %>%
+  left_join(
+    works_published %>% transmute(work_id = id, cited_by_count, fwci),
+    by = "work_id"
+  ) %>%
+  group_by(collab_detail_alt) %>%
+  summarise(
+    n_papers = n(),
+    mean_citations = round(mean(cited_by_count, na.rm = TRUE), 2),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    .groups = "drop"
+  )
+
+cat("=== VERIFICATION 12: Impact by Collaboration ===\n")
+cat("Original:\n")
+print(impact_by_collab)
+cat("\nAlternative:\n")
+print(impact_collab_alt)
+
+# ============================================================
+# FINAL COMPARISON SUMMARY
+# ============================================================
+
+cat("\n\n========================================\n")
+cat("FINAL VERIFICATION SUMMARY\n")
+cat("========================================\n\n")
+
+final_comparison <- tibble(
+  Metric = c(
+    "UA solo papers",
+    "US collaboration papers",
+    "International collaboration papers",
+    "Unique UA authors",
+    "Unique countries",
+    "Unique partner institutions",
+    "UA as corresponding author %"
+  ),
+  Original = as.character(c(
+    sum(works_classified$collab_detail == "UA solo"),
+    sum(works_classified$collab_detail == "US collaboration"),
+    sum(works_classified$collab_detail == "International collaboration"),
+    nrow(ua_unique_authors),
+    unique_countries_count,
+    unique_institutions_count,
+    round(mean(corresponding_ua$ua_is_corresponding, na.rm = TRUE) * 100, 1)
+  )),
+  Alternative = as.character(c(
+    sum(collab_classified_alt$collab_detail_alt == "UA solo"),
+    sum(collab_classified_alt$collab_detail_alt == "US collaboration"),
+    sum(collab_classified_alt$collab_detail_alt == "International collaboration"),
+    nrow(ua_unique_authors_alt),
+    unique_countries_alt,
+    unique_institutions_alt,
+    round(mean(corresponding_ua_alt$ua_is_corresponding_alt, na.rm = TRUE) * 100, 1)
+  ))
+)
+
+final_comparison <- final_comparison %>%
+  mutate(Match = Original == Alternative)
+
+print(final_comparison)
+
+cat("\nAll checks passed:", all(final_comparison$Match), "\n")
+
+##############################################################
+#######################################################################
+######################################################################
+#######################################################################
+################ Awards and Funders Analysis 
+##############################################################
+#######################################################################
 # ============================================================
 # Inspect "awards" column
 # ============================================================
@@ -835,6 +1532,134 @@ federal_agency_summary <- funders_federal %>%
 print(federal_agency_summary)
 
 # ============================================================
+# IMPROVED: Federal funder classification
+# Combine list + pattern, but exclude non-US
+# ============================================================
+
+# Non-US funders that pattern incorrectly catches
+non_us_false_positives <- c(
+  "National Institute of Mental Health and Neurosciences",   # India
+  "National Institute of Ecology",                           # Mexico/Korea
+  "Florida Fish and Wildlife Conservation Commission",       # State, not federal
+  "National Fish and Wildlife Foundation",                   # Non-profit, not federal
+  "Foundation for the National Institutes of Health",        # Non-profit
+  "Foundation for Food and Agriculture Research",            # Non-profit
+  "Indian Council of Agricultural Research",                 # India
+  "Shota Rustaveli National Science Foundation",             # Georgia (country)
+  "National Science Foundation of Sri Lanka",                # Sri Lanka
+  "Iran National Science Foundation",                        # Iran
+  "National Cancer Center",                                  # Japan/Korea
+  "Department of Agriculture and Rural Development, Northern Ireland",  # UK
+  "California Department of Fish and Wildlife",              # State
+  "Consortium of International Agricultural Research Centers",  # International
+  "National Science Foundation Graduate Research Fellowship Program"  # Keep as NSF
+)
+
+# Additional true US federal funders missed by pattern
+additional_federal <- c(
+  "National Institute on Aging",
+  "National Institute on Alcohol Abuse and Alcoholism",
+  "National Institute on Drug Abuse",
+  "National Institute on Deafness and Other Communication Disorders",
+  "National Center for Advancing Translational Sciences",
+  "National Center for Complementary and Integrative Health",
+  "Office of Science",
+  "High Energy Physics",
+  "United States Agency for International Development",
+  "Fogarty International Center",
+  "Air Force Research Laboratory",
+  "U.S. Naval Research Laboratory",
+  "Office of Naval Research Global",
+  "U.S. Bureau of Land Management",
+  "Savannah River Operations Office, U.S. Department of Energy",
+  "Division of Intramural Research, National Institute of Allergy and Infectious Diseases",
+  "Division of Cancer Epidemiology and Genetics, National Cancer Institute",
+  "Division of Cancer Prevention, National Cancer Institute",
+  "Office of Extramural Research, National Institutes of Health",
+  "Center for Hierarchical Manufacturing, National Science Foundation",
+  "National Aeronautics and Space Administration Postdoctoral Program",
+  "Smithsonian Tropical Research Institute",
+  "Smithsonian Astrophysical Observatory",
+  "Smithsonian's National Zoo and Conservation Biology Institute",
+  "National Institute of Standards and Technology",
+  "National Science Foundation Graduate Research Fellowship Program"
+)
+
+# Updated complete federal list
+us_federal_funders_updated <- c(us_federal_funders, additional_federal)
+
+# Re-classify
+funders_classified_v2 <- funders_data %>%
+  filter(!is.na(display_name)) %>%
+  mutate(
+    funder_type = case_when(
+      display_name %in% us_federal_funders_updated ~ "US Federal",
+      display_name %in% non_us_false_positives ~ "Other",
+      # Catch remaining NIH sub-institutes with "National Institute" in US context
+      grepl("Division of .+, National", display_name) ~ "US Federal",
+      TRUE ~ "Other"
+    )
+  )
+
+# Updated summary
+funder_type_summary_v2 <- funders_classified_v2 %>%
+  group_by(funder_type) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    num_funders = n_distinct(display_name),
+    .groups = "drop"
+  ) %>%
+  mutate(pct_of_funded = round(num_papers / n_distinct(funders_data$work_id) * 100, 1))
+
+cat("=== UPDATED Federal vs Other ===\n")
+print(funder_type_summary_v2)
+
+# Compare to original
+cat("\nOriginal:\n")
+print(funder_type_summary)
+cat("\nUpdated:\n")
+print(funder_type_summary_v2)
+
+# ============================================================
+# Updated federal agency breakdown
+# ============================================================
+
+funders_federal_v2 <- funders_classified_v2 %>%
+  filter(funder_type == "US Federal") %>%
+  mutate(
+    parent_agency = case_when(
+      grepl("National Science Foundation|Division of Astronomical|Division of Materials|Division of Earth|Division of Physics|Division of Chemistry|Division of Ocean|Division of Computer|Division of Mathematical|Division of Biological Infrastructure|Division of Environmental|Division of Atmospheric|Division of Molecular|Division of Civil|Center for Hierarchical", display_name) ~ "NSF",
+      grepl("National Institutes of Health|National Institute|National Cancer|National Heart|National Eye|National Library|National Human Genome|Fogarty|Eunice Kennedy|National Center for Advancing|National Center for Complementary|Office of Extramural Research|Division of Cancer|Division of Intramural", display_name) ~ "NIH",
+      grepl("National Aeronautics|NASA", display_name) ~ "NASA",
+      grepl("Department of Energy|High Energy Physics|Office of Science|Savannah River", display_name) ~ "DOE",
+      grepl("Department of Defense|Air Force|Army|Navy|Defense Advanced|Naval Research", display_name) ~ "DOD",
+      grepl("Department of Agriculture|Food and Agriculture|Agricultural Research|National Institute of Food", display_name) ~ "USDA",
+      grepl("Oceanic and Atmospheric", display_name) ~ "NOAA",
+      grepl("Geological Survey", display_name) ~ "USGS",
+      grepl("Centers for Disease Control", display_name) ~ "CDC",
+      grepl("Environmental Protection Agency", display_name) ~ "EPA",
+      grepl("Agency for International Development", display_name) ~ "USAID",
+      grepl("Smithsonian", display_name) ~ "Smithsonian",
+      grepl("Department of the Interior|Bureau of Land|Fish and Wildlife", display_name) ~ "DOI",
+      grepl("National Institute of Standards", display_name) ~ "NIST",
+      TRUE ~ "Other Federal"
+    )
+  )
+
+federal_agency_summary_v2 <- funders_federal_v2 %>%
+  group_by(parent_agency) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    num_sub_agencies = n_distinct(display_name),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers))
+
+cat("\n=== UPDATED Federal Agency Breakdown ===\n")
+print(federal_agency_summary_v2)
+
+
+# ============================================================
 # STEP 10: Impact by funder type (Federal vs Other)
 # ============================================================
 
@@ -964,6 +1789,405 @@ write.csv(federal_agency_summary, "UA_federal_agency_breakdown.csv", row.names =
 write.csv(impact_by_funder_type, "UA_impact_by_funder_type.csv", row.names = FALSE)
 write.csv(impact_by_agency, "UA_impact_by_federal_agency.csv", row.names = FALSE)
 write.csv(as.data.frame(grants_summary), "UA_grants_summary.csv", row.names = FALSE)
+
+
+########################### 2026-07-11 Alternative code for awards analysis to verify results
+######################################
+
+# ============================================================
+# VERIFICATION METHOD 1: Count funded papers
+# Original: used map_lgl on funders column
+# Alternative: unnest funders and count distinct work_ids
+# ============================================================
+
+# --- Alternative approach ---
+# Unnest funders directly and see how many unique work_ids have data
+funders_unnested_alt <- works_published %>%
+  select(work_id = id, funders) %>%
+  mutate(row_num = row_number()) %>%
+  mutate(
+    is_df = map_lgl(funders, is.data.frame),
+    nrow_funders = map_int(funders, function(f) {
+      if (is.data.frame(f)) return(nrow(f))
+      return(0L)
+    })
+  )
+
+# Count
+funded_alt <- sum(funders_unnested_alt$nrow_funders > 0)
+unfunded_alt <- sum(funders_unnested_alt$nrow_funders == 0)
+pct_funded_alt <- round(funded_alt / nrow(works_published) * 100, 1)
+
+cat("=== VERIFICATION: Funded Paper Count ===\n")
+cat("Papers with funders (alternative):", funded_alt, "\n")
+cat("Papers without funders (alternative):", unfunded_alt, "\n")
+cat("Percentage funded (alternative):", pct_funded_alt, "%\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 2: Top funders
+# Original: unnest funders, count display_name
+# Alternative: loop through each work, extract funder names manually
+# ============================================================
+
+# --- Alternative approach ---
+funder_names_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    funder_list = map(funders, function(f) {
+      if (!is.data.frame(f) || nrow(f) == 0) return(character(0))
+      f$display_name[!is.na(f$display_name)]
+    })
+  ) %>%
+  unnest(funder_list, keep_empty = TRUE) %>%
+  filter(!is.na(funder_list))
+
+top_funders_alt <- funder_names_alt %>%
+  count(funder_list, sort = TRUE, name = "num_papers") %>%
+  rename(display_name = funder_list)
+
+cat("=== VERIFICATION: Top Funders ===\n")
+cat("Original top 10:\n")
+print(head(top_funders, 10))
+cat("\nAlternative top 10:\n")
+print(head(top_funders_alt, 10))
+
+# Check if they match
+funders_match <- all.equal(
+  top_funders %>% head(10) %>% pull(num_papers),
+  top_funders_alt %>% head(10) %>% pull(num_papers)
+)
+cat("\nTop 10 funders match:", funders_match, "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 3: Impact by funding status
+# Original: joined has_funding flag, grouped
+# Alternative: split data manually, calculate separately
+# ============================================================
+
+# --- Alternative approach ---
+funded_work_ids_alt <- funders_unnested_alt %>%
+  filter(nrow_funders > 0) %>%
+  pull(work_id)
+
+unfunded_work_ids_alt <- funders_unnested_alt %>%
+  filter(nrow_funders == 0) %>%
+  pull(work_id)
+
+# Calculate metrics separately
+funded_metrics_alt <- works_published %>%
+  filter(id %in% funded_work_ids_alt) %>%
+  summarise(
+    n_papers = n(),
+    mean_citations = round(mean(cited_by_count, na.rm = TRUE), 2),
+    median_citations = median(cited_by_count, na.rm = TRUE),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    median_fwci = round(median(fwci, na.rm = TRUE), 2)
+  ) %>%
+  mutate(status = "Funded")
+
+unfunded_metrics_alt <- works_published %>%
+  filter(id %in% unfunded_work_ids_alt) %>%
+  summarise(
+    n_papers = n(),
+    mean_citations = round(mean(cited_by_count, na.rm = TRUE), 2),
+    median_citations = median(cited_by_count, na.rm = TRUE),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    median_fwci = round(median(fwci, na.rm = TRUE), 2)
+  ) %>%
+  mutate(status = "Not funded")
+
+impact_alt <- bind_rows(funded_metrics_alt, unfunded_metrics_alt)
+
+cat("=== VERIFICATION: Impact by Funding Status ===\n")
+cat("Original:\n")
+print(impact_by_funding %>% select(funding_status, n_papers, mean_fwci))
+cat("\nAlternative:\n")
+print(impact_alt %>% select(status, n_papers, mean_fwci))
+
+# ============================================================
+# VERIFICATION METHOD 4: Awards count
+# Original: checked all(is.na(a)) and length >= 4
+# Alternative: check class and type directly
+# ============================================================
+
+# --- Alternative approach ---
+awards_check_alt <- works_published %>%
+  transmute(
+    work_id = id,
+    awards_type = map_chr(awards, function(a) {
+      if (is.null(a)) return("null")
+      if (is.logical(a) && all(is.na(a))) return("logical_NA")
+      if (is.character(a) && length(a) >= 4) return("has_awards")
+      return("other")
+    })
+  )
+
+cat("=== VERIFICATION: Awards Count ===\n")
+table(awards_check_alt$awards_type)
+cat("Papers with awards (alternative):", 
+    sum(awards_check_alt$awards_type == "has_awards"), "\n\n")
+
+# ============================================================
+# VERIFICATION METHOD 5: Federal vs Other
+# Original: matched against us_federal_funders list
+# Alternative: use ROR patterns for US government
+# ============================================================
+
+# --- Alternative approach using ROR ---
+# US federal agencies typically have specific ROR patterns
+# But let's verify by checking overlap
+
+funders_with_ror <- works_published %>%
+  select(work_id = id, funders) %>%
+  mutate(has_funders = map_lgl(funders, ~ is.data.frame(.x) && nrow(.x) > 0)) %>%
+  filter(has_funders) %>%
+  unnest(funders, keep_empty = TRUE)
+
+# Check: How many funders are in our federal list?
+federal_check_alt <- funders_with_ror %>%
+  filter(!is.na(display_name)) %>%
+  mutate(
+    is_federal_by_list = display_name %in% us_federal_funders,
+    # Alternative: pattern matching for common US gov keywords
+    is_federal_by_pattern = grepl(
+      "National Science Foundation|National Institutes of Health|National Aeronautics|Department of Energy|Department of Defense|Department of Agriculture|National Institute of|National Cancer|National Heart|National Eye|Geological Survey|Oceanic and Atmospheric|Environmental Protection|Centers for Disease Control|Air Force|Army Research|Naval Research|Defense Advanced|Fish and Wildlife|Bureau of Land|Smithsonian|Food and Agriculture|Agricultural Research",
+      display_name
+    )
+  )
+
+# Compare the two methods
+cat("=== VERIFICATION: Federal Funder Detection ===\n")
+cat("Federal by exact list match:", 
+    n_distinct(federal_check_alt$work_id[federal_check_alt$is_federal_by_list]), "papers\n")
+cat("Federal by pattern match:", 
+    n_distinct(federal_check_alt$work_id[federal_check_alt$is_federal_by_pattern]), "papers\n")
+
+# What does pattern catch that list doesn't?
+pattern_not_list <- federal_check_alt %>%
+  filter(is_federal_by_pattern & !is_federal_by_list) %>%
+  distinct(display_name)
+
+cat("\nFunders caught by pattern but NOT in list:\n")
+print(pattern_not_list, n = 30)
+
+# What does list catch that pattern doesn't?
+list_not_pattern <- federal_check_alt %>%
+  filter(is_federal_by_list & !is_federal_by_pattern) %>%
+  distinct(display_name)
+
+cat("\nFunders in list but NOT caught by pattern:\n")
+print(list_not_pattern)
+
+# ============================================================
+# Check: Do the final numbers match despite classification differences?
+# ============================================================
+
+cat("=== CORE NUMBERS COMPARISON ===\n\n")
+
+cat("1. Funded paper count:\n")
+cat("   Original:", sum(papers_with_funding$has_funding), "\n")
+cat("   Alternative:", funded_alt, "\n")
+cat("   Match:", sum(papers_with_funding$has_funding) == funded_alt, "\n\n")
+
+cat("2. Top 5 funders (original):\n")
+print(head(top_funders, 5))
+cat("\n   Top 5 funders (alternative):\n")
+print(head(top_funders_alt, 5))
+
+cat("\n3. FWCI comparison:\n")
+cat("   Funded FWCI - Original:", 
+    impact_by_funding$mean_fwci[impact_by_funding$has_funding == TRUE], "\n")
+cat("   Funded FWCI - Alternative:", funded_metrics_alt$mean_fwci, "\n")
+cat("   Match:", 
+    impact_by_funding$mean_fwci[impact_by_funding$has_funding == TRUE] == funded_metrics_alt$mean_fwci, "\n\n")
+
+cat("4. Funding by collaboration:\n")
+cat("   Original:\n")
+print(funding_by_collab)
+cat("\n   Alternative:\n")
+print(funding_collab_alt)
+
+# ============================================================
+# VERIFICATION METHOD 6: Federal agency breakdown
+# Alternative: count directly from funders_with_ror
+# ============================================================
+
+# --- Alternative: classify using a simpler approach ---
+federal_agency_alt <- funders_with_ror %>%
+  filter(!is.na(display_name)) %>%
+  mutate(
+    agency = case_when(
+      grepl("National Science Foundation|Division of", display_name) ~ "NSF",
+      grepl("National Institutes of Health|National Institute|National Cancer|National Heart|National Eye|National Library|National Human Genome|Fogarty|Eunice Kennedy|National Center for Advancing|National Center for Complementary", display_name) ~ "NIH",
+      grepl("National Aeronautics|NASA", display_name) ~ "NASA",
+      grepl("Department of Energy|High Energy Physics|Office of Science", display_name) ~ "DOE",
+      grepl("Department of Defense|Air Force|Army|Navy|Defense Advanced|Naval Research", display_name) ~ "DOD",
+      grepl("Department of Agriculture|Food and Agriculture|Agricultural Research", display_name) ~ "USDA",
+      grepl("Oceanic and Atmospheric", display_name) ~ "NOAA",
+      grepl("Geological Survey", display_name) ~ "USGS",
+      grepl("Centers for Disease Control", display_name) ~ "CDC",
+      grepl("Environmental Protection Agency", display_name) ~ "EPA",
+      grepl("Agency for International Development", display_name) ~ "USAID",
+      grepl("Smithsonian", display_name) ~ "Smithsonian",
+      grepl("Department of the Interior|Bureau of Land|Fish and Wildlife", display_name) ~ "DOI",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(agency))
+
+federal_agency_summary_alt <- federal_agency_alt %>%
+  group_by(agency) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers))
+
+cat("=== VERIFICATION: Federal Agency Breakdown ===\n")
+cat("Original:\n")
+print(federal_agency_summary)
+cat("\nAlternative:\n")
+print(federal_agency_summary_alt)
+
+# ============================================================
+# VERIFICATION METHOD 7: Funding by collaboration type
+# Alternative: merge differently
+# ============================================================
+
+# --- Alternative approach ---
+funding_collab_alt <- works_classified %>%
+  select(work_id = id, collab_detail) %>%
+  left_join(
+    funders_unnested_alt %>% select(work_id, nrow_funders),
+    by = "work_id"
+  ) %>%
+  mutate(is_funded = nrow_funders > 0) %>%
+  group_by(collab_detail) %>%
+  summarise(
+    n_papers = n(),
+    n_funded = sum(is_funded),
+    pct_funded = round(mean(is_funded) * 100, 1),
+    .groups = "drop"
+  )
+
+cat("=== VERIFICATION: Funding by Collaboration Type ===\n")
+cat("Original:\n")
+print(funding_by_collab)
+cat("\nAlternative:\n")
+print(funding_collab_alt)
+
+# ============================================================
+# VERIFICATION METHOD 8: Spot-check individual papers
+# ============================================================
+
+# Pick 5 random funded papers and verify manually
+set.seed(42)
+sample_funded <- works_published %>%
+  filter(id %in% funded_work_ids_alt) %>%
+  slice_sample(n = 5) %>%
+  select(id, title)
+
+cat("\n=== SPOT CHECK: 5 Random Funded Papers ===\n")
+for (i in 1:5) {
+  wid <- sample_funded$id[i]
+  cat("\n--- Paper", i, "---\n")
+  cat("Title:", sample_funded$title[i], "\n")
+  
+  # Get funders
+  f <- works_published %>% filter(id == wid) %>% pull(funders)
+  if (is.data.frame(f[[1]])) {
+    cat("Funders:", paste(f[[1]]$display_name, collapse = "; "), "\n")
+  }
+  
+  # Get awards
+  a <- works_published %>% filter(id == wid) %>% pull(awards)
+  if (!all(is.na(a[[1]])) && length(a[[1]]) >= 4) {
+    award_names <- a[[1]][names(a[[1]]) == "funder_display_name"]
+    cat("Award funders:", paste(unique(award_names), collapse = "; "), "\n")
+  }
+}
+
+# Pick 5 random unfunded papers and verify
+sample_unfunded <- works_published %>%
+  filter(id %in% unfunded_work_ids_alt) %>%
+  slice_sample(n = 5) %>%
+  select(id, title)
+
+cat("\n=== SPOT CHECK: 5 Random Unfunded Papers ===\n")
+for (i in 1:5) {
+  wid <- sample_unfunded$id[i]
+  cat("\n--- Paper", i, "---\n")
+  cat("Title:", sample_unfunded$title[i], "\n")
+  
+  f <- works_published %>% filter(id == wid) %>% pull(funders)
+  if (is.data.frame(f[[1]])) {
+    cat("Funders nrow:", nrow(f[[1]]), "\n")
+  } else {
+    cat("Funders: not a dataframe\n")
+  }
+  
+  a <- works_published %>% filter(id == wid) %>% pull(awards)
+  cat("Awards is.na:", all(is.na(a[[1]])), "\n")
+}
+
+# ============================================================
+# FINAL COMPARISON SUMMARY
+# ============================================================
+
+cat("\n\n========================================\n")
+cat("FINAL VERIFICATION SUMMARY\n")
+cat("========================================\n\n")
+
+comparison <- tibble(
+  Metric = c(
+    "Papers funded",
+    "Papers unfunded",
+    "% funded",
+    "Mean FWCI (funded)",
+    "Mean FWCI (unfunded)",
+    "Top funder #1 papers",
+    "Top funder #2 papers",
+    "Top funder #3 papers"
+  ),
+  Original = as.character(c(
+    sum(papers_with_funding$has_funding),
+    sum(!papers_with_funding$has_funding),
+    paste0(round(mean(papers_with_funding$has_funding) * 100, 1), "%"),
+    impact_by_funding$mean_fwci[impact_by_funding$has_funding == TRUE],
+    impact_by_funding$mean_fwci[impact_by_funding$has_funding == FALSE],
+    top_funders$num_papers[1],
+    top_funders$num_papers[2],
+    top_funders$num_papers[3]
+  )),
+  Alternative = as.character(c(
+    funded_alt,
+    unfunded_alt,
+    paste0(pct_funded_alt, "%"),
+    funded_metrics_alt$mean_fwci,
+    unfunded_metrics_alt$mean_fwci,
+    top_funders_alt$num_papers[1],
+    top_funders_alt$num_papers[2],
+    top_funders_alt$num_papers[3]
+  )),
+  Match = c(
+    sum(papers_with_funding$has_funding) == funded_alt,
+    sum(!papers_with_funding$has_funding) == unfunded_alt,
+    round(mean(papers_with_funding$has_funding) * 100, 1) == pct_funded_alt,
+    impact_by_funding$mean_fwci[impact_by_funding$has_funding == TRUE] == funded_metrics_alt$mean_fwci,
+    impact_by_funding$mean_fwci[impact_by_funding$has_funding == FALSE] == unfunded_metrics_alt$mean_fwci,
+    top_funders$num_papers[1] == top_funders_alt$num_papers[1],
+    top_funders$num_papers[2] == top_funders_alt$num_papers[2],
+    top_funders$num_papers[3] == top_funders_alt$num_papers[3]
+  )
+)
+
+print(comparison)
+
+cat("\nAll checks passed:", all(comparison$Match), "\n")
+
+
+
+
 
 
 
