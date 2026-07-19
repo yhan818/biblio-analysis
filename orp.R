@@ -837,6 +837,8 @@ corresponding_ua_alt <- works_published %>%
 cat("=== VERIFICATION 9: UA as Corresponding Author ===\n")
 cat("Original (by name 'Arizona'):", 
     sum(corresponding_ua$ua_is_corresponding, na.rm = TRUE), "\n")
+##### ROR is more accurate. but missing Cancer center!!!!!!!!!!!!!
+##################################################################
 cat("Alternative (by ROR):", 
     sum(corresponding_ua_alt$ua_is_corresponding_alt, na.rm = TRUE), "\n")
 cat("Original %:", 
@@ -888,7 +890,18 @@ cat("Match:", nrow(ua_unique_authors) == nrow(ua_unique_authors_alt), "\n\n")
 # ============================================================
 # VERIFICATION METHOD 11: Unique Countries & Institutions
 # ============================================================
+unique_countries_alt <- collab_classified_alt %>%
+  unnest(all_countries_per_work, keep_empty = TRUE) %>%
+  filter(!is.na(all_countries_per_work) & all_countries_per_work != "US") %>%
+  n_distinct()
 
+unique_institutions_alt <- collab_classified_alt %>%
+  unnest(all_institutions_per_work, keep_empty = TRUE) %>%
+  filter(!is.na(all_institutions_per_work)) %>%
+  # Exclude UA
+  filter(!grepl("University of Arizona", all_institutions_per_work)) %>%
+  pull(all_institutions_per_work) %>%
+  n_distinct()
 
 cat("=== VERIFICATION 11: Unique Countries & Institutions ===\n")
 cat("Unique countries (original):", unique_countries_count, "\n")
@@ -966,6 +979,10 @@ cat("n_distinct(all_partners$partners):", n_distinct(all_partners$partners), "\n
 # The difference in institutions is likely because:
 # 1. Original includes ALL institutions (including UA sub-units?)
 # 2. Name-based exclusion misses UA variations
+# The difference (9,005 vs 7,934) = ~1,071 is NOT just UA — it's likely also:
+
+#  UA sub-departments/centers listed as separate institutions
+#  Entries with NA in ROR that have "University of Arizona" in the name
 # ============================================================
 
 # Check: What UA-related names exist in the data?
@@ -977,6 +994,42 @@ ua_related_names <- collab_classified_alt %>%
 cat("Institutions with 'Arizona' in name:\n")
 print(ua_related_names, n = 30)
 
+
+# ============================================================
+# CORRECTED: Unique partner institutions (exclude UA properly)
+# ============================================================
+
+unique_institutions_correct <- works_published %>%
+  transmute(
+    work_id = id,
+    partner_insts = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      df <- author_df %>%
+        unnest(affiliations, names_sep = "_", keep_empty = TRUE)
+      # Exclude UA by BOTH ROR and name
+      df %>%
+        filter(
+          !grepl("03m2x1q45", affiliations_ror) | is.na(affiliations_ror)
+        ) %>%
+        filter(
+          !grepl("University of Arizona", affiliations_display_name, ignore.case = TRUE) | 
+            is.na(affiliations_display_name)
+        ) %>%
+        pull(affiliations_display_name) %>%
+        na.omit() %>%
+        unique()
+    })
+  ) %>%
+  unnest(partner_insts, keep_empty = TRUE) %>%
+  filter(!is.na(partner_insts)) %>%
+  pull(partner_insts) %>%
+  n_distinct()
+
+cat("Unique partner institutions (exclude UA by ROR + name):", unique_institutions_correct, "\n")
+
+### UA has only 1 institution name with ROR 03m2x1q45: "University of Arizona"
+# "University of Arizona Cancer Center" has a different ROR (04tvx8690) — so it's NOT excluded by the UA ROR filter
+Total institutions = 7,935 (including UA) → 7,934 (excluding UA by ROR) — difference is just 1 (UA itself)
 # ============================================================
 # CORRECTED FINAL COMPARISON
 # ============================================================
@@ -1779,17 +1832,25 @@ print(grants_summary)
 # STEP 13: Export
 # ============================================================
 
-write.csv(top_funders, "UA_top_funders.csv", row.names = FALSE)
-write.csv(top_funders_awards, "UA_top_funders_with_awards.csv", row.names = FALSE)
-write.csv(impact_by_funder, "UA_impact_by_funder.csv", row.names = FALSE)
-write.csv(impact_by_funding, "UA_funded_vs_not.csv", row.names = FALSE)
-write.csv(funding_by_collab, "UA_funding_by_collaboration.csv", row.names = FALSE)
-write.csv(funder_type_summary, "UA_federal_vs_other.csv", row.names = FALSE)
-write.csv(federal_agency_summary, "UA_federal_agency_breakdown.csv", row.names = FALSE)
-write.csv(impact_by_funder_type, "UA_impact_by_funder_type.csv", row.names = FALSE)
-write.csv(impact_by_agency, "UA_impact_by_federal_agency.csv", row.names = FALSE)
-write.csv(as.data.frame(grants_summary), "UA_grants_summary.csv", row.names = FALSE)
+library(openxlsx)
 
+# List of dataframes → sheet names
+sheets <- list(
+  "Grants Summary"          = as.data.frame(grants_summary),
+  "Top Funders"             = top_funders,
+  "Top Funders with Awards" = top_funders_awards,
+  "Impact by Funder"        = impact_by_funder,
+  "Funded vs Not"           = impact_by_funding,
+  "Funding by Collaboration"= funding_by_collab,
+  "Federal vs Other"        = funder_type_summary,
+  "Federal Agency Breakdown"= federal_agency_summary,
+  "Impact by Funder Type"   = impact_by_funder_type,
+  "Impact by Federal Agency"= impact_by_agency
+)
+
+write.xlsx(sheets, file = "UA_Funding_Analysis.xlsx")
+
+cat("✅ Saved: UA_Funding_Analysis.xlsx\n")
 
 ########################### 2026-07-11 Alternative code for awards analysis to verify results
 ######################################
@@ -2188,10 +2249,6 @@ cat("\nAll checks passed:", all(comparison$Match), "\n")
 
 
 
-
-
-
-
 ##########################2026-07-10:
 ######################## Discipline (Domain, Field, Subfield)
 library(dplyr)
@@ -2460,20 +2517,757 @@ print(discipline_summary)
 # STEP 13: Export
 # ============================================================
 
-write.csv(topics_extracted, "UA_topics_extracted.csv", row.names = FALSE)
-write.csv(domain_summary, "UA_domain_summary.csv", row.names = FALSE)
-write.csv(field_summary, "UA_field_summary.csv", row.names = FALSE)
-write.csv(subfield_summary, "UA_subfield_summary.csv", row.names = FALSE)
-write.csv(topic_summary, "UA_topic_summary.csv", row.names = FALSE)
-write.csv(impact_by_domain, "UA_impact_by_domain.csv", row.names = FALSE)
-write.csv(impact_by_field, "UA_impact_by_field.csv", row.names = FALSE)
-write.csv(funding_by_domain, "UA_funding_by_domain.csv", row.names = FALSE)
-write.csv(funding_by_field, "UA_funding_by_field.csv", row.names = FALSE)
-write.csv(collab_by_domain_wide, "UA_collaboration_by_domain.csv", row.names = FALSE)
-write.csv(top_funders_by_domain, "UA_top_funders_by_domain.csv", row.names = FALSE)
-write.csv(as.data.frame(discipline_summary), "UA_discipline_summary.csv", row.names = FALSE)
+library(openxlsx)
+
+sheets <- list(
+  "Discipline Summary"      = as.data.frame(discipline_summary),
+  "Topics Extracted"        = topics_extracted,
+  "Domain Summary"          = domain_summary,
+  "Field Summary"           = field_summary,
+  "Subfield Summary"        = subfield_summary,
+  "Topic Summary"           = topic_summary,
+  "Impact by Domain"        = impact_by_domain,
+  "Impact by Field"         = impact_by_field,
+  "Funding by Domain"       = funding_by_domain,
+  "Funding by Field"        = funding_by_field,
+  "Collaboration by Domain" = collab_by_domain_wide,
+  "Top Funders by Domain"   = top_funders_by_domain
+)
+
+write.xlsx(sheets, file = "UA_Discipline_Analysis.xlsx")
+
+cat("✅ Saved: UA_Discipline_Analysis.xlsx\n")
+
+##################################
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(openxlsx)
+
+# ============================================================
+# SHEET 1: PAPERS (one row per paper, awards collapsed)
+# ============================================================
+
+papers_sheet <- works_published %>%
+  transmute(
+    work_id = id,
+    doi,
+    title,
+    publication_date,
+    journal = source_display_name,
+    publisher = host_organization,
+    cited_by_count,
+    fwci,
+    # Collapse all funders/awards into single cells
+    all_funders = map_chr(awards, function(a) {
+      if (is.null(a) || all(is.na(a)) || length(a) < 4) return(NA_character_)
+      nms <- names(a)
+      funder_names <- a[nms == "funder_display_name"]
+      if (length(funder_names) == 0) return(NA_character_)
+      paste(unique(funder_names), collapse = "; ")
+    }),
+    all_award_ids = map_chr(awards, function(a) {
+      if (is.null(a) || all(is.na(a)) || length(a) < 4) return(NA_character_)
+      nms <- names(a)
+      award_ids <- a[nms == "funder_award_id"]
+      if (length(award_ids) == 0) return(NA_character_)
+      paste(unique(award_ids), collapse = "; ")
+    }),
+    num_awards = map_int(awards, function(a) {
+      if (is.null(a) || all(is.na(a)) || length(a) < 4) return(0L)
+      nms <- names(a)
+      length(a[nms == "funder_award_id"])
+    })
+  ) %>%
+  left_join(ua_authors_info, by = "work_id") %>%
+  left_join(corresponding_info, by = "work_id") %>%
+  left_join(topics_extracted %>% select(work_id, domain, field, subfield, topic), by = "work_id")
+
+# ============================================================
+# SHEET 2: AWARD-PAPER LINKS (one row per award-paper pair)
+# This is the KEY sheet for tracking "papers per grant"
+# ============================================================
+
+award_paper_links <- awards_data %>%
+  filter(!is.na(funder_display_name)) %>%
+  select(work_id, funder_display_name, funder_award_id) %>%
+  left_join(
+    works_published %>% transmute(
+      work_id = id,
+      doi,
+      title,
+      publication_date,
+      journal = source_display_name,
+      cited_by_count,
+      fwci
+    ),
+    by = "work_id"
+  ) %>%
+  left_join(
+    ua_authors_info,
+    by = "work_id"
+  ) %>%
+  arrange(funder_display_name, funder_award_id, desc(cited_by_count))
+
+# ============================================================
+# SHEET 3: AWARD SUMMARY (one row per unique award)
+# "How many papers did each grant produce?"
+# ============================================================
+
+award_summary <- awards_data %>%
+  filter(!is.na(funder_display_name) & !is.na(funder_award_id)) %>%
+  left_join(
+    works_published %>% transmute(work_id = id, cited_by_count, fwci, publication_date),
+    by = "work_id"
+  ) %>%
+  group_by(funder_display_name, funder_award_id) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    total_citations = sum(cited_by_count, na.rm = TRUE),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    earliest_pub = min(publication_date, na.rm = TRUE),
+    latest_pub = max(publication_date, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(funder_display_name, desc(num_papers))
+
+# ============================================================
+# SHEET 4: FUNDER SUMMARY (aggregated by funder)
+# ============================================================
+
+funder_summary <- awards_data %>%
+  filter(!is.na(funder_display_name)) %>%
+  left_join(
+    works_published %>% transmute(work_id = id, cited_by_count, fwci),
+    by = "work_id"
+  ) %>%
+  group_by(funder_display_name) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    num_awards = n_distinct(funder_award_id),
+    total_citations = sum(cited_by_count, na.rm = TRUE),
+    mean_citations = round(mean(cited_by_count, na.rm = TRUE), 2),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers))
+
+# ============================================================
+# SHEET 5: NSF-SPECIFIC (filtered for NSF only)
+# ============================================================
+
+nsf_awards <- award_paper_links %>%
+  filter(grepl("National Science Foundation|Division of", funder_display_name))
+
+# ============================================================
+# SHEET 6: NIH-SPECIFIC (filtered for NIH and sub-institutes)
+# ============================================================
+
+nih_awards <- award_paper_links %>%
+  filter(grepl("National Institutes of Health|National Institute|National Cancer|National Heart|National Eye|National Library|Eunice Kennedy|Fogarty|National Center for Advancing|National Center for Complementary", funder_display_name))
+
+# ============================================================
+# CREATE XLSX WORKBOOK
+# ============================================================
+
+wb <- createWorkbook()
+
+# --- Styles ---
+headerStyle <- createStyle(
+  fgFill = "#4472C4",
+  textDecoration = "bold",
+  fontColour = "white",
+  halign = "center",
+  border = "TopBottom",
+  wrapText = TRUE
+)
+
+numberStyle <- createStyle(numFmt = "#,##0")
+fwciStyle <- createStyle(numFmt = "0.00")
+
+# --- Sheet 1: All Papers ---
+addWorksheet(wb, "All Papers")
+writeData(wb, "All Papers", papers_sheet)
+addStyle(wb, "All Papers", headerStyle, rows = 1, cols = 1:ncol(papers_sheet), gridExpand = TRUE)
+freezePane(wb, "All Papers", firstRow = TRUE)
+setColWidths(wb, "All Papers", cols = 1:ncol(papers_sheet), widths = "auto")
+
+# --- Sheet 2: Award-Paper Links ---
+addWorksheet(wb, "Award-Paper Links")
+writeData(wb, "Award-Paper Links", award_paper_links)
+addStyle(wb, "Award-Paper Links", headerStyle, rows = 1, cols = 1:ncol(award_paper_links), gridExpand = TRUE)
+freezePane(wb, "Award-Paper Links", firstRow = TRUE)
+setColWidths(wb, "Award-Paper Links", cols = 1:ncol(award_paper_links), widths = "auto")
+
+# Add filter dropdowns so users can filter by funder/award
+addFilter(wb, "Award-Paper Links", rows = 1, cols = 1:ncol(award_paper_links))
+
+# --- Sheet 3: Award Summary ---
+addWorksheet(wb, "Award Summary")
+writeData(wb, "Award Summary", award_summary)
+addStyle(wb, "Award Summary", headerStyle, rows = 1, cols = 1:ncol(award_summary), gridExpand = TRUE)
+freezePane(wb, "Award Summary", firstRow = TRUE)
+setColWidths(wb, "Award Summary", cols = 1:ncol(award_summary), widths = "auto")
+addFilter(wb, "Award Summary", rows = 1, cols = 1:ncol(award_summary))
+
+# Color-code by paper count
+conditionalFormatting(
+  wb, "Award Summary",
+  cols = which(colnames(award_summary) == "num_papers"),
+  rows = 2:(nrow(award_summary) + 1),
+  type = "colourScale",
+  style = c("#FFFFFF", "#63BE7B")
+)
+
+# --- Sheet 4: Funder Summary ---
+addWorksheet(wb, "Funder Summary")
+writeData(wb, "Funder Summary", funder_summary)
+addStyle(wb, "Funder Summary", headerStyle, rows = 1, cols = 1:ncol(funder_summary), gridExpand = TRUE)
+freezePane(wb, "Funder Summary", firstRow = TRUE)
+setColWidths(wb, "Funder Summary", cols = 1:ncol(funder_summary), widths = "auto")
+
+# --- Sheet 5: NSF Awards ---
+addWorksheet(wb, "NSF Awards")
+writeData(wb, "NSF Awards", nsf_awards)
+addStyle(wb, "NSF Awards", headerStyle, rows = 1, cols = 1:ncol(nsf_awards), gridExpand = TRUE)
+freezePane(wb, "NSF Awards", firstRow = TRUE)
+setColWidths(wb, "NSF Awards", cols = 1:ncol(nsf_awards), widths = "auto")
+addFilter(wb, "NSF Awards", rows = 1, cols = 1:ncol(nsf_awards))
+
+# --- Sheet 6: NIH Awards ---
+addWorksheet(wb, "NIH Awards")
+writeData(wb, "NIH Awards", nih_awards)
+addStyle(wb, "NIH Awards", headerStyle, rows = 1, cols = 1:ncol(nih_awards), gridExpand = TRUE)
+freezePane(wb, "NIH Awards", firstRow = TRUE)
+setColWidths(wb, "NIH Awards", cols = 1:ncol(nih_awards), widths = "auto")
+addFilter(wb, "NIH Awards", rows = 1, cols = 1:ncol(nih_awards))
+
+# ============================================================
+# SAVE
+# ============================================================
+
+saveWorkbook(wb, "UA_Award_Tracking.xlsx", overwrite = TRUE)
+
+cat("✅ Workbook saved: UA_Award_Tracking.xlsx\n\n")
+cat("Sheet summary:\n")
+cat("1. All Papers:", nrow(papers_sheet), "rows\n")
+cat("2. Award-Paper Links:", nrow(award_paper_links), "rows\n")
+cat("3. Award Summary:", nrow(award_summary), "unique awards\n")
+cat("4. Funder Summary:", nrow(funder_summary), "unique funders\n")
+cat("5. NSF Awards:", nrow(nsf_awards), "NSF-linked papers\n")
+cat("6. NIH Awards:", nrow(nih_awards), "NIH-linked papers\n")
 
 
 
+###################
 
+library(dplyr)
+library(tidyr)
+library(openxlsx)
+
+# ============================================================
+# SHEET 1: AWARD DETAILS (main tracking sheet)
+# One row per award, with aggregated paper metrics
+# ============================================================
+
+award_summary <- awards_data %>%
+  filter(!is.na(funder_display_name)) %>%
+  group_by(funder_display_name, funder_award_id) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    paper_ids = paste(unique(work_id), collapse = "; "),
+    mean_citations = round(mean(
+      works_published %>% 
+        filter(id %in% work_id) %>% 
+        pull(cited_by_count)
+      , na.rm = TRUE), 2),
+    mean_fwci = round(mean(
+      works_published %>% 
+        filter(id %in% work_id) %>% 
+        pull(fwci)
+      , na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers))
+
+head(award_summary)
+
+# ============================================================
+# SHEET 2: AWARD-PAPER MAPPING (linking table)
+# One row per award-paper combination
+# This shows exactly which papers each award generated
+# ============================================================
+
+award_paper_mapping <- awards_data %>%
+  filter(!is.na(funder_display_name)) %>%
+  select(work_id, funder_display_name, funder_award_id) %>%
+  left_join(
+    works_published %>% transmute(
+      work_id = id,
+      title,
+      publication_date,
+      cited_by_count,
+      fwci,
+      journal = source_display_name
+    ),
+    by = "work_id"
+  ) %>%
+  arrange(funder_display_name, funder_award_id, publication_date)
+
+head(award_paper_mapping, 20)
+
+# ============================================================
+# SHEET 3: DETAILED PAPER INFO (all papers with funding)
+# One row per paper, showing ALL awards for that paper
+# ============================================================
+
+papers_with_awards <- awards_data %>%
+  filter(!is.na(funder_display_name)) %>%
+  group_by(work_id) %>%
+  summarise(
+    num_awards = n_distinct(funder_award_id),
+    funders = paste(unique(funder_display_name), collapse = "; "),
+    award_ids = paste(unique(funder_award_id), collapse = "; "),
+    .groups = "drop"
+  ) %>%
+  left_join(
+    works_published %>% transmute(
+      work_id = id,
+      title,
+      publication_date,
+      journal = source_display_name,
+      cited_by_count,
+      fwci,
+      doi
+    ),
+    by = "work_id"
+  ) %>%
+  left_join(
+    ua_authors_info,
+    by = "work_id"
+  ) %>%
+  left_join(
+    corresponding_info,
+    by = "work_id"
+  ) %>%
+  select(
+    work_id,
+    title,
+    publication_date,
+    journal,
+    cited_by_count,
+    fwci,
+    num_awards,
+    funders,
+    award_ids,
+    ua_author_names,
+    corresponding_author,
+    corresponding_institution,
+    doi
+  ) %>%
+  arrange(desc(publication_date))
+
+head(papers_with_awards)
+
+# ============================================================
+# SHEET 4: FUNDER SUMMARY (high-level overview)
+# Aggregated by funder
+# ============================================================
+
+funder_summary_sheet <- awards_data %>%
+  filter(!is.na(funder_display_name)) %>%
+  group_by(funder_display_name) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    num_awards = n_distinct(funder_award_id),
+    mean_citations = round(mean(
+      works_published %>% 
+        filter(id %in% work_id) %>% 
+        pull(cited_by_count)
+      , na.rm = TRUE), 2),
+    mean_fwci = round(mean(
+      works_published %>% 
+        filter(id %in% work_id) %>% 
+        pull(fwci)
+      , na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers))
+
+head(funder_summary_sheet)
+
+# ============================================================
+# SHEET 5: MULTI-AWARD PAPERS (papers with 2+ awards)
+# Special focus on highly-funded papers
+# ============================================================
+
+multi_award_papers <- papers_with_awards %>%
+  filter(num_awards >= 2) %>%
+  arrange(desc(num_awards), desc(publication_date))
+
+head(multi_award_papers)
+
+# ============================================================
+# CREATE WORKBOOK
+# ============================================================
+
+wb <- createWorkbook()
+
+# ============================================================
+# SHEET 1: Award Summary
+# ============================================================
+addWorksheet(wb, "Award Summary")
+
+# Add data
+writeData(wb, "Award Summary", award_summary)
+
+# Format header
+headerStyle <- createStyle(
+  fgFill = "#4472C4",
+  textDecoration = "bold",
+  fontColour = "white",
+  halign = "center",
+  border = "TopBottom"
+)
+addStyle(wb, "Award Summary", headerStyle, rows = 1, cols = 1:ncol(award_summary))
+
+# Auto-fit columns
+setColWidths(wb, "Award Summary", cols = 1:ncol(award_summary), widths = "auto")
+
+# Freeze panes
+freezePane(wb, "Award Summary", firstRow = TRUE)
+
+# ============================================================
+# SHEET 2: Award-Paper Mapping (Linking Table)
+# ============================================================
+addWorksheet(wb, "Award-Paper Mapping")
+
+writeData(wb, "Award-Paper Mapping", award_paper_mapping)
+
+# Format
+addStyle(wb, "Award-Paper Mapping", headerStyle, rows = 1, cols = 1:ncol(award_paper_mapping))
+setColWidths(wb, "Award-Paper Mapping", cols = 1:ncol(award_paper_mapping), widths = "auto")
+freezePane(wb, "Award-Paper Mapping", firstRow = TRUE)
+
+# Hyperlink to DOI (if available)
+# This allows clicking through to the paper
+
+# ============================================================
+# SHEET 3: Detailed Paper Information
+# ============================================================
+addWorksheet(wb, "Funded Papers")
+
+writeData(wb, "Funded Papers", papers_with_awards)
+
+# Format
+addStyle(wb, "Funded Papers", headerStyle, rows = 1, cols = 1:ncol(papers_with_awards))
+setColWidths(wb, "Funded Papers", cols = 1:ncol(papers_with_awards), widths = "auto")
+freezePane(wb, "Funded Papers", firstRow = TRUE)
+
+# Conditional formatting for FWCI (highlight high impact)
+fwci_col <- which(colnames(papers_with_awards) == "fwci")
+conditionalFormatting(
+  wb, "Funded Papers",
+  cols = fwci_col,
+  rows = 2:(nrow(papers_with_awards) + 1),
+  type = "colourScale",
+  style = c("#F8696B", "#FFEB84", "#63BE7B")
+)
+
+# ============================================================
+# SHEET 4: Funder Summary
+# ============================================================
+addWorksheet(wb, "Funder Summary")
+
+writeData(wb, "Funder Summary", funder_summary_sheet)
+
+addStyle(wb, "Funder Summary", headerStyle, rows = 1, cols = 1:ncol(funder_summary_sheet))
+setColWidths(wb, "Funder Summary", cols = 1:ncol(funder_summary_sheet), widths = "auto")
+freezePane(wb, "Funder Summary", firstRow = TRUE)
+
+# ============================================================
+# SHEET 5: Multi-Award Papers
+# ============================================================
+if (nrow(multi_award_papers) > 0) {
+  addWorksheet(wb, "Multi-Award Papers")
+  
+  writeData(wb, "Multi-Award Papers", multi_award_papers)
+  
+  addStyle(wb, "Multi-Award Papers", headerStyle, rows = 1, cols = 1:ncol(multi_award_papers))
+  setColWidths(wb, "Multi-Award Papers", cols = 1:ncol(multi_award_papers), widths = "auto")
+  freezePane(wb, "Multi-Award Papers", firstRow = TRUE)
+  
+  # Highlight multi-award rows
+  multiAwardStyle <- createStyle(
+    fgFill = "#FFF2CC",
+    border = "TopBottom"
+  )
+  addStyle(wb, "Multi-Award Papers", multiAwardStyle, 
+           rows = 2:(nrow(multi_award_papers) + 1), 
+           cols = 1:ncol(multi_award_papers))
+}
+
+# ============================================================
+# Save
+# ============================================================
+saveWorkbook(wb, "UA_Awards_Tracking2.xlsx", overwrite = TRUE)
+
+cat("✅ XLSX created: UA_Awards_Tracking.2x.lsx\n")
+cat("\nSheet structure:\n")
+cat("1. Award Summary - High-level overview by award\n")
+cat("2. Award-Paper Mapping - Which papers each award generated\n")
+cat("3. Funded Papers - All papers with complete funding details\n")
+cat("4. Funder Summary - Aggregated by funder (NSF, NIH, etc.)\n")
+cat("5. Multi-Award Papers - Papers funded by 2+ awards\n")
+
+
+######################## 2026-0-7-15
+
+# ============================================================
+# US Partner-Award-Funder Detail Sheet
+# One row per US partner × award × paper combination
+# ============================================================
+
+us_partner_award_funder <- works_published %>%
+  transmute(
+    work_id = id,
+    us_partners = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      df <- author_df %>%
+        unnest(affiliations, names_sep = "_", keep_empty = TRUE)
+      df %>%
+        filter(affiliations_country_code == "US") %>%
+        filter(!grepl("03m2x1q45", affiliations_ror)) %>%
+        pull(affiliations_display_name) %>%
+        na.omit() %>%
+        unique()
+    })
+  ) %>%
+  unnest(us_partners, keep_empty = TRUE) %>%
+  filter(!is.na(us_partners)) %>%
+  # Join with awards
+  left_join(
+    awards_data %>%
+      filter(!is.na(funder_display_name)) %>%
+      select(work_id, funder_display_name, funder_award_id),
+    by = "work_id"
+  ) %>%
+  filter(!is.na(funder_display_name)) %>%
+  # Join with paper metadata
+  left_join(
+    works_published %>% transmute(
+      work_id = id,
+      title,
+      publication_date,
+      journal = source_display_name,
+      cited_by_count,
+      fwci,
+      doi
+    ),
+    by = "work_id"
+  ) %>%
+  select(
+    us_partners,
+    funder_display_name,
+    funder_award_id,
+    work_id,
+    title,
+    publication_date,
+    journal,
+    cited_by_count,
+    fwci,
+    doi
+  ) %>%
+  arrange(us_partners, funder_display_name, funder_award_id)
+
+cat("US Partner-Award-Funder rows:", nrow(us_partner_award_funder), "\n")
+cat("Unique US partners:", n_distinct(us_partner_award_funder$us_partners), "\n")
+cat("Unique awards:", n_distinct(us_partner_award_funder$funder_award_id), "\n")
+
+# ============================================================
+# US Partner-Award Summary (collapsed: one row per partner × award)
+# ============================================================
+
+us_partner_award_summary <- us_partner_award_funder %>%
+  group_by(us_partners, funder_display_name, funder_award_id) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    total_citations = sum(cited_by_count, na.rm = TRUE),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(us_partners, funder_display_name, desc(num_papers))
+
+# ============================================================
+# US Partner Summary (collapsed: one row per partner × funder)
+# "How many papers does UA co-publish with U Michigan on NSF grants?"
+# ============================================================
+
+us_partner_funder_summary <- us_partner_award_funder %>%
+  group_by(us_partners, funder_display_name) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    num_awards = n_distinct(funder_award_id),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers))
+
+head(us_partner_funder_summary, 20)
+
+# ============================================================
+# Same for International
+# ============================================================
+
+intl_partner_award_funder <- works_published %>%
+  transmute(
+    work_id = id,
+    intl_partners = map(authorships, function(author_df) {
+      if (is.null(author_df) || nrow(author_df) == 0) return(character(0))
+      df <- author_df %>%
+        unnest(affiliations, names_sep = "_", keep_empty = TRUE)
+      df %>%
+        filter(affiliations_country_code != "US") %>%
+        pull(affiliations_display_name) %>%
+        na.omit() %>%
+        unique()
+    })
+  ) %>%
+  unnest(intl_partners, keep_empty = TRUE) %>%
+  filter(!is.na(intl_partners)) %>%
+  # Join with awards
+  left_join(
+    awards_data %>%
+      filter(!is.na(funder_display_name)) %>%
+      select(work_id, funder_display_name, funder_award_id),
+    by = "work_id"
+  ) %>%
+  filter(!is.na(funder_display_name)) %>%
+  # Join with paper metadata
+  left_join(
+    works_published %>% transmute(
+      work_id = id,
+      title,
+      publication_date,
+      journal = source_display_name,
+      cited_by_count,
+      fwci,
+      doi
+    ),
+    by = "work_id"
+  ) %>%
+  # Join country code for each partner
+  left_join(
+    works_published %>%
+      transmute(
+        work_id = id,
+        partner_country = map(authorships, function(author_df) {
+          if (is.null(author_df) || nrow(author_df) == 0) return(tibble(inst = character(0), country = character(0)))
+          df <- author_df %>%
+            unnest(affiliations, names_sep = "_", keep_empty = TRUE)
+          df %>%
+            filter(affiliations_country_code != "US") %>%
+            select(inst = affiliations_display_name, country = affiliations_country_code) %>%
+            distinct()
+        })
+      ) %>%
+      unnest(partner_country, keep_empty = TRUE),
+    by = c("work_id", "intl_partners" = "inst")
+  ) %>%
+  select(
+    intl_partners,
+    country,
+    funder_display_name,
+    funder_award_id,
+    work_id,
+    title,
+    publication_date,
+    journal,
+    cited_by_count,
+    fwci,
+    doi
+  ) %>%
+  arrange(intl_partners, funder_display_name, funder_award_id)
+
+cat("\nIntl Partner-Award-Funder rows:", nrow(intl_partner_award_funder), "\n")
+
+# ============================================================
+# International Partner-Funder Summary
+# ============================================================
+
+intl_partner_funder_summary <- intl_partner_award_funder %>%
+  group_by(intl_partners, country, funder_display_name) %>%
+  summarise(
+    num_papers = n_distinct(work_id),
+    num_awards = n_distinct(funder_award_id),
+    mean_fwci = round(mean(fwci, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers))
+
+head(intl_partner_funder_summary, 20)
+
+# ============================================================
+# ADD TO XLSX WORKBOOK
+# ============================================================
+
+# US Partner-Award-Funder Detail
+addWorksheet(wb, "US Partner-Award Detail")
+writeData(wb, "US Partner-Award Detail", us_partner_award_funder)
+addStyle(wb, "US Partner-Award Detail", headerStyle, rows = 1, 
+         cols = 1:ncol(us_partner_award_funder), gridExpand = TRUE)
+freezePane(wb, "US Partner-Award Detail", firstRow = TRUE)
+setColWidths(wb, "US Partner-Award Detail", cols = 1:ncol(us_partner_award_funder), widths = "auto")
+addFilter(wb, "US Partner-Award Detail", rows = 1, cols = 1:ncol(us_partner_award_funder))
+
+# US Partner-Award Summary
+addWorksheet(wb, "US Partner-Award Summary")
+writeData(wb, "US Partner-Award Summary", us_partner_award_summary)
+addStyle(wb, "US Partner-Award Summary", headerStyle, rows = 1, 
+         cols = 1:ncol(us_partner_award_summary), gridExpand = TRUE)
+freezePane(wb, "US Partner-Award Summary", firstRow = TRUE)
+setColWidths(wb, "US Partner-Award Summary", cols = 1:ncol(us_partner_award_summary), widths = "auto")
+addFilter(wb, "US Partner-Award Summary", rows = 1, cols = 1:ncol(us_partner_award_summary))
+
+# US Partner-Funder Summary
+addWorksheet(wb, "US Partner-Funder Summary")
+writeData(wb, "US Partner-Funder Summary", us_partner_funder_summary)
+addStyle(wb, "US Partner-Funder Summary", headerStyle, rows = 1, 
+         cols = 1:ncol(us_partner_funder_summary), gridExpand = TRUE)
+freezePane(wb, "US Partner-Funder Summary", firstRow = TRUE)
+setColWidths(wb, "US Partner-Funder Summary", cols = 1:ncol(us_partner_funder_summary), widths = "auto")
+addFilter(wb, "US Partner-Funder Summary", rows = 1, cols = 1:ncol(us_partner_funder_summary))
+
+# Intl Partner-Award-Funder Detail
+addWorksheet(wb, "Intl Partner-Award Detail")
+writeData(wb, "Intl Partner-Award Detail", intl_partner_award_funder)
+addStyle(wb, "Intl Partner-Award Detail", headerStyle, rows = 1, 
+         cols = 1:ncol(intl_partner_award_funder), gridExpand = TRUE)
+freezePane(wb, "Intl Partner-Award Detail", firstRow = TRUE)
+setColWidths(wb, "Intl Partner-Award Detail", cols = 1:ncol(intl_partner_award_funder), widths = "auto")
+addFilter(wb, "Intl Partner-Award Detail", rows = 1, cols = 1:ncol(intl_partner_award_funder))
+
+# Intl Partner-Funder Summary
+addWorksheet(wb, "Intl Partner-Funder Summary")
+writeData(wb, "Intl Partner-Funder Summary", intl_partner_funder_summary)
+addStyle(wb, "Intl Partner-Funder Summary", headerStyle, rows = 1, 
+         cols = 1:ncol(intl_partner_funder_summary), gridExpand = TRUE)
+freezePane(wb, "Intl Partner-Funder Summary", firstRow = TRUE)
+setColWidths(wb, "Intl Partner-Funder Summary", cols = 1:ncol(intl_partner_funder_summary), widths = "auto")
+addFilter(wb, "Intl Partner-Funder Summary", rows = 1, cols = 1:ncol(intl_partner_funder_summary))
+
+# ============================================================
+# SAVE
+# ============================================================
+
+saveWorkbook(wb, "UA_Partner-Award-Funder.xlsx", overwrite = TRUE)
+
+cat("\n✅ Workbook updated: UA_ Partner awPard_Tracking.x\n")
+cat("New sheets added:\n")
+cat("  - US Partner-Award Detail:", nrow(us_partner_award_funder), "rows\n")
+cat("  - US Partner-Award Summary:", nrow(us_partner_award_summary), "rows\n")
+cat("  - US Partner-Funder Summary:", nrow(us_partner_funder_summary), "rows\n")
+cat("  - Intl Partner-Award Detail:", nrow(intl_partner_award_funder), "rows\n")
+cat("  - Intl Partner-Funder Summary:", nrow(intl_partner_funder_summary), "rows\n")
 
