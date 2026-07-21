@@ -3021,6 +3021,113 @@ cat("3. Funded Papers - All papers with complete funding details\n")
 cat("4. Funder Summary - Aggregated by funder (NSF, NIH, etc.)\n")
 cat("5. Multi-Award Papers - Papers funded by 2+ awards\n")
 
+# ============================================================
+# ORIGINAL METHOD: Compare has_funding vs has_award flags
+# ============================================================
+
+# (Already computed above)
+cat("=== ORIGINAL METHOD ===\n")
+cat("Papers with funders but NO award IDs:", nrow(papers_funder_no_award), "\n\n")
+
+# ============================================================
+# ALTERNATIVE METHOD 1: Direct comparison of column states
+# Check each work independently without relying on pre-computed flags
+# ============================================================
+
+alt_check <- works_published %>%
+  transmute(
+    work_id = id,
+    # Check funders: is it a dataframe with rows?
+    funders_nrow = map_int(funders, function(f) {
+      if (!is.data.frame(f)) return(0L)
+      nrow(f)
+    }),
+    # Check awards: is it a non-NA character vector with length >= 4?
+    awards_length = map_int(awards, function(a) {
+      if (is.null(a)) return(0L)
+      if (is.logical(a) && all(is.na(a))) return(0L)
+      if (is.character(a)) return(length(a))
+      return(0L)
+    }),
+    has_funders_alt = funders_nrow > 0,
+    has_awards_alt = awards_length >= 4
+  )
+
+funder_no_award_alt <- alt_check %>%
+  filter(has_funders_alt == TRUE & has_awards_alt == FALSE)
+
+cat("=== ALTERNATIVE METHOD 1 ===\n")
+cat("Papers with funders but NO award IDs:", nrow(funder_no_award_alt), "\n")
+cat("Total with funders:", sum(alt_check$has_funders_alt), "\n")
+cat("Total with awards:", sum(alt_check$has_awards_alt), "\n")
+cat("Percentage of funded papers missing award IDs:",
+    round(nrow(funder_no_award_alt) / sum(alt_check$has_funders_alt) * 100, 1), "%\n\n")
+
+# ============================================================
+# ALTERNATIVE METHOD 2: Cross-check using funders_data
+# Papers in funders_data that are NOT in awards_data
+# ============================================================
+
+works_with_funders <- funders_data %>%
+  distinct(work_id)
+
+works_with_awards <- awards_data %>%
+  filter(!is.na(funder_display_name)) %>%
+  distinct(work_id)
+
+funder_no_award_alt2 <- works_with_funders %>%
+  anti_join(works_with_awards, by = "work_id")
+
+cat("=== ALTERNATIVE METHOD 2 ===\n")
+cat("Works in funders_data:", nrow(works_with_funders), "\n")
+cat("Works in awards_data:", nrow(works_with_awards), "\n")
+cat("Works with funders but NOT in awards_data:", nrow(funder_no_award_alt2), "\n\n")
+
+# ============================================================
+# COMPARISON
+# ============================================================
+
+cat("=== VERIFICATION COMPARISON ===\n")
+cat("Original:", nrow(papers_funder_no_award), "\n")
+cat("Alternative 1:", nrow(funder_no_award_alt), "\n")
+cat("Alternative 2:", nrow(funder_no_award_alt2), "\n")
+cat("Methods 1 match:", nrow(papers_funder_no_award) == nrow(funder_no_award_alt), "\n")
+cat("Methods 2 match:", nrow(papers_funder_no_award) == nrow(funder_no_award_alt2), "\n\n")
+
+# ============================================================
+# SPOT CHECK: Verify a few examples
+# ============================================================
+
+set.seed(123)
+sample_ids <- funder_no_award_alt %>%
+  slice_sample(n = 5) %>%
+  pull(work_id)
+
+cat("=== SPOT CHECK: 5 papers with funders but no awards ===\n")
+for (i in seq_along(sample_ids)) {
+  wid <- sample_ids[i]
+  row <- works_published %>% filter(id == wid)
+  
+  cat("\n--- Paper", i, "---\n")
+  cat("Title:", row$title, "\n")
+  
+  # Show funders
+  f <- row$funders[[1]]
+  if (is.data.frame(f) && nrow(f) > 0) {
+    cat("Funders (", nrow(f), "):", paste(f$display_name, collapse = "; "), "\n")
+  }
+  
+  # Show awards
+  a <- row$awards[[1]]
+  if (all(is.na(a))) {
+    cat("Awards: NA (no award data)\n")
+  } else {
+    cat("Awards length:", length(a), "\n")
+  }
+}
+
+
+
 
 ######################## 2026-0-7-15
 
@@ -3270,4 +3377,264 @@ cat("  - US Partner-Award Summary:", nrow(us_partner_award_summary), "rows\n")
 cat("  - US Partner-Funder Summary:", nrow(us_partner_funder_summary), "rows\n")
 cat("  - Intl Partner-Award Detail:", nrow(intl_partner_award_funder), "rows\n")
 cat("  - Intl Partner-Funder Summary:", nrow(intl_partner_funder_summary), "rows\n")
+
+
+
+
+
+
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+install.packages("stringdist")
+library(stringdist)
+library(openxlsx)
+
+# ============================================================
+# STEP 1: Basic cleaning (remove periods, standardize)
+# ============================================================
+
+clean_author_name <- function(name) {
+  if (is.na(name)) return(NA_character_)
+  name <- gsub("\\.", "", name)           # Remove periods
+  name <- gsub("-", " ", name)            # Standardize hyphens
+  name <- trimws(gsub("\\s+", " ", name)) # Remove extra spaces
+  name <- tolower(name)                    # Lowercase for comparison
+  return(name)
+}
+
+# Get all individual UA author names
+ua_authors_all <- ua_authors_info %>%
+  separate_rows(ua_author_names, sep = "; ") %>%
+  filter(!is.na(ua_author_names)) %>%
+  distinct(ua_author_names) %>%
+  mutate(name_cleaned = sapply(ua_author_names, clean_author_name))
+
+cat("Total raw unique names:", nrow(ua_authors_all), "\n")
+
+# Deduplicate on cleaned names
+ua_authors_deduped <- ua_authors_all %>%
+  group_by(name_cleaned) %>%
+  summarise(
+    display_name = first(ua_author_names),  # Keep one variant as canonical
+    all_variants = paste(unique(ua_author_names), collapse = " | "),
+    num_variants = n(),
+    .groups = "drop"
+  )
+
+cat("After basic cleaning:", nrow(ua_authors_deduped), "\n")
+cat("Names with variants found:", sum(ua_authors_deduped$num_variants > 1), "\n\n")
+
+# Show examples of merged variants
+ua_authors_deduped %>%
+  filter(num_variants > 1) %>%
+  arrange(desc(num_variants)) %>%
+  head(20)
+
+# ============================================================
+# STEP 2: Fuzzy matching to find likely duplicates
+# Uses stringdist package with multiple algorithms
+# ============================================================
+
+# Get cleaned names as vector
+name_vector <- ua_authors_deduped$name_cleaned
+
+# Compute string distance matrix (Jaro-Winkler is good for names)
+# NOTE: This can be slow for very large sets. Sample if needed.
+cat("Computing fuzzy matches... (this may take a moment)\n")
+
+# For large datasets, limit to pairs with short distance
+# Using stringdistmatrix with method = "jw" (Jaro-Winkler)
+# Threshold: < 0.1 means very similar
+
+# For efficiency, compare in batches or use a threshold approach
+find_fuzzy_duplicates <- function(names_vec, max_dist = 0.1, method = "jw") {
+  n <- length(names_vec)
+  
+  # For large datasets, use amatch for approximate matching
+  matches <- list()
+  
+  for (i in seq_len(n)) {
+    # Find names similar to names_vec[i]
+    distances <- stringdist(names_vec[i], names_vec, method = method)
+    
+    # Find close matches (excluding self)
+    close_idx <- which(distances > 0 & distances < max_dist)
+    
+    if (length(close_idx) > 0) {
+      matches[[length(matches) + 1]] <- tibble(
+        name_1 = names_vec[i],
+        name_2 = names_vec[close_idx],
+        distance = distances[close_idx],
+        idx_1 = i,
+        idx_2 = close_idx
+      )
+    }
+  }
+  
+  if (length(matches) == 0) return(tibble())
+  bind_rows(matches) %>%
+    # Remove duplicate pairs (A-B and B-A)
+    filter(idx_1 < idx_2) %>%
+    arrange(distance)
+}
+
+# Run fuzzy matching (may take time for 7000+ names)
+# For very large sets, sample first to test:
+# name_sample <- sample(name_vector, min(2000, length(name_vector)))
+
+fuzzy_duplicates <- find_fuzzy_duplicates(name_vector, max_dist = 0.08, method = "jw")
+
+cat("Potential fuzzy duplicate pairs found:", nrow(fuzzy_duplicates), "\n\n")
+
+# Add display names for readability
+fuzzy_duplicates <- fuzzy_duplicates %>%
+  mutate(
+    display_name_1 = ua_authors_deduped$display_name[idx_1],
+    display_name_2 = ua_authors_deduped$display_name[idx_2]
+  ) %>%
+  select(display_name_1, display_name_2, name_1, name_2, distance)
+
+head(fuzzy_duplicates, 30)
+
+# ============================================================
+# STEP 3: Additional check using Levenshtein distance
+# Catches typos, character swaps
+# ============================================================
+
+fuzzy_duplicates_lv <- find_fuzzy_duplicates(name_vector, max_dist = 2, method = "lv")
+
+# Levenshtein distance of 1-2 = very likely same person
+fuzzy_duplicates_lv <- fuzzy_duplicates_lv %>%
+  mutate(
+    display_name_1 = ua_authors_deduped$display_name[idx_1],
+    display_name_2 = ua_authors_deduped$display_name[idx_2]
+  ) %>%
+  select(display_name_1, display_name_2, name_1, name_2, distance)
+
+cat("Levenshtein duplicates (distance 1-2):", nrow(fuzzy_duplicates_lv), "\n")
+head(fuzzy_duplicates_lv, 30)
+
+# ============================================================
+# STEP 4: Combine both methods for comprehensive check
+# ============================================================
+
+all_potential_duplicates <- bind_rows(
+  fuzzy_duplicates %>% mutate(method = "Jaro-Winkler"),
+  fuzzy_duplicates_lv %>% mutate(method = "Levenshtein")
+) %>%
+  distinct(name_1, name_2, .keep_all = TRUE) %>%
+  arrange(distance)
+
+cat("Total potential duplicate pairs:", nrow(all_potential_duplicates), "\n")
+
+# ============================================================
+# STEP 5: Rebuild author productivity with cleaned names
+# ============================================================
+
+# Use cleaned names for counting
+ua_author_productivity <- ua_authors_info %>%
+  separate_rows(ua_author_names, sep = "; ") %>%
+  filter(!is.na(ua_author_names)) %>%
+  mutate(name_cleaned = sapply(ua_author_names, clean_author_name)) %>%
+  group_by(name_cleaned) %>%
+  summarise(
+    display_name = first(ua_author_names),
+    num_papers = n_distinct(work_id),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers)) %>%
+  mutate(rank = row_number())
+
+# Sheet 1: All works with UA authors (cleaned)
+all_works <- works_published %>%
+  transmute(
+    work_id = id,
+    title,
+    publication_date,
+    journal = source_display_name,
+    cited_by_count,
+    fwci,
+    doi
+  ) %>%
+  left_join(
+    ua_authors_info %>%
+      mutate(ua_author_names_clean = map_chr(
+        strsplit(ua_author_names, "; "),
+        function(names) {
+          if (all(is.na(names))) return(NA_character_)
+          cleaned <- sapply(names, clean_author_name)
+          # Title case for display
+          cleaned <- gsub("(^|\\s)(\\w)", "\\1\\U\\2", cleaned, perl = TRUE)
+          paste(unique(cleaned), collapse = "; ")
+        }
+      )),
+    by = "work_id"
+  )
+
+# Sheet 3: Authors with funders (cleaned)
+authors_with_funders <- ua_authors_info %>%
+  separate_rows(ua_author_names, sep = "; ") %>%
+  filter(!is.na(ua_author_names)) %>%
+  mutate(name_cleaned = sapply(ua_author_names, clean_author_name)) %>%
+  left_join(
+    papers_with_funding %>% transmute(work_id = id, has_funding),
+    by = "work_id"
+  ) %>%
+  group_by(name_cleaned) %>%
+  summarise(
+    display_name = first(ua_author_names),
+    num_papers = n(),
+    num_funded_papers = sum(has_funding, na.rm = TRUE),
+    pct_funded = round(mean(has_funding, na.rm = TRUE) * 100, 1),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_funded_papers))
+
+# Sheet 4: Authors with awards (cleaned)
+authors_with_awards <- ua_authors_info %>%
+  separate_rows(ua_author_names, sep = "; ") %>%
+  filter(!is.na(ua_author_names)) %>%
+  mutate(name_cleaned = sapply(ua_author_names, clean_author_name)) %>%
+  left_join(
+    papers_with_funding %>% transmute(work_id = id, has_award),
+    by = "work_id"
+  ) %>%
+  group_by(name_cleaned) %>%
+  summarise(
+    display_name = first(ua_author_names),
+    num_papers = n(),
+    num_papers_with_awards = sum(has_award, na.rm = TRUE),
+    pct_with_awards = round(mean(has_award, na.rm = TRUE) * 100, 1),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_papers_with_awards))
+
+# ============================================================
+# STEP 6: Export to Excel
+# ============================================================
+
+sheets <- list(
+  "All Works"              = all_works,
+  "Author Productivity"    = ua_author_productivity,
+  "Authors with Funders"   = authors_with_funders,
+  "Authors with Awards"    = authors_with_awards,
+  "Potential Duplicates"   = all_potential_duplicates,
+  "Variant Names Found"    = ua_authors_deduped %>% filter(num_variants > 1)
+)
+
+write.xlsx(sheets, file = "UA_Authors_Analysis.xlsx")
+
+cat("✅ Saved: UA_Authors_Analysis.xlsx\n")
+cat("\nSheets:\n")
+cat("1. All Works - papers with cleaned UA author names\n")
+cat("2. Author Productivity - ranked by paper count (deduplicated)\n")
+cat("3. Authors with Funders - funding rate per author\n")
+cat("4. Authors with Awards - award rate per author\n")
+cat("5. Potential Duplicates - fuzzy matches for manual review\n")
+cat("6. Variant Names Found - basic cleaning matches (periods, spaces)\n")
+
+
+
 
