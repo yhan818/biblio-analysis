@@ -1,4 +1,7 @@
 
+###### Use Claude Sonnet 5 ($$$) and Opus 5 ($$$$$)
+### 2026-08-15:  Opus 5 has issues. often not output all the code: Gave up
+### 2026-08-15: Use Sonnet 5 instead.
 
 options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
 PATH <- "/home/yhan/Documents/biblio-analysis"
@@ -8,52 +11,9 @@ getwd()
 print(here())
 source("my_functions.R")
 
-# [Not Found] Henry Tseng at ASU (Jui-Heng Tseng)
-# [Not Found] Ken Buetow at ASU (Kennith Buetow)
-# [Not Found] Bill Shuttleworth at UNM (William )
-
-
-[Not Found] Haijiang Cai at UA
-[Not Found] Michael Daines at UA
-
-# Manually added: [Not Found] Tatiana Kalin at UA (Cincinnati https://api.openalex.org/a5078276804 )
-# [Not Found] Moulun Luo at UA
-
-# [Not Found] Mary laura Thomas at ASU (Mary Laura Lind)
-# !!! [Not Found] Sampath Rangasamy at ASU (Arizona Research Center?, Phoenix, DO Check openAlex manually!!!)
-
-
-========================================================
-  ❌ AUTHORS NOT FOUND (Manual Check Needed)
-========================================================
-  
-  
-  |First Name |Last Name     |Institution |
-  |:----------|:-------------|:-----------|
-  |James      |BIbb          |UA          |
-  |Nipavan    |Chiamvimonvat |UA          | >>> UC Davis
-  |Michael    |Daines        |UA          |
-  |Tatiana    |Kalin         |UA          | >> Cincinati 
-  |Moulun     |Luo           |UA          |
-  |Yanqiao    |Zhang         |UA          |
-  |Sampath    |Rangasamy     |ASU         |
-  |Gaberiel   |Shaibi        |ASU         |
-  |Vincent    |Pizziconi     |ASU         |
-  |Nathan     |Zaidman       |UNM         |
-  |Eliseo     |Castillo      |UNM         |
-  |f          |Clark         |UNM         |
-  |Michael    |Deyhle        |UNM         |
-  |Amy        |Gardiner      |UNM         |
-  |Finny      |Swamidoss     |UNM         |
-  |Kathleen   |Rogers        |UA          |
-  |Reza       |Shekarriz     |UNM         |
-
-[Not Found] Olga Ponomarova at UNM (https://orcid.org/0000-0001-6331-9949 ). Handle differently
- Amy Gardiner at UNM (https://orcid.org/0000-0002-8179-4919)
-
 ########################
-#### 1st code: 2026-01-15, updated: 2026-02-13
-
+#### 1st code: 2026-01-15, updated: 2026-02-13; updated: 2026-08-11
+ 
 # --- 2. ROR Definitions ---
 ua_ror        <- "03m2x1q45"
 asu_ror       <- "03efmqc40"
@@ -62,14 +22,65 @@ unm_hos_ror   <- "04skph061"
 niddk_ror     <- "00adh9b73"
 
 # --- 3. Load the CSV ---
-csv_file <- "ua_asu_unm_grant_authors_fin.csv"
+#csv_file <- "ua_asu_unm_grant_authors_fin.csv"
 authors_raw <- read_csv(csv_file)
 
-# Standardize column names
-colnames(authors_raw) <- trimws(colnames(authors_raw))
+### 2026-08 READ XSLX
+# Read the Excel file
+library(readxl)
+library(tidyr)
+library(dplyr)
+library(stringr)
 
-authors_df <- authors_raw %>%
-  mutate(full_name = paste(trimws(`First Name`), trimws(`Last Name`)))
+# Read the Excel file
+data <- read_excel("FY27_SWDRC.xlsx")
+
+# Process the Name column
+data_processed <- data %>%
+  # Remove anything in parentheses
+  mutate(Name = str_trim(str_remove(Name, "\\s*\\([^)]*\\)"))) %>%
+  # Remove multiple titles
+  mutate(Name = str_trim(str_remove_all(Name, regex("(Dr\\.?|Prof\\.?|Mr\\.?|Mrs\\.?|Ms\\.?|Sir|Dame|Jr\\.?|Sr\\.?)\\s+", ignore_case = TRUE)))) %>%
+  # Split by comma (Last_Name, First_Name format)
+  separate_wider_delim(
+    Name,
+    delim = ",",
+    names = c("Last_Name", "First_Name"),
+    too_few = "align_start"
+  ) %>%
+  mutate(
+    First_Name = str_trim(First_Name),
+    Last_Name = str_trim(Last_Name)
+  ) %>%
+  select(First_Name, Last_Name, Institution, College, everything())
+
+# Fix the Institution mapping to handle "NIDDK" with variations
+authors_df <- data_processed %>%
+  mutate(full_name = paste(trimws(First_Name), trimws(Last_Name))) %>%
+  # Standardize Institution - treat any NIDDK variant as "NIDDK"
+  mutate(Institution = case_when(
+    str_detect(Institution, regex("NIDDK", ignore_case = TRUE)) ~ "NIDDK",
+    TRUE ~ Institution
+  ))
+
+head(data_processed)
+library(dplyr)
+library(stringr)
+
+# Quick test with sample values
+inst <- c("UA", "UA - PHX", "UA- PHX", "ASU", "NIDDK")
+
+primary_ror <- case_when(
+  str_detect(inst, regex("^UA", ignore_case = TRUE)) ~ "UA_ROR_PLACEHOLDER",
+  inst == "ASU"   ~ "ASU_ROR_PLACEHOLDER",
+  inst == "UNM"   ~ "UNM_ROR_PLACEHOLDER",
+  inst == "NIDDK" ~ "NIDDK_ROR_PLACEHOLDER",
+  TRUE            ~ as.character(NA)
+)
+
+print(data.frame(inst, primary_ror))
+
+#authors_df <- authors_raw %>% mutate(full_name = paste(trimws(First_Name), trimws(Last_Name)))
 
 # --- 4. Step 1: Resolve IDs and Categorize ---
 message("\n>>> RESOLVING AUTHORS ON OPENALEX...")
@@ -77,12 +88,13 @@ message("\n>>> RESOLVING AUTHORS ON OPENALEX...")
 found_list <- list()
 not_found_list <- list()
 
+
 for (i in 1:nrow(authors_df)) {
   name <- authors_df$full_name[i]
   inst <- trimws(authors_df$Institution[i])
   
   primary_ror <- case_when(
-    inst == "UA"    ~ ua_ror,
+    str_detect(inst, regex("^UA", ignore_case = TRUE)) ~ ua_ror,
     inst == "ASU"   ~ asu_ror,
     inst == "UNM"   ~ unm_main_ror,
     inst == "NIDDK" ~ niddk_ror,
@@ -90,6 +102,15 @@ for (i in 1:nrow(authors_df)) {
   )
   
   res <- search_author(name, primary_ror)
+  
+  # Fallback: try with just first word of first name (drop middle name)
+  if (is.null(res)) {
+    short_name <- paste(word(authors_df$First_Name[i], 1), authors_df$Last_Name[i])
+    if (short_name != name) {
+      message("  [Retry] Trying shortened name: ", short_name)
+      res <- search_author(short_name, primary_ror)
+    }
+  }
   
   # UNM Fallback Logic
   if (is.null(res) && inst == "UNM") {
@@ -105,6 +126,7 @@ for (i in 1:nrow(authors_df)) {
     not_found_list[[name]] <- authors_df[i, ]
   }
 }
+
 
 # --- 5. PRINT SUMMARIES AND SAVE RESULTS TO CSV ---
 
@@ -131,7 +153,7 @@ if (length(not_found_list) > 0) {
   cat("❌ AUTHORS NOT FOUND (Manual Check Needed)\n")
   cat("========================================================\n")
   not_found_df %>%
-    select(`First Name`, `Last Name`, Institution) %>%
+    select(`First_Name`, `Last_Name`, Institution) %>%
     kable() %>%
     print()
   
@@ -140,12 +162,95 @@ if (length(not_found_list) > 0) {
   message("Warning: Not found authors saved to 'authors_not_found.csv'")
 }
 
-#######################
+========================================================
+  ❌ AUTHORS NOT FOUND (Manual Check Needed)
+========================================================
+  
+  
+  |First_Name   |Last_Name  |Institution |
+  |:------------|:----------|:-----------|
+  |FRANK C      |BROSIUS    |ASU         |
+  |ELIZABETH A. |REIFSNIDER |ASU         |
+  |RONALDIP     |BANERJEE   |UA          |
+  |JEAN M.      |WILSON     |UA          |
+  |MELISSA      |CHAMBERS   |UA - PHX    |
+
+
+candidates_brosius <- oa_fetch(entity = "authors", search = "Frank Brosius", verbose = FALSE)
+print(candidates_brosius[, c("display_name", "id", "works_count", "last_known_institutions")])
+
+candidates_reifsnider <- oa_fetch(entity = "authors", search = "Elizabeth Reifsnider", verbose = FALSE)
+print(candidates_reifsnider[, c("display_name", "id", "works_count", "last_known_institutions")])
+
+candidates_wilson <- oa_fetch(entity = "authors", search = "Jean Wilson", verbose = FALSE)
+print(candidates_wilson[, c("display_name", "id", "works_count", "last_known_institutions")])
+
+candidates_chambers <- oa_fetch(entity = "authors", search = "Melissa Chambers", verbose = FALSE)
+print(candidates_chambers[, c("display_name", "id", "works_count", "last_known_institutions")])
+
+## 2026-08-15: Manual add
+
+manual_authors_batch <- tribble(
+  ~id, ~name, ~inst,
+  # Fixed key-matching entries:
+  "https://openalex.org/A5003676386", "FRANK C BROSIUS", "ASU",
+  "https://openalex.org/a5066121781", "RONALDIP BANERJEE", "UA",
+  
+  # Fill in after running oa_fetch searches above:
+  "https://openalex.org/aXXXXXXXXXX", "ELIZABETH A. REIFSNIDER", "ASU",
+  "https://openalex.org/aXXXXXXXXXX", "JEAN M. WILSON", "UA",
+  "https://openalex.org/aXXXXXXXXXX", "MELISSA CHAMBERS", "UA - PHX"
+)
+
+  
+###############################################################
+####################### Code for 2026-01: DO NOT USE for late grant!!! 
 ### Not found
 ### Megan Camey
 ## |Finny       |Swamidoss     |UNM         |
 ## |Kathleen    |Rogers        |UA          | >> Ohio State?? 
 # Reza Shekarriz , Albuquerque, or Shahid Beheshti University ??
+
+# [Not Found] Henry Tseng at ASU (Jui-Heng Tseng)
+# [Not Found] Ken Buetow at ASU (Kennith Buetow)
+# [Not Found] Bill Shuttleworth at UNM (William )
+
+[Not Found] Haijiang Cai at UA
+[Not Found] Michael Daines at UA
+
+# Manually added: [Not Found] Tatiana Kalin at UA (Cincinnati https://api.openalex.org/a5078276804 )
+# [Not Found] Moulun Luo at UA
+
+# [Not Found] Mary laura Thomas at ASU (Mary Laura Lind)
+# !!! [Not Found] Sampath Rangasamy at ASU (Arizona Research Center?, Phoenix, DO Check openAlex manually!!!)
+
+========================================================
+  ❌ AUTHORS NOT FOUND (Manual Check Needed)
+========================================================
+  
+  
+  |First_Name |Last_Name     |Institution |
+  |:----------|:-------------|:-----------|
+  |James      |BIbb          |UA          |
+  |Nipavan    |Chiamvimonvat |UA          | >>> UC Davis
+|Michael    |Daines        |UA          |
+  |Tatiana    |Kalin         |UA          | >> Cincinati 
+|Moulun     |Luo           |UA          |
+  |Yanqiao    |Zhang         |UA          |
+  |Sampath    |Rangasamy     |ASU         |
+  |Gaberiel   |Shaibi        |ASU         |
+  |Vincent    |Pizziconi     |ASU         |
+  |Nathan     |Zaidman       |UNM         |
+  |Eliseo     |Castillo      |UNM         |
+  |f          |Clark         |UNM         |
+  |Michael    |Deyhle        |UNM         |
+  |Amy        |Gardiner      |UNM         |
+  |Finny      |Swamidoss     |UNM         |
+  |Kathleen   |Rogers        |UA          |
+  |Reza       |Shekarriz     |UNM         |
+  
+  [Not Found] Olga Ponomarova at UNM (https://orcid.org/0000-0001-6331-9949 ). Handle differently
+Amy Gardiner at UNM (https://orcid.org/0000-0002-8179-4919)
 
 # --- Manual Additions (Batch Processing) ---
 manual_id   <- "https://openalex.org/a5033254684"  # 
@@ -162,7 +267,7 @@ if (!is.null(manual_author) && nrow(manual_author) > 0) {
   message("Manually added: ", manual_name)
 }
 
-
+#### 2026-01: First Grant
 # Define manual entries here. Add new lines as needed.
 manual_authors_batch <- tribble(
   ~id, ~name, ~inst,
@@ -392,6 +497,75 @@ if (exists("final_report") && nrow(final_report) > 0) {
 
 
 
+############################# Testing Claude Haiku 4.5
+library(openalexR)
+library(dplyr)
+library(knitr)
+ 
+
+# Create a dataframe with the found authors
+found_authors <- tribble(
+  ~display_name, ~id, ~works_count, ~csv_institution,
+  "Matthew P. Buman", "https://openalex.org/A5000559212", 312, "ASU",
+  "Ellen P. Green", "https://openalex.org/A5047947143", 19, "ASU",
+  "Rodney P. Joseph", "https://openalex.org/A5053124087", 71, "ASU",
+  "Christos S. Katsanos", "https://openalex.org/A5074138380", 109, "ASU",
+  "Min‐Hyun Kim", "https://openalex.org/A5024956976", 38, "ASU",
+  "Rosa Krajmalnik‐Brown", "https://openalex.org/A5035488966", 213, "ASU",
+  "Joshua LaBaer", "https://openalex.org/A5046993686", 418, "ASU",
+  "Linda J. Luecken", "https://openalex.org/A5073812178", 149, "ASU",
+  "Miyeko Mana", "https://openalex.org/A5028420772", 69, "ASU",
+  "Eyitayo Omolara Owolabi", "https://openalex.org/A5006639752", 79, "ASU",
+  "Adewale L. Oyeyemi", "https://openalex.org/A5066047427", 175, "ASU",
+  "Marisol Pérez", "https://openalex.org/A5013609965", 129, "ASU",
+  "Bing Si", "https://openalex.org/A5053304698", 39, "ASU",
+  "Taichi A. Suzuki", "https://openalex.org/A5008343733", 53, "ASU",
+  "Corrie M. Whisner", "https://openalex.org/A5003624984", 132, "ASU",
+  "Leslie J. Baier", "https://openalex.org/A5041569085", 219, "NIDDK",
+  "Robert L. Hanson", "https://openalex.org/A5049047999", 582, "NIDDK",
+  "Halimatou Alaofè", "https://openalex.org/A5078896557", 75, "UA",
+  "Wei Zhou", "https://openalex.org/A5100640843", 170, "UA"
+)
+
+# Verify each author by extracting the A-number and fetching from OpenAlex
+verification_results <- found_authors %>%
+  mutate(
+    a_number = str_extract(id, "A\\d+"),
+    api_url = paste0("https://api.openalex.org/authors/", a_number)
+  ) %>%
+  rowwise() %>%
+  mutate(
+    verification = tryCatch({
+      response <- httr::GET(api_url)
+      if (httr::status_code(response) == 200) {
+        author_data <- jsonlite::fromJSON(httr::content(response, "text"))
+        paste0(
+          "✓ VERIFIED | Name: ", author_data$display_name, 
+          " | Works: ", author_data$works_count,
+          " | Last Known Affiliation: ", 
+          ifelse(!is.null(author_data$last_known_institution$display_name),
+                 author_data$last_known_institution$display_name, "Not listed")
+        )
+      } else {
+        "✗ NOT FOUND (404)"
+      }
+    }, error = function(e) paste0("✗ ERROR: ", e$message))
+  ) %>%
+  ungroup() %>%
+  select(display_name, a_number, verification, csv_institution)
+
+# Display results
+kable(verification_results, format = "markdown")
+
+# Summary
+cat("\n\n=== VERIFICATION SUMMARY ===\n")
+cat("Total authors checked:", nrow(verification_results), "\n")
+cat("Verified:", sum(str_detect(verification_results$verification, "^✓")), "\n")
+cat("Not found:", sum(str_detect(verification_results$verification, "^✗ NOT FOUND")), "\n")
+cat("Errors:", sum(str_detect(verification_results$verification, "^✗ ERROR")), "\n")
+
+# Save detailed results
+write_csv(verification_results, "author_verification_results.csv")
 
 
 

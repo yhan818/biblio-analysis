@@ -89,19 +89,6 @@ works_count <-oa_fetch(
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
-works_published_2022 <-oa_fetch(
-  entity="works",
-  institutions.ror=c("03m2x1q45"), # UArizona
-  from_publication_date ="2022-01-01",
-  to_publication_date = "2022-12-31",
-  )
-
-works_published_2023 <-oa_fetch(
-  entity="works",
-  institutions.ror=c("03m2x1q45"), # UArizona
-  from_publication_date ="2023-01-01",
-  to_publication_date = "2023-12-31",
-)
 
 works_published_2024 <-oa_fetch(
   entity="works",
@@ -118,48 +105,30 @@ works_published_2025 <-oa_fetch(
   to_publication_date = "2025-12-31",
 )
 
-# saveRDS(works_published_2019, "../works_published_2019.rds")
-# saveRDS(works_published_2020, "../works_published_2020.rds")
-# saveRDS(works_published_2021, "../works_published_2021.rds")
-saveRDS(works_published_2022, "../works_published_2022_ver2026.rds")
-saveRDS(works_published_2023, "../works_published_2023_ver2026.rds")
-saveRDS(works_published_2024, "../works_published_2024_ver2026.rds")
+# saveRDS(works_published_2022, "../works_published_2022_ver2026.rds")
+# saveRDS(works_published_2023, "../works_published_2023_ver2026.rds")
+# saveRDS(works_published_2024, "../works_published_2024_ver2026.rds")
 saveRDS(works_published_2025, "../works_published_2025_ver2026.rds")
 
 
 # Load data 
-works_published_2019 <- readRDS("../works_published_2019.rds")
-works_published <- works_published_2019
 
-works_published_2020 <- readRDS("../works_published_2020.rds")
-works_published <- works_published_2020
-
-works_published_2021 <- readRDS("../works_published_2021.rds")
-#works_published_2021_journal <- readRDS("../works_published_journal_2021.rds")
-works_published <- works_published_2021
-
-works_published_2022_ver2026 <- readRDS("../works_published_2022_ver2026.rds")
-works_published_2022 <- readRDS("../works_published_2022.rds")
-works_published <- works_published_2022
-
-
-
-works_published_2023 <- readRDS("../works_published_2023.rds")
-works_published <- works_published_2023
+# works_published_2023 <- readRDS("../works_published_2023.rds")
+# works_published <- works_published_2023
 
 # By 2025-07, there is a data structure change such as "author" changed to "authorships"
-works_published_2024 <- readRDS("../works_published_2024.rds")
-works_published <- works_published_2024
-
+# works_published_2024 <- readRDS("../works_published_2024.rds")
+# works_published <- works_published_2024
 
 works_published_2025_ver202606 <- readRDS("../works_published_2025_ver2026.rds")
 works_published <- works_published_2025
 
+# Filter dataframe for non articles
+works_articles <- works_published_2025_ver202606 %>%
+  filter(type == "article")
 
-# compare df again before binding rows
-matching_list <- list(works_published_2020, works_published_2021, works_published_2022, works_published_2023, works_published_2024) 
-all_df_match <-check_df_structure(matching_list)
-print(paste("Do all DataFrames in matching_list have the same structure?", all_df_match))
+works_non_articles <- works_published_2025_ver202606 %>%
+  filter(type != "article")
 
 
 # works_published_2022_2024 <- bind_rows(works_published_2022, works_published_2023, works_published_2024)
@@ -497,7 +466,7 @@ message("Total rows BEFORE merger: ", nrow(works_cited))
 works_cited_updated <- bind_rows(works_cited, recovered_df)
 message("Total rows after merger: ", nrow(works_cited_updated))
 
-saveRDS(works_cited_updated, "../works_cited_2022_ver2026.rds")
+#saveRDS(works_cited_updated, "../works_cited_2022_ver2026.rds")
 
 #################################################################
 ############### Comparing ver2025 and ver2026 data #### 
@@ -606,9 +575,9 @@ cat(sprintf("Citations -> Retained Base: %d | Pure Growth: %d | Pure Leakage: %d
 #### Step 1: Re-generate a new row if it matches (meaning; cited multiple times.)
 
 ## Save works_cited files
-saveRDS(works_cited, "../works_cited_2024_ver2026.rds")
+# saveRDS(works_cited, "../works_cited_2024_ver2026.rds")
 
-saveRDS(works_cited_2023, "../works_cited_2023_ver2026.rds")
+# saveRDS(works_cited_2023, "../works_cited_2023_ver2026.rds")
 
 #######################################################################################
 # SECTION 2: Works cited
@@ -618,49 +587,36 @@ saveRDS(works_cited_2023, "../works_cited_2023_ver2026.rds")
 # ASU: 2022: 303,563
 # MSU: 2022: 356,486
 #  UW: 2022: 678,317 
-saveRDS(works_cited, "../msu_works_cited_2022.rds")
+# saveRDS(works_cited, "../msu_works_cited_2022.rds")
 
 #  UA: 2023: 387,734 (2026), 353,424
 # ASU: 2023: 317,643
 # MSU: 2023: 349,299
 #  UW: 2023: 706,551
-saveRDS(works_cited, "../msu_works_cited_2023.rds")
+# saveRDS(works_cited, "../msu_works_cited_2023.rds")
 
 # 2024-04-04: 
 #  UA: 2024: 305,670
 # ASU: 2024: 271,694
 # MSU: 2024: 307,672
 #  UW: 2024: 616,427
-saveRDS(works_cited, "../msu_works_cited_2024.rds")
+# saveRDS(works_cited, "../msu_works_cited_2024.rds")
 
 rm(works_cited)
 
-works_cited_2019 <- readRDS("../works_cited_2019.rds")
-works_cited_2020 <- readRDS("../works_cited_2020.rds")
-works_cited_2021 <- readRDS("../works_cited_2021.rds")
+# works_cited_2023 <- readRDS("../works_cited_2023.rds")
 
-works_cited_2022 <- readRDS("../UA-datasets/works_cited_2022.rds")
+# works_cited_2024 <- readRDS("../works_cited_2024.rds")
 
-works_cited_2023 <- readRDS("../works_cited_2023.rds")
-
-works_cited_2024 <- readRDS("../works_cited_2024.rds")
-
-# 
-df1 <-works_cited_2024
-record <- df1[grepl("https://openalex.org/W3217039319", df1$id),]
 
 # compare df again before binding rows
-matching_list <- list(works_cited_2022, works_cited_2023, works_cited_2024) 
-all_df_match <-check_df_structure(matching_list)
-print(paste("Do all DataFrames in matching_list have the same structure?", all_df_match))
+# matching_list <- list(works_cited_2022, works_cited_2023, works_cited_2024) 
+# all_df_match <-check_df_structure(matching_list)
+# print(paste("Do all DataFrames in matching_list have the same structure?", all_df_match))
 
+# works_cited_2022_2024 <- bind_rows(works_cited_2022, works_cited_2023, works_cited_2024)
+# saveRDS(works_cited_2022_2024, "../works_cited_2022_2024.rds")
 
-works_cited_2022_2024 <- bind_rows(works_cited_2022, works_cited_2023, works_cited_2024)
-saveRDS(works_cited_2022_2024, "../works_cited_2022_2024.rds")
-
-
-works_cited_2022_2024 <- readRDS("../works_cited_2022_2024.rds")
-works_cited <- works_cited_2022_2024
 
 # One is primary.source.type = journal, the other (works_cited_2) contains everything
 # For year 2022, 325,520 : 345,813. 
@@ -751,20 +707,15 @@ head(matching_rows$id)
 # First getting all the works_cited by year data. year by year. 2022 > 2023 > 2024 
 ### Always run this year by year 
 
-works_cited <- works_cited_2022
-works_cited <- works_cited_2022 %>%
-  mutate(authored_year = 2022) %>%
-  select(authored_year, everything())  # This moves UA_authored_year to first position
+#works_cited <- works_cited_2023
+#works_cited <- works_cited_2023 %>%
+#  mutate(authored_year = 2023) %>%
+#  select(authored_year, everything())  # This moves UA_authored_year to first position
 
-works_cited <- works_cited_2023
-works_cited <- works_cited_2023 %>%
-  mutate(authored_year = 2023) %>%
-  select(authored_year, everything())  # This moves UA_authored_year to first position
-
-works_cited <- works_cited_2024
-works_cited <- works_cited_2024 %>%
-  mutate(authored_year = 2024) %>%
-  select(authored_year, everything())  # This moves UA_authored_year to first position
+#works_cited <- works_cited_2024
+# works_cited <- works_cited_2024 %>%
+#  mutate(authored_year = 2024) %>%
+#  select(authored_year, everything())  # This moves UA_authored_year to first position
 
 # Step 2.1: One way is via type = article
 # works_cited = works_cited_type_articles + works_cited_type_nonarticles
@@ -944,53 +895,6 @@ truncate_and_write(works_cited_source_issn_bmj)
 ###############################################################################
 #### Step 4: Analyzing publisher
 ###############################################################################
-############################################################
-##### 2025-02: Brill (https://openalex.org/publishers/p4310320561)
-# 2024: 100, 
-# 2023: 100 (article), 54 (nonarticle)
-# 2022: 109 (article)
-
-# Criteria: article and nonarticle.
-publisher_str <- "Brill"
-works_cited_type_articles_brill <- works_cited_type_articles %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
-
-works_cited_type_nonarticles_brill <- works_cited_type_nonarticles %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
-
-works_published_brill <- works_published %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
-
-works_cited_type_articles_brill_22 <- works_cited_type_articles_brill
-works_cited_type_articles_brill_23 <- works_cited_type_articles_brill
-works_cited_type_articles_brill_24 <- works_cited_type_articles_brill
-works_cited_type_articles_brill_22_23_24 <- bind_rows(works_cited_type_articles_brill_22, 
-                                                      works_cited_type_articles_brill_23, 
-                                                      works_cited_type_articles_brill_24)
-
-saveRDS(works_cited_type_articles_brill_22_23_24, "./citations/works_cited_type_articles_brill_22_23_24.rds")
-
-works_cited_type_articles_brill_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_brill_22_23_24, 1)
-write_df_to_excel(works_cited_type_articles_brill_yr22_23_24)
-
-# Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_brill_yr22_23_24.xlsx", "citations/brill_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
-tryCatch({
-  wb <- createWorkbook()
-  for (i in seq_along(excel_files)) {
-    df <- read.xlsx(excel_files[i])
-    sheet_name <- gsub("citations/(.*)\\.xlsx", "\\1", excel_files[i]) # Extract sheet name from file name
-    sheet_name <-substr(sheet_name, 1, 31)  # Truncate to 31 chars for worksheet
-    addWorksheet(wb, sheetName = sheet_name)
-    writeData(wb, sheet = sheet_name, x = df)
-  }
-  saveWorkbook(wb, "citations/works_cited_type_articles_brill_22_23_24_v1.xlsx", overwrite = TRUE)
-  message("!!! Combination successful!")
-}, error = function(e) {
-  message("Combination failed: ", e)
-  print(e)
-})
-
 ##############################################################################
 ##### The following code can be used for any big publishers. 
 
@@ -1898,7 +1802,7 @@ test_df2 <- works_cited_type_articles_publisher_yr23 %>%
 
 
 # Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_publisher_yr22_23_24.xlsx", "citations/nature_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+# excel_files <- c("citations/works_cited_type_articles_publisher_yr22_23_24.xlsx", "citations/nature_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {
@@ -1986,7 +1890,7 @@ works_cited_type_articles_tf_yr22_23_24 <- extract_topics_by_level(works_cited_t
 write_df_to_excel(works_cited_type_articles_tf_yr22_23_24)
 
 # Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_tf_yr22_23_24.xlsx", "citations/tf_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+# excel_files <- c("citations/works_cited_type_articles_tf_yr22_23_24.xlsx", "citations/tf_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {
@@ -2272,7 +2176,7 @@ write_df_to_excel(works_cited_type_articles_iop_yr22_23_24)
 rank_top_cited_journals(works_cited_type_articles_iop_22_23_24, "so", "issn_l", "host_organization", 2000)
 
 # Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_iop_yr22_23_24.xlsx", "citations/iop_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+# excel_files <- c("citations/works_cited_type_articles_iop_yr22_23_24.xlsx", "citations/iop_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {
@@ -2397,11 +2301,10 @@ write_df_to_excel(works_cited_type_articles_nature_sn_yr22_23_24)
 
 top_cited_journals <- rank_top_cited_journals(works_cited_type_articles_nature_sn_yr22_23_24, "source_display_name", "issn_l", "host_organization_name", 3000)
 
-ua_df <- readxl::read_excel("citations/nature_sn_yr22_23_24_top_cited_j.xlsx")
+#ua_df <- readxl::read_excel("citations/nature_sn_yr22_23_24_top_cited_j.xlsx")
 
-# ou_df <-readxl::read_excel("citations/asu_nature_sn_yr22_23_24_top_cited_j.xlsx")
-ou_df <-readxl::read_excel("citations/msu_nature_sn_yr22_23_24_top_cited_j.xlsx")
-# ou_df <-readxl::read_excel("citations/uw_nature_sn_yr22_23_24_top_cited_j.xlsx")
+#ou_df <-readxl::read_excel("citations/msu_nature_sn_yr22_23_24_top_cited_j.xlsx")
+
 
 
 # Compare top 10
@@ -2425,7 +2328,7 @@ print(paste("Number of UA Unique Journals:", comparison$count_ua_unique))
 print(paste("Number of U Unique Journals:", comparison$count_ou_unique))
 
 # Combine Excel Files
-excel_files <- c("citations/msu_works_cited_type_articles_nature_sn_yr22_23_24.xlsx", "citations/msu_nature_sn_yr22_23_24_top_cited_j.xlsx", "citations/README.xlsx")
+# excel_files <- c("citations/msu_works_cited_type_articles_nature_sn_yr22_23_24.xlsx", "citations/msu_nature_sn_yr22_23_24_top_cited_j.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {
@@ -2491,7 +2394,7 @@ works_cited_type_articles_wiley_yr22_23_24 <- extract_topics_by_level(works_cite
 write_df_to_excel(works_cited_type_articles_wiley_yr22_23_24)
 
 # Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_wiley_yr22_23_24.xlsx", "citations/wiley_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+# excel_files <- c("citations/works_cited_type_articles_wiley_yr22_23_24.xlsx", "citations/wiley_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {
@@ -2535,7 +2438,7 @@ works_cited_type_articles_sage_yr22_23_24 <- extract_topics_by_level(works_cited
 write_df_to_excel(works_cited_type_articles_sage_yr22_23_24)
 
 # Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_sage_yr22_23_24.xlsx", "citations/sage_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+# excel_files <- c("citations/works_cited_type_articles_sage_yr22_23_24.xlsx", "citations/sage_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 tryCatch({
   wb <- createWorkbook()
   for (i in seq_along(excel_files)) {
@@ -2705,7 +2608,7 @@ top_cited_journals <- rank_top_cited_journals(works_cited_type_articles_publishe
 #write_df_to_excel(works_published_brill)
 
 # 2. Combine Excel Files
-excel_files <- c("citations/works_cited_type_articles_brill_yr22_23_24.xlsx", "citations/brill_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
+# excel_files <- c("citations/works_cited_type_articles_brill_yr22_23_24.xlsx", "citations/brill_22_23_24_top_cited_journals.xlsx", "citations/README.xlsx")
 
 tryCatch({
   wb <- createWorkbook()

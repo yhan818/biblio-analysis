@@ -1,21 +1,6 @@
-Last Name,First Name,Institution,full_name
-Bibb,James,UA,James Bibb
-Chiamvimonvat,Nipavan,UA,Nipavan Chiamvimonvat
-Daines,Michael,UA,Michael Daines
-Kalin,Tatiana,UA,Tatiana Kalin
-Ledford,Julie,UA,Julie Ledford
-Luo,Moulun,UA,Moulun Luo
-Yin,Liya,UA,Liya Yin
-Zhang,Yanqiao,UA,Yanqiao Zhang
-Rangasamy,Sampath,ASU,Sampath Rangasamy
-Pizziconi,Vincent,ASU,Vincent Pizziconi
-Castillo,Eliseo,UNM,Eliseo Castillo
-Clark,f,UNM,f Clark
-Deyhle,Michael,UNM,Michael Deyhle
-Gardiner,Amy,UNM,Amy Gardiner
-Swamidoss,Finny,UNM,Finny Swamidoss
-Rogers,Kathleen,UA,Kathleen Rogers
-Shekarriz,Reza,UNM,Reza Shekarriz
-Thomas,Marylaura,ASU,Marylaura Thomas
-Banerjee,Ronaldip,UA,Ronaldip Banerjee
-Camey,Megan,UA,Megan Camey
+First_Name,Last_Name,Institution,College,NIH Funded PI (NIDDK or Diabetes Focus),NIH Funded Co-PI (NIDDK or Diabetes Focus),Previously NIDDK Funded Diabetes Focus,full_name
+FRANK C,BROSIUS,ASU,COM-T,NA,X,NA,FRANK C BROSIUS
+ELIZABETH A.,REIFSNIDER,ASU,Health Solutions,NA,NA,X,ELIZABETH A. REIFSNIDER
+RONALDIP,BANERJEE,UA,COM-T,NA,NA,X,RONALDIP BANERJEE
+JEAN M.,WILSON,UA,COM-T,NA,NA,X,JEAN M. WILSON
+MELISSA,CHAMBERS,UA - PHX,COM-P,NA,X,NA,MELISSA CHAMBERS

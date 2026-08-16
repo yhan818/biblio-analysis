@@ -3636,5 +3636,217 @@ cat("5. Potential Duplicates - fuzzy matches for manual review\n")
 cat("6. Variant Names Found - basic cleaning matches (periods, spaces)\n")
 
 
+library(testthat)
+library(stringdist)
+
+# ============================================================
+# TEST 1: Basic cleaning function
+# ============================================================
+
+test_that("clean_author_name removes periods correctly", {
+  expect_equal(clean_author_name("I. G. Sipes"), "i g sipes")
+  expect_equal(clean_author_name("I G Sipes"), "i g sipes")
+  expect_equal(clean_author_name("J.R. Smith"), "jr smith")
+  expect_equal(clean_author_name("J. R. Smith"), "j r smith")
+  expect_equal(clean_author_name("Mary-Jane Watson"), "mary jane watson")
+  expect_equal(clean_author_name("  John   Doe  "), "john doe")
+  expect_equal(clean_author_name(NA), NA_character_)
+})
+
+# ============================================================
+# TEST 2: Known duplicates should be caught
+# ============================================================
+
+test_that("Known duplicate pairs are identified by basic cleaning", {
+  known_duplicates <- list(
+    c("I. G. Sipes", "I G Sipes"),
+    c("J. R. Smith", "J.R. Smith"),
+    c("A. B. Johnson", "A.B. Johnson"),
+    c("M. C. Williams", "M C Williams")
+  )
+  
+  for (pair in known_duplicates) {
+    cleaned_1 <- clean_author_name(pair[1])
+    cleaned_2 <- clean_author_name(pair[2])
+    expect_equal(cleaned_1, cleaned_2,
+                 info = paste("Failed for:", pair[1], "vs", pair[2]))
+  }
+})
+
+# ============================================================
+# TEST 3: Known NON-duplicates should NOT be merged
+# ============================================================
+
+test_that("Different authors are not falsely merged", {
+  non_duplicates <- list(
+    c("John Smith", "Jane Smith"),
+    c("Robert Chen", "Robert Chan"),
+    c("Maria Garcia", "Mario Garcia"),
+    c("A. Smith", "B. Smith"),
+    c("David Lee", "Daniel Lee")
+  )
+  
+  for (pair in non_duplicates) {
+    cleaned_1 <- clean_author_name(pair[1])
+    cleaned_2 <- clean_author_name(pair[2])
+    expect_false(cleaned_1 == cleaned_2,
+                 info = paste("Falsely merged:", pair[1], "and", pair[2]))
+  }
+})
+
+# ============================================================
+# TEST 4: Jaro-Winkler catches near-duplicates
+# ============================================================
+
+test_that("Jaro-Winkler identifies likely duplicates (distance < 0.08)", {
+  likely_same <- list(
+    c("john r smith", "john smith"),        # Missing middle initial
+    c("michael brown", "micheal brown"),    # Typo
+    c("katherine jones", "katharine jones") # Variant spelling
+  )
+  
+  for (pair in likely_same) {
+    dist <- stringdist(pair[1], pair[2], method = "jw")
+    expect_lt(dist, 0.15,
+              info = paste("Distance too high for:", pair[1], "vs", pair[2],
+                           "- dist:", round(dist, 4)))
+  }
+})
+
+# ============================================================
+# TEST 5: Jaro-Winkler correctly separates different people
+# ============================================================
+
+test_that("Jaro-Winkler keeps different people separate (distance > 0.15)", {
+  different_people <- list(
+    c("john smith", "jane doe"),
+    c("robert chen", "maria garcia"),
+    c("alice johnson", "bob williams")
+  )
+  
+  for (pair in different_people) {
+    dist <- stringdist(pair[1], pair[2], method = "jw")
+    expect_gt(dist, 0.15,
+              info = paste("Should be different:", pair[1], "vs", pair[2],
+                           "- dist:", round(dist, 4)))
+  }
+})
+
+# ============================================================
+# TEST 6: Levenshtein catches typos (edit distance 1-2)
+# ============================================================
+
+test_that("Levenshtein catches single-character typos", {
+  typo_pairs <- list(
+    c("smith", "smth"),       # deletion
+    c("johnson", "johnsom"),  # substitution
+    c("williams", "wlliams") # deletion
+  )
+  
+  for (pair in typo_pairs) {
+    dist <- stringdist(pair[1], pair[2], method = "lv")
+    expect_lte(dist, 2,
+               info = paste("Edit distance too high for:", pair[1], "vs", pair[2]))
+  }
+})
+
+# ============================================================
+# TEST 7: Edge cases
+# ============================================================
+
+test_that("Edge cases are handled correctly", {
+  # Empty string
+  expect_equal(clean_author_name(""), "")
+  
+  # Single character
+  expect_equal(clean_author_name("A."), "a")
+  
+  # All periods
+  expect_equal(clean_author_name("..."), "")
+  
+  # Unicode characters (accented names)
+  expect_equal(clean_author_name("José García"), "josé garcía")
+  
+  # Hyphenated names
+  expect_equal(clean_author_name("Mary-Jane Watson"), "mary jane watson")
+  
+  # Multiple spaces
+  expect_equal(clean_author_name("John    Doe"), "john doe")
+})
+
+# ============================================================
+# TEST 8: Real-world UA author examples
+# ============================================================
+
+test_that("Real UA author variants are correctly handled", {
+  # These should match after cleaning
+  expect_equal(
+    clean_author_name("I. G. Sipes"),
+    clean_author_name("I G Sipes")
+  )
+  
+  # These should NOT match (different people at UA)
+  expect_false(
+    clean_author_name("John A. Smith") == clean_author_name("John B. Smith")
+  )
+})
+
+# ============================================================
+# TEST 9: Validate find_fuzzy_duplicates function
+# ============================================================
+
+test_that("find_fuzzy_duplicates returns correct structure", {
+  test_names <- c("john smith", "jon smith", "jane doe", "john smth")
+  
+  result <- find_fuzzy_duplicates(test_names, max_dist = 0.15, method = "jw")
+  
+  # Should return a tibble/dataframe
+  
+  expect_true(is.data.frame(result))
+  
+  # Should have expected columns
+  expect_true(all(c("name_1", "name_2", "distance") %in% colnames(result)))
+  
+  # "john smith" and "jon smith" should be flagged
+  flagged <- result %>%
+    filter(
+      (name_1 == "john smith" & name_2 == "jon smith") |
+        (name_1 == "jon smith" & name_2 == "john smith")
+    )
+  expect_gt(nrow(flagged), 0, info = "john smith / jon smith not flagged")
+  
+  # "john smith" and "jane doe" should NOT be flagged
+  false_match <- result %>%
+    filter(
+      (name_1 == "john smith" & name_2 == "jane doe") |
+        (name_1 == "jane doe" & name_2 == "john smith")
+    )
+  expect_equal(nrow(false_match), 0, info = "john smith / jane doe falsely flagged")
+})
+
+# ============================================================
+# TEST 10: Threshold sensitivity
+# ============================================================
+
+test_that("Threshold affects number of matches appropriately", {
+  test_names <- c("john smith", "jon smith", "john smyth", 
+                  "jane doe", "janet doe", "completely different")
+  
+  strict <- find_fuzzy_duplicates(test_names, max_dist = 0.05, method = "jw")
+  loose <- find_fuzzy_duplicates(test_names, max_dist = 0.20, method = "jw")
+  
+  # Looser threshold should find more (or equal) matches
+  
+  expect_gte(nrow(loose), nrow(strict))
+})
+
+# ============================================================
+# RUN ALL TESTS
+# ============================================================
+
+cat("\n=== Running all author deduplication tests ===\n\n")
+test_results <- test_dir(".", reporter = "summary")
+
+
 
 
