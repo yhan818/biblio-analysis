@@ -165,8 +165,7 @@ if (length(not_found_list) > 0) {
 ========================================================
   ❌ AUTHORS NOT FOUND (Manual Check Needed)
 ========================================================
-  
-  
+
   |First_Name   |Last_Name  |Institution |
   |:------------|:----------|:-----------|
   |FRANK C      |BROSIUS    |ASU         |
@@ -185,7 +184,7 @@ print(candidates_reifsnider[, c("display_name", "id", "works_count", "last_known
 candidates_wilson <- oa_fetch(entity = "authors", search = "Jean Wilson", verbose = FALSE)
 print(candidates_wilson[, c("display_name", "id", "works_count", "last_known_institutions")])
 
-candidates_chambers <- oa_fetch(entity = "authors", search = "Melissa Chambers", verbose = FALSE)
+candidates_chambers <- oa_fetch(entity = "authors", search = "Melissa M. Chambers", verbose = FALSE)
 print(candidates_chambers[, c("display_name", "id", "works_count", "last_known_institutions")])
 
 ## 2026-08-15: Manual add
@@ -197,11 +196,13 @@ manual_authors_batch <- tribble(
   "https://openalex.org/a5066121781", "RONALDIP BANERJEE", "UA",
   
   # Fill in after running oa_fetch searches above:
-  "https://openalex.org/aXXXXXXXXXX", "ELIZABETH A. REIFSNIDER", "ASU",
-  "https://openalex.org/aXXXXXXXXXX", "JEAN M. WILSON", "UA",
-  "https://openalex.org/aXXXXXXXXXX", "MELISSA CHAMBERS", "UA - PHX"
+  "https://openalex.org/A5050987084", "ELIZABETH A. REIFSNIDER", "ASU", ### Move to Old Dominion University
+  ######## "https://openalex.org/aXXXXXXXXXX", "JEAN M. WILSON", "UA", 
+  ######## "https://openalex.org/aXXXXXXXXXX", "MELISSA CHAMBERS", "UA - PHX"
 )
 
+################### End of NIH 2 grant: Larry Mandarino. 2026-08-16
+##################################################################
   
 ###############################################################
 ####################### Code for 2026-01: DO NOT USE for late grant!!! 
@@ -214,20 +215,12 @@ manual_authors_batch <- tribble(
 # [Not Found] Henry Tseng at ASU (Jui-Heng Tseng)
 # [Not Found] Ken Buetow at ASU (Kennith Buetow)
 # [Not Found] Bill Shuttleworth at UNM (William )
-
-[Not Found] Haijiang Cai at UA
-[Not Found] Michael Daines at UA
-
-# Manually added: [Not Found] Tatiana Kalin at UA (Cincinnati https://api.openalex.org/a5078276804 )
+# [Not Found] Haijiang Cai at UA
+# [Not Found] Michael Daines at UA
 # [Not Found] Moulun Luo at UA
-
 # [Not Found] Mary laura Thomas at ASU (Mary Laura Lind)
-# !!! [Not Found] Sampath Rangasamy at ASU (Arizona Research Center?, Phoenix, DO Check openAlex manually!!!)
-
-========================================================
-  ❌ AUTHORS NOT FOUND (Manual Check Needed)
-========================================================
-  
+#  [Not Found] Sampath Rangasamy at ASU (Arizona Research Center?, Phoenix, DO Check openAlex manually!!!)
+❌ AUTHORS NOT FOUND (Manual Check Needed)
   
   |First_Name |Last_Name     |Institution |
   |:----------|:-------------|:-----------|
@@ -294,7 +287,12 @@ manual_authors_batch <- tribble(
 # |Kathleen   |Rogers        |UA          |
 #  |Reza       |Shekarriz     |UNM 
 # |Megan      |Camey         |UA          |
-  
+
+##################################################### 
+###############3 End of NIH Grant 1: 2026-01
+###############################################
+
+
 
 message(paste("\nProcessing", nrow(manual_authors_batch), "manual additions..."))
 
@@ -497,85 +495,94 @@ if (exists("final_report") && nrow(final_report) > 0) {
 
 
 
-############################# Testing Claude Haiku 4.5
-library(openalexR)
+############################# Testing Claude Sonnet 5
 library(dplyr)
+library(stringr)
+library(httr)
+library(jsonlite)
 library(knitr)
- 
+library(purrr)
 
-# Create a dataframe with the found authors
-found_authors <- tribble(
-  ~display_name, ~id, ~works_count, ~csv_institution,
-  "Matthew P. Buman", "https://openalex.org/A5000559212", 312, "ASU",
-  "Ellen P. Green", "https://openalex.org/A5047947143", 19, "ASU",
-  "Rodney P. Joseph", "https://openalex.org/A5053124087", 71, "ASU",
-  "Christos S. Katsanos", "https://openalex.org/A5074138380", 109, "ASU",
-  "Min‐Hyun Kim", "https://openalex.org/A5024956976", 38, "ASU",
-  "Rosa Krajmalnik‐Brown", "https://openalex.org/A5035488966", 213, "ASU",
-  "Joshua LaBaer", "https://openalex.org/A5046993686", 418, "ASU",
-  "Linda J. Luecken", "https://openalex.org/A5073812178", 149, "ASU",
-  "Miyeko Mana", "https://openalex.org/A5028420772", 69, "ASU",
-  "Eyitayo Omolara Owolabi", "https://openalex.org/A5006639752", 79, "ASU",
-  "Adewale L. Oyeyemi", "https://openalex.org/A5066047427", 175, "ASU",
-  "Marisol Pérez", "https://openalex.org/A5013609965", 129, "ASU",
-  "Bing Si", "https://openalex.org/A5053304698", 39, "ASU",
-  "Taichi A. Suzuki", "https://openalex.org/A5008343733", 53, "ASU",
-  "Corrie M. Whisner", "https://openalex.org/A5003624984", 132, "ASU",
-  "Leslie J. Baier", "https://openalex.org/A5041569085", 219, "NIDDK",
-  "Robert L. Hanson", "https://openalex.org/A5049047999", 582, "NIDDK",
-  "Halimatou Alaofè", "https://openalex.org/A5078896557", 75, "UA",
-  "Wei Zhou", "https://openalex.org/A5100640843", 170, "UA"
-)
+`%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
 
-# Verify each author by extracting the A-number and fetching from OpenAlex
-verification_results <- found_authors %>%
+# --- 1. Build the dataframe directly from found_list ---
+found_df <- bind_rows(found_list) %>%
+  select(display_name, id, works_count, csv_institution)
+
+# --- 2. Verify each author against the live OpenAlex API ---
+verification_results <- found_df %>%
   mutate(
     a_number = str_extract(id, "A\\d+"),
-    api_url = paste0("https://api.openalex.org/authors/", a_number)
+    api_url  = paste0("https://api.openalex.org/authors/", a_number, "?mailto=your_email@arizona.edu")
   ) %>%
   rowwise() %>%
   mutate(
     verification = tryCatch({
       response <- httr::GET(api_url)
       if (httr::status_code(response) == 200) {
-        author_data <- jsonlite::fromJSON(httr::content(response, "text"))
+        author_data <- jsonlite::fromJSON(httr::content(response, "text", encoding = "UTF-8"))
+        
+        # Force everything to a single scalar value
+        api_name <- author_data$display_name %||% NA
+        if (length(api_name) != 1) api_name <- api_name[1] %||% NA
+        
+        api_wc <- author_data$works_count %||% NA
+        if (length(api_wc) != 1) api_wc <- api_wc[1] %||% NA
+        
+        # Safely extract last_known_institution name, guarding against
+        # NULL, empty list, or unexpected multi-element structures
+        api_inst <- tryCatch({
+          inst_val <- author_data$last_known_institution$display_name
+          if (is.null(inst_val) || length(inst_val) == 0) {
+            "Not listed"
+          } else if (length(inst_val) > 1) {
+            paste(inst_val, collapse = "; ")  # collapse multiples into one string
+          } else {
+            inst_val
+          }
+        }, error = function(e) "Not listed")
+        
+        name_flag <- if (!is.na(api_name) && tolower(api_name) != tolower(display_name)) " ⚠️ NAME DIFFERS" else ""
+        wc_flag   <- if (!is.na(api_wc) && api_wc != works_count) paste0(" ⚠️ WORKS_COUNT DIFFERS (CSV: ", works_count, ")") else ""
+        
         paste0(
-          "✓ VERIFIED | Name: ", author_data$display_name, 
-          " | Works: ", author_data$works_count,
-          " | Last Known Affiliation: ", 
-          ifelse(!is.null(author_data$last_known_institution$display_name),
-                 author_data$last_known_institution$display_name, "Not listed")
+          "✓ VERIFIED | Name: ", api_name,
+          " | Works: ", api_wc,
+          " | Last Known Affiliation: ", api_inst,
+          name_flag, wc_flag
         )
       } else {
-        "✗ NOT FOUND (404)"
+        paste0("✗ NOT FOUND (HTTP ", httr::status_code(response), ")")
       }
     }, error = function(e) paste0("✗ ERROR: ", e$message))
   ) %>%
   ungroup() %>%
-  select(display_name, a_number, verification, csv_institution)
+  select(display_name, a_number, csv_institution, verification)
 
-# Display results
+# --- 3. Display results ---
 kable(verification_results, format = "markdown")
 
-# Summary
+# --- 4. Summary ---
 cat("\n\n=== VERIFICATION SUMMARY ===\n")
 cat("Total authors checked:", nrow(verification_results), "\n")
 cat("Verified:", sum(str_detect(verification_results$verification, "^✓")), "\n")
 cat("Not found:", sum(str_detect(verification_results$verification, "^✗ NOT FOUND")), "\n")
 cat("Errors:", sum(str_detect(verification_results$verification, "^✗ ERROR")), "\n")
+cat("Name mismatches:", sum(str_detect(verification_results$verification, "NAME DIFFERS")), "\n")
+cat("Works_count mismatches:", sum(str_detect(verification_results$verification, "WORKS_COUNT DIFFERS")), "\n")
 
-# Save detailed results
-write_csv(verification_results, "author_verification_results.csv")
+# --- 5. Save full verification report ---
+write_csv(verification_results, "author_verification_full_report.csv")
+message("Full verification report saved to 'author_verification_full_report.csv'")
 
+# --- 6. Isolate only problematic rows for quick manual review ---
+flagged <- verification_results %>%
+  filter(str_detect(verification, "⚠️|✗"))
 
-
-
-
-
-
-
-
-
-
-
-
+if (nrow(flagged) > 0) {
+  cat("\n\n=== ⚠️ ROWS NEEDING MANUAL REVIEW ===\n")
+  kable(flagged, format = "markdown") %>% print()
+  write_csv(flagged, "author_verification_flagged.csv")
+} else {
+  cat("\n✅ All authors verified cleanly — no mismatches detected.\n")
+}
