@@ -28,6 +28,7 @@ authors_raw <- read_csv(csv_file)
 ### 2026-08 READ XSLX
 # Read the Excel file
 library(readxl)
+library(readr)
 library(tidyr)
 library(dplyr)
 library(stringr)
@@ -63,9 +64,6 @@ authors_df <- data_processed %>%
     TRUE ~ Institution
   ))
 
-head(data_processed)
-library(dplyr)
-library(stringr)
 
 # Quick test with sample values
 inst <- c("UA", "UA - PHX", "UA- PHX", "ASU", "NIDDK")
@@ -162,17 +160,6 @@ if (length(not_found_list) > 0) {
   message("Warning: Not found authors saved to 'authors_not_found.csv'")
 }
 
-========================================================
-  ❌ AUTHORS NOT FOUND (Manual Check Needed)
-========================================================
-
-  |First_Name   |Last_Name  |Institution |
-  |:------------|:----------|:-----------|
-  |FRANK C      |BROSIUS    |ASU         |
-  |ELIZABETH A. |REIFSNIDER |ASU         |
-  |RONALDIP     |BANERJEE   |UA          |
-  |JEAN M.      |WILSON     |UA          |
-  |MELISSA      |CHAMBERS   |UA - PHX    |
 
 
 candidates_brosius <- oa_fetch(entity = "authors", search = "Frank Brosius", verbose = FALSE)
@@ -197,8 +184,8 @@ manual_authors_batch <- tribble(
   
   # Fill in after running oa_fetch searches above:
   "https://openalex.org/A5050987084", "ELIZABETH A. REIFSNIDER", "ASU", ### Move to Old Dominion University
-  ######## "https://openalex.org/aXXXXXXXXXX", "JEAN M. WILSON", "UA", 
-  ######## "https://openalex.org/aXXXXXXXXXX", "MELISSA CHAMBERS", "UA - PHX"
+  "https://openalex.org/a5000573702", "JEAN M. WILSON", "UA", 
+  "https://openalex.org/a5001871630", "MELISSA CHAMBERS", "UA - PHX"
 )
 
 ################### End of NIH 2 grant: Larry Mandarino. 2026-08-16
@@ -329,12 +316,13 @@ for (i in 1:nrow(manual_authors_batch)) {
   }
 }
 
-#######################################################
-####################### 2026-01-26
+
 # Step 2:
 ####################################
 ########################################################
 # --- Section 6: Robust Collaboration Search using Authorships ---
+library(purrr)
+# Then rerun your script
 
 if (length(found_list) < 2) {
   stop("\nNot enough authors were identified to perform a cross-reference search.")

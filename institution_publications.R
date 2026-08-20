@@ -9,11 +9,12 @@
 install.packages(c("dplyr", "ggplot2", "readr", "tibble", "purrr", "stringr", "forcats"))
 
 install.packages('data.table')
-install.packages("openalexR")
-install.packages("openxlsx")
-install.packages("writexl")
-# install.packages("remotes")
-# remotes::install_github("ropensci/openalexR", force=TRUE) 
+# install.packages("openalexR")
+# install.packages("openxlsx")
+# install.packages("writexl")
+
+library(data.table)
+library(writexl)
 
 library(openalexR)
 packageVersion("openalexR")
@@ -22,12 +23,14 @@ packageVersion("openalexR")
 rm(list=ls())
 gc()
 
+
 options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
 PATH <- "/home/yhan/Documents/biblio-analysis"
-
 setwd(PATH)
 getwd()
-#print(here())
+
+Sys.getenv("OPENALEXR_APIKEY")
+# Sys.getenv("OPENALEXR_APIKEY_Personal")
 
 
 source("my_functions.R")
@@ -69,7 +72,6 @@ source("my_functions.R")
 # Note: When we query OpenAlex, we use the ROR ID (not the institution ID) to retrieve an institution’s data. This is because the ROR ID is stable, 
 # universal standard for institutional identification, ensuring our findings are both reproducible and interoperable with the wider scholarly data ecosystem and stability in a long term
 
-Sys.getenv("OPENALEXR_APIKEY")
 
 works_count <-oa_fetch(
   entity="works",
@@ -96,7 +98,7 @@ works_published_2024 <-oa_fetch(
   from_publication_date ="2024-01-01",
   to_publication_date = "2024-12-31",
 )
-
+    
 # 2026-05: 
 works_published_2025 <-oa_fetch(
   entity="works",
@@ -107,11 +109,9 @@ works_published_2025 <-oa_fetch(
 
 # saveRDS(works_published_2022, "../works_published_2022_ver2026.rds")
 # saveRDS(works_published_2023, "../works_published_2023_ver2026.rds")
-# saveRDS(works_published_2024, "../works_published_2024_ver2026.rds")
-saveRDS(works_published_2025, "../works_published_2025_ver2026.rds")
+saveRDS(works_published_2024, "../works_published_2024_ver202608.rds")
 
-
-# Load data 
+# saveRDS(works_published_2025, "../works_published_2025_ver202608.rds")
 
 # works_published_2023 <- readRDS("../works_published_2023.rds")
 # works_published <- works_published_2023
@@ -120,14 +120,17 @@ saveRDS(works_published_2025, "../works_published_2025_ver2026.rds")
 # works_published_2024 <- readRDS("../works_published_2024.rds")
 # works_published <- works_published_2024
 
-works_published_2025_ver202606 <- readRDS("../works_published_2025_ver2026.rds")
-works_published <- works_published_2025
+#works_published_2025 <- readRDS("../works_published_2025_ver202608.rds")
+
+
+
+works_published <- works_published_2024
 
 # Filter dataframe for non articles
-works_articles <- works_published_2025_ver202606 %>%
+works_articles <- works_published %>%
   filter(type == "article")
 
-works_non_articles <- works_published_2025_ver202606 %>%
+works_non_articles <- works_published %>%
   filter(type != "article")
 
 
@@ -172,6 +175,7 @@ works_na_referenced_works <- works_published %>%
 
 ### 2.2 Combine all the references and do further data analysis
 # Avg # of references per article: ~50
+# Year 2024 total references: 410,216: 
 # Year 2023 total references: 364,304: total journal article: 308,359:  unique 281,470 / 351,479: more cited: ~77,000 
 # Year 2022 total references: 356,718: 
 
@@ -197,21 +201,6 @@ head(citation_counts)
 # Find the index of multiple samples
 head(works_published$referenced_works)
 head(works_published_ref_unique)
-
-# Use sapply to find matching elements in the works_published_ref for testing. 
-matching_indices <- which(sapply(works_published_ref_combined, function(x) 
-  any(x %in% c("https://openalex.org/W4210835162", "https://openalex.org/W2944198613")))) # https://openalex.org/W1624352668 were cited on 2021 and 2023 data
-print(matching_indices)
-
-# We can see the original works for samples
-works_published[2, "id"]
-works_published[174, "id"]
-
-# Test to see how many times a work is cited. 
-# 21 times (2020); 22 times(2021), 26 times(2022), 18 times(2023)
-# https://openalex.org/W4247665917 were cited in 2019, 2021, 2022 and 2023 data
-index <- which(works_published_ref_combined == "https://openalex.org/W4247665917")
-print(index)
 
 ###########################################################
 
@@ -247,37 +236,15 @@ for (i in indices) {
   cat("Element:\n", works_published_ref_combined[[i]], "\n\n")
 }
 
-#### Find it from works_published (UA author works_cited the work (search_string))
-# Find it from the original article
-search_string <- "https://openalex.org/W2594545996"  
-# this article was cited 81 (2019, 130 (2020), 90 (2021), 52 (2022), 16 (2023)
-indices_with_string <- which(sapply(works_published$referenced_works, function(x) search_string %in% x))
-print(indices_with_string)
-works_published[indices_with_string, ]$id
-
-# test case 2: cited 6 from microbiology, multiple times for 2019, 2020, 2021, 2022
-# both final published version and pre-print existing: https://openalex.org/works/W4379795917 and https://openalex.org/W4319339791 
-search_string <- "https://openalex.org/W2153919737"
-indices_with_string <- which(sapply(works_published$referenced_works, function(x) search_string %in% x))
-print(indices_with_string)
-works_published[indices_with_string, ]$id
-
-# https://openalex.org/W4210835162
-
 
 ##### 3.34  Fetch time 
 # the number of works to fetch at a time has little influence the time to run oa_fetch
 # 2024-09: fetch_number = 1,000, reduced the total running time of 10% comparing to fetch_number 100
 # 2024-09: fetching 241,000 works took 188 minutes
-# optimize code: ... <to do> 
-
-#Creating an empty dataframe to store the results of the for loop.
-
-works_cited <-data.frame()
 
 # Getting these works' metadata. This takes long time to run. 
 # Warnings(). a work > 100 authors will be truncated 
-# 2024: 
+# 2024: 410,216 
 # 2023: 352,509 (checked) out of 364,304 : article  / 308,359
 # 2022: 345,813 (checked) : article / 325,520 (type = journal)
 # 2021: 384,886 (checked) out of 384,886
@@ -287,21 +254,18 @@ works_cited <-data.frame()
 #########################
 # Ensure oa_fetch() is receiving the correct input and create a new dataframe for results.
 works_cited <- data.frame()
-works_cited_2025 <-data.frame()
-
-
+#works_cited_2025 <-data.frame()
 
 library(httr)
 ################################################ CORE: Citation DATA
 ###***********************************************
 ################################################### CORE 
-Sys.getenv("OPENALEXR_APIKEY")
 
 # Check in browser or via httr:
 # GET https://api.openalex.org/rate-limit?api_key=YOUR_API_KEY
 # Ensure API key is set
-
 openalexR::oa_apikey("OPENALEXR_APIKEY")
+
 httr::set_config(httr::timeout(120))
 
 fetch_number <- 100
@@ -399,15 +363,15 @@ message("Identifiers not found: ", length(missing_ids))
 message("Batches with errors: ", nrow(error_log))
 
 # Save missing IDs for investigation
-saveRDS(missing_ids, "2022_missing_openalex_ids.rds")
-saveRDS(error_log, "2022_error_log.rds")
+saveRDS(missing_ids, "2024_missing_openalex_ids.rds")
+saveRDS(error_log, "2024_error_log.rds")
 
 # Create a summary data frame of missing IDs
 missing_summary <- data.table::data.table(
   openalex_id = missing_ids,
   status = "not_returned"
 )
-data.table::fwrite(missing_summary, "2022_missing_records_log.csv")
+data.table::fwrite(missing_summary, "2024_missing_records_log.csv")
 
 
 ########################
@@ -424,11 +388,11 @@ data.table::fwrite(missing_summary, "2022_missing_records_log.csv")
 
 # 2022: Permanently missing: 26013; recovered: 1479
 # 2023: 
-# 2024: Permanently missing: 24,706; recovered 2387
-# 2025: Permanently missing: 11,417; recovered 998
+# 2024: Works retrieved: 382,250, not found: 26,941 (Permanently missing: 25,043; recovered: 1898
+# 2025: Works retrieved: 343,174, not found: 15,543 (Permanently missing: 13,903; recovered: 1640)
 
 ################ Recover missing IDs ####################
-missing_ids <- readRDS("2022_missing_openalex_ids.rds")
+missing_ids <- readRDS("2024_missing_openalex_ids.rds")
 message("Total missing: ", length(missing_ids))
 
 
@@ -450,14 +414,14 @@ for (j in seq_along(missing_ids)) {
   }
   
   if (j %% 100 == 0) message("Retried ", j, " of ", length(missing_ids))
-  Sys.sleep(4)
+  Sys.sleep(1)
 }
 
 message("Recovered on retry: ", length(retry_results))
 message("Permanently missing: ", length(still_missing))
-saveRDS(still_missing, "2022_permanently_missing_ids.rds")
+saveRDS(still_missing, "2024_permanently_missing_ids.rds")
 
-
+library(dplyr)
 ############### Recover
 # 1. Combine the list of small data frames into one 'recovered' data frame
 recovered_df <- bind_rows(retry_results)
@@ -466,7 +430,7 @@ message("Total rows BEFORE merger: ", nrow(works_cited))
 works_cited_updated <- bind_rows(works_cited, recovered_df)
 message("Total rows after merger: ", nrow(works_cited_updated))
 
-#saveRDS(works_cited_updated, "../works_cited_2022_ver2026.rds")
+saveRDS(works_cited_updated, "../works_cited_2024_ver202608.rds")
 
 #################################################################
 ############### Comparing ver2025 and ver2026 data #### 
