@@ -1,0 +1,10 @@
+topic,note
+Source list,"Workbook lists 1,195 rows; W4389192884 appears twice, so 1,194 unique Work IDs. [1]"
+Retrieval,"1,192 returned by batch query; 2 (W7028777612, W7084109945) required individual fetch because they are expansion-corpus records excluded from queries by default."
+grants -> awards,The requested grants.funder_display_name / grants.award_id no longer exist on the Work object; the payload carries awards[] and funders[]. Delivered columns keep the requested names and are sourced from awards[].funder_display_name and awards[].funder_award_id.
+Delimiters,"'; ' = deduplicated name lists. ' | ' = positional, one slot per author (also used for award_ids). ' + ' = multiple institutions within a single author."
+Author cap,The API returns at most 100 authorships; author/institution/country list fields are truncated on such works (see authorships_truncated_flag).
+Institution counts,On 12 works OpenAlex's institutions_distinct_count exceeds the locally recomputed count. Both columns are shipped so the gap is visible.
+Funding,"851 works have funder metadata; only 790 have structured award records. Use funding_provenance, not has_funding_data, to distinguish."
+Award titles,"~76% of award records have no title. Absence reflects the upstream source, not missing extraction."
+Type mapping,"OpenAlex collapses journal articles, proceedings papers, and posted content into type='article', distinguishing them by venue. Check raw_type for the upstream label; posters likely appear as conference-abstract or other."

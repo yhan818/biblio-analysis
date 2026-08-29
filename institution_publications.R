@@ -28,10 +28,8 @@ options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
 PATH <- "/home/yhan/Documents/biblio-analysis"
 setwd(PATH)
 getwd()
-
 Sys.getenv("OPENALEXR_APIKEY")
 # Sys.getenv("OPENALEXR_APIKEY_Personal")
-
 
 source("my_functions.R")
 
@@ -92,11 +90,11 @@ works_count <-oa_fetch(
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
 
-works_published_2024 <-oa_fetch(
+works_published_2023 <-oa_fetch(
   entity="works",
   institutions.ror=c("03m2x1q45"), # U Arizona
-  from_publication_date ="2024-01-01",
-  to_publication_date = "2024-12-31",
+  from_publication_date ="2023-01-01",
+  to_publication_date = "2023-12-31",
 )
     
 # 2026-05: 
@@ -107,24 +105,21 @@ works_published_2025 <-oa_fetch(
   to_publication_date = "2025-12-31",
 )
 
-# saveRDS(works_published_2022, "../works_published_2022_ver2026.rds")
-# saveRDS(works_published_2023, "../works_published_2023_ver2026.rds")
-saveRDS(works_published_2024, "../works_published_2024_ver202608.rds")
+# saveRDS(works_published_2022, "../works_published_2022_ver202608.rds")
+
+saveRDS(works_published_2023, "../works_published_2023_ver202608.rds")
+ 
+# saveRDS(works_published_2024, "../works_published_2024_ver202608.rds")
 
 # saveRDS(works_published_2025, "../works_published_2025_ver202608.rds")
 
 # works_published_2023 <- readRDS("../works_published_2023.rds")
-# works_published <- works_published_2023
 
-# By 2025-07, there is a data structure change such as "author" changed to "authorships"
 # works_published_2024 <- readRDS("../works_published_2024.rds")
-# works_published <- works_published_2024
 
 #works_published_2025 <- readRDS("../works_published_2025_ver202608.rds")
 
-
-
-works_published <- works_published_2024
+works_published <- works_published_2022
 
 # Filter dataframe for non articles
 works_articles <- works_published %>%
@@ -252,19 +247,15 @@ for (i in indices) {
 ########################################
 
 #########################
-# Ensure oa_fetch() is receiving the correct input and create a new dataframe for results.
+
 works_cited <- data.frame()
+
 #works_cited_2025 <-data.frame()
 
 library(httr)
 ################################################ CORE: Citation DATA
 ###***********************************************
 ################################################### CORE 
-
-# Check in browser or via httr:
-# GET https://api.openalex.org/rate-limit?api_key=YOUR_API_KEY
-# Ensure API key is set
-openalexR::oa_apikey("OPENALEXR_APIKEY")
 
 httr::set_config(httr::timeout(120))
 
@@ -351,7 +342,7 @@ time_taken <- system.time({
                     "| works_cited:", nrow(works_cited),
                     "| missing so far:", length(missing_ids)))
     }
-    Sys.sleep(8) # adjust this value because openalex has free credit $1. For 400k records, you need long sleep time
+    Sys.sleep(0.1) # adjust this value because openalex has free credit $1. For 400k records, you need long sleep time
   }
 })
 
@@ -363,15 +354,15 @@ message("Identifiers not found: ", length(missing_ids))
 message("Batches with errors: ", nrow(error_log))
 
 # Save missing IDs for investigation
-saveRDS(missing_ids, "2024_missing_openalex_ids.rds")
-saveRDS(error_log, "2024_error_log.rds")
+saveRDS(missing_ids, "2022_missing_openalex_ids.rds")
+saveRDS(error_log, "2022_error_log.rds")
 
 # Create a summary data frame of missing IDs
 missing_summary <- data.table::data.table(
   openalex_id = missing_ids,
   status = "not_returned"
 )
-data.table::fwrite(missing_summary, "2024_missing_records_log.csv")
+data.table::fwrite(missing_summary, "2022_missing_records_log.csv")
 
 
 ########################
@@ -387,12 +378,12 @@ data.table::fwrite(missing_summary, "2024_missing_records_log.csv")
 ### Sour mismatch
 
 # 2022: Permanently missing: 26013; recovered: 1479
-# 2023: 
+# 2023: Works retrieved: 396,742, not found: 32,458 (Permanently missing: 25,043; recovered: 1898
 # 2024: Works retrieved: 382,250, not found: 26,941 (Permanently missing: 25,043; recovered: 1898
 # 2025: Works retrieved: 343,174, not found: 15,543 (Permanently missing: 13,903; recovered: 1640)
 
 ################ Recover missing IDs ####################
-missing_ids <- readRDS("2024_missing_openalex_ids.rds")
+missing_ids <- readRDS("2022_missing_openalex_ids.rds")
 message("Total missing: ", length(missing_ids))
 
 
@@ -414,12 +405,13 @@ for (j in seq_along(missing_ids)) {
   }
   
   if (j %% 100 == 0) message("Retried ", j, " of ", length(missing_ids))
-  Sys.sleep(1)
+  Sys.sleep(0.5)
 }
 
 message("Recovered on retry: ", length(retry_results))
 message("Permanently missing: ", length(still_missing))
-saveRDS(still_missing, "2024_permanently_missing_ids.rds")
+saveRDS(still_missing, "2022_permanently_missing_ids.rds")
+
 
 library(dplyr)
 ############### Recover
@@ -430,7 +422,11 @@ message("Total rows BEFORE merger: ", nrow(works_cited))
 works_cited_updated <- bind_rows(works_cited, recovered_df)
 message("Total rows after merger: ", nrow(works_cited_updated))
 
-saveRDS(works_cited_updated, "../works_cited_2024_ver202608.rds")
+saveRDS(works_cited_updated, "../works_cited_2022_ver202608.rds")
+
+
+
+
 
 #################################################################
 ############### Comparing ver2025 and ver2026 data #### 
@@ -566,12 +562,6 @@ cat(sprintf("Citations -> Retained Base: %d | Pure Growth: %d | Pure Leakage: %d
 #  UW: 2024: 616,427
 # saveRDS(works_cited, "../msu_works_cited_2024.rds")
 
-rm(works_cited)
-
-# works_cited_2023 <- readRDS("../works_cited_2023.rds")
-
-# works_cited_2024 <- readRDS("../works_cited_2024.rds")
-
 
 # compare df again before binding rows
 # matching_list <- list(works_cited_2022, works_cited_2023, works_cited_2024) 
@@ -671,28 +661,38 @@ head(matching_rows$id)
 # First getting all the works_cited by year data. year by year. 2022 > 2023 > 2024 
 ### Always run this year by year 
 
-#works_cited <- works_cited_2023
-#works_cited <- works_cited_2023 %>%
-#  mutate(authored_year = 2023) %>%
-#  select(authored_year, everything())  # This moves UA_authored_year to first position
 
-#works_cited <- works_cited_2024
-# works_cited <- works_cited_2024 %>%
-#  mutate(authored_year = 2024) %>%
-#  select(authored_year, everything())  # This moves UA_authored_year to first position
+rm(works_cited)
+works_cited_2023 <- readRDS("../works_cited_2023_ver202608.rds")
+works_cited <- works_cited_2023
+works_cited <- works_cited_2023 %>%
+  mutate(authored_year = 2023) %>%
+  select(authored_year, everything())  # This moves UA_authored_year to first position
+
+
+rm(works_cited)
+works_cited_2024 <- readRDS("../works_cited_2024_ver202608.rds")
+works_cited <- works_cited_2024
+works_cited <- works_cited_2024 %>%
+  mutate(authored_year = 2024) %>%
+  select(authored_year, everything())  # This moves UA_authored_year to first position
+
+
+rm(works_cited)
+works_cited_2025 <- readRDS("../works_cited_2025_ver202608.rds")
+works_cited <- works_cited_2025
+works_cited <- works_cited_2025 %>%
+  mutate(authored_year = 2025) %>%
+  select(authored_year, everything())  # This moves UA_authored_year to first position
 
 # Step 2.1: One way is via type = article
 # works_cited = works_cited_type_articles + works_cited_type_nonarticles
 
 works_cited_type_articles    <- subset(works_cited, type == "article")
 unique(works_cited_type_articles$type)
-unique_issns <- unique(works_cited_type_articles$issn_l)
-number_of_unique_issns <- length(unique_issns)
 
 works_cited_type_nonarticles <- subset(works_cited, type != "article")
 unique(works_cited_type_nonarticles$type)
-unique_issns2 <- unique(works_cited_type_nonarticles$issn_l)
-number_of_unique_issns2 <- length(unique_issns2)
 
 
 #######################################################################
@@ -796,32 +796,6 @@ unique_publishers <- unique(works_cited_type_articles$host_organization)
 num_unique_publishers <- length(unique_publishers)  # number of publishers: ~1,600
 print(unique_publishers[1:50])
 
-####################### Using ISSN 
-# list NULL publishers ~ 1 %
-# 2023: 2,227 (probably need ISSN matching) / 2,922 NA/
-# 2022: 3,312 NA / 323,221
-# 2021: 3,687 NA / 341,738 
-# 2020: 4,039 NA / 382,495
-num_na <- sum(is.na(works_cited_source_issn$host_organization))
-# Replace NA values and empty strings with "NA"
-works_cited_source_issn$host_organization[is.na(works_cited_source_issn$host_organization) | trimws(works_cited_source_issn$host_organization) == ""] <- "NA"
-
-# Dealing with "NA" data in "host_organization" field.
-# 1. First, showing all NA publisher: meaning publisher info is not available. 
-publisher_NA <- works_cited_source_issn[works_cited_source_issn$host_organization == "NA", ]
-
-publisher_NA_id <-unique(publisher_NA$id)
-# Check if any row in the df 'publisher_NA' contains a non-missing value in the "issn_l" column
-publisher_NA_with_issn <- publisher_NA[!is.na(publisher_NA$`issn_l`) & publisher_NA$`issn_l` != "", ]
-print(publisher_NA_with_issn)
-
-# Extract unique ISSNs from the 'issn_l' column: 1235 unique issns
-# 2023: 1,236 / 3,489 NA
-# 2022: 1,110 / 3,312 NA
-# 2021: 1,204 / 3,687 NA
-# 2020: 1,737 / 4,039 NA 
-unique_issn <- unique(publisher_NA$`issn_l`)
-print(unique_issn)
 
 # Convert the 'author' dataframe to JSON for each row
 publisher_NA <- publisher_NA %>%
@@ -831,30 +805,6 @@ publisher_NA <- publisher_NA %>%
 publisher_NA <- publisher_NA %>%
   mutate(across(where(is.character), ~ ifelse(nchar(.) > 32767, substr(., 1, 32767), .)))
 
-
-# APS: 
-# 2023: journal (article, review): 166; Non-journal (book-chapter): 0
-# 2022: journal (article, review): 230; Non-journal (book-chapter): 2
-# 2021: journal (article, review) : 170; Non-journal (book-chapter) : 2
-works_cited_source_issn_aps  <- works_cited_source_issn[grepl("American Phytopathological Society", works_cited_source_issn$host_organization, ignore.case = TRUE), ]
-works_cited_source_nonissn_aps <- works_cited_source_nonissn[grepl("American Phytopathological Society", works_cited_source_nonissn$host_organization, ignore.case = TRUE), ]
-
-# Create a list to hold the data frames
-cited_all_types <- list(
-  APS_journal_type = publisher_aps, 
-  APS_non_journal_type = publisher_aps2  
-)
-# Write the list to an Excel file with each data frame as a separate sheet
-write_xlsx(cited_all_types, "citations/publisher_aps_cited_works_2022.xlsx")
-
-# 2025-01: BMJ:
-# 2023: journal (article, review): 1,694 ; Non-journal: 0
-# 2022: journal (article, review): 1,914 ; Non-journal: 0
-# 2021: journal (article, review): 1,815 ; Non-journal: 0
-works_cited_source_issn_bmj  <- works_cited_source_issn[grepl("BMJ", works_cited_source_issn$host_organization, ignore.case = TRUE), ]
-works_cited_source_nonissn_bmj <- works_cited_source_nonissn[grepl("BMJ", works_cited_source_nonissn$host_organization, ignore.case = TRUE), ]
-
-truncate_and_write(works_cited_source_issn_bmj)
 
 ###############################################################################
 #### Step 4: Analyzing publisher
@@ -1019,18 +969,45 @@ works_cited_type_articles_child_publishers <-bind_rows(works_cited_type_articles
 #########################################
 
 
+
+
+
+### testing a work ID and its publisher
+w <- oa_fetch(
+  entity     = "works",
+  identifier = "W2031502025",
+  verbose    = TRUE
+)
+
+str(w, max.level = 1)
+
+
+
+
+
 ###################################################################
 ######################  Filter for the PUBLISHER
 ####################################################################
-# Only see the publisher ("publisher_str") in the host_organization. 
+# Only see the publisher ("publisher_str") in the host_organization.
+publisher_str <- "Rockefeller University Press" 
+publisher_id <- "https://openalex.org/P4310315676"
+
+
 works_cited_type_articles_publisher <- works_cited_type_articles %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+  filter(grepl(publisher_str, host_organization_name, ignore.case = TRUE))
+works_cited_type_articles_publisher2 <- works_cited_type_articles %>%
+  filter(grepl(publisher_id, host_organization, ignore.case = TRUE))
+
 
 works_cited_type_nonarticles_publisher <- works_cited_type_nonarticles %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+  filter(grepl(publisher_str, host_organization_name, ignore.case = TRUE))
+works_cited_type_nonarticles_publisher2 <- works_cited_type_nonarticles %>%
+  filter(grepl(publisher_id, host_organization, ignore.case = TRUE))
 
 works_published_publisher <- works_published %>%
-  filter(grepl(publisher_str, host_organization, ignore.case = TRUE))
+  filter(grepl(publisher_str, host_organization_name, ignore.case = TRUE))
+
+
 
 works_cited_type_articles_publisher <- bind_rows(works_cited_type_articles_child_publishers, works_cited_type_articles_publisher)
 
@@ -1042,18 +1019,20 @@ print(unique_publishers)
 # Get 2022 data, then 2023, then 2024
 #works_cited_type_articles_publisher <- works_cited_type_articles_c1
 
-works_cited_type_articles_publisher_22 <- works_cited_type_articles_publisher
+# works_cited_type_articles_publisher_22 <- works_cited_type_articles_publisher
 
 works_cited_type_articles_publisher_23 <- works_cited_type_articles_publisher
 
 works_cited_type_articles_publisher_24 <- works_cited_type_articles_publisher
 
+works_cited_type_articles_publisher_25 <- works_cited_type_articles_publisher
+
 
 ################################## NEXT STEP 
 
-final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_22, 2022)
 final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_23, 2023)
 final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_24, 2024)
+final_p <- count_cited_works_by_category(works_cited_type_articles_publisher_25, 2025)
 
 print(final_p$other_data[1])
 # Analyze topic: domain, field, sub-field, topic
@@ -1198,17 +1177,46 @@ print(final_p$other_data[1])
 
 
 
-works_cited_type_articles_publisher_22_23_24 <- bind_rows(works_cited_type_articles_publisher_22, 
-                                                         works_cited_type_articles_publisher_23, 
-                                                         works_cited_type_articles_publisher_24)
-saveRDS(works_cited_type_articles_publisher_22_23_24, "../works_cited_type_articles_tf_22_23_24.rds")
+works_cited_type_articles_publisher_23_24_25 <- bind_rows(works_cited_type_articles_publisher_23, 
+                                                         works_cited_type_articles_publisher_24, 
+                                                         works_cited_type_articles_publisher_25)
+saveRDS(works_cited_type_articles_publisher_23_24_25, "../works_cited_type_articles_rockefellerupress_23_24_25.rds")
 
 
 ### comment out when loading a new publisher
-#works_cited_type_articles_publisher_22_23_24 <- readRDS("../works_cited_type_articles_elsevier_22_23_24.rds")
+works_cited_type_articles_publisher_23_24_25 <- readRDS("../works_cited_type_articles_rockefellerupress_23_24_25.rds")
+works_cited_type_articles_publisher_23 <- works_cited_type_articles_publisher_23_24_25 %>%
+  filter(authored_year == 2023)
+works_cited_type_articles_publisher_24 <- works_cited_type_articles_publisher_23_24_25 %>%
+  filter(authored_year == 2024)
+works_cited_type_articles_publisher_25 <- works_cited_type_articles_publisher_23_24_25 %>%
+  filter(authored_year == 2025)
 
-works_cited_type_articles_publisher_yr22 <- extract_topics_by_level(works_cited_type_articles_publisher_22, 1)
-works_cited_type_articles_publisher_yr22_field <- extract_topics_by_level(works_cited_type_articles_publisher_22, 2)
+
+
+#works_cited_type_articles_publisher_yr22 <- extract_topics_by_level(works_cited_type_articles_publisher_22, 1)
+#works_cited_type_articles_publisher_yr22_field <- extract_topics_by_level(works_cited_type_articles_publisher_22, 2)
+
+library(tidyr)
+library(purrr)
+names(works_cited_type_articles_publisher_23)
+
+library(tidyr)
+library(dplyr)
+
+# Unnest safely using names_sep to prefix sub-columns
+topics_unnested <- works_cited_type_articles_publisher_23 %>%
+  select(id, topics) %>%
+  unnest(topics, names_sep = "_")
+
+head(topics_unnested)
+
+
+rup <- works_cited_type_articles_publisher_23 |>
+  dplyr::filter(grepl("P4310315676", host_organization))
+
+# sanity check: should be the 4 RUP journals
+dplyr::count(rup, source_display_name, host_organization_name, sort = TRUE)
 
 works_cited_type_articles_publisher_yr23 <- extract_topics_by_level(works_cited_type_articles_publisher_23, 1)
 works_cited_type_articles_publisher_yr23_field <- extract_topics_by_level(works_cited_type_articles_publisher_23, 2)
@@ -1216,9 +1224,86 @@ works_cited_type_articles_publisher_yr23_field <- extract_topics_by_level(works_
 works_cited_type_articles_publisher_yr24 <- extract_topics_by_level(works_cited_type_articles_publisher_24, 1)
 works_cited_type_articles_publisher_yr24_field <- extract_topics_by_level(works_cited_type_articles_publisher_24, 2)
 
+works_cited_type_articles_publisher_yr25 <- extract_topics_by_level(works_cited_type_articles_publisher_25, 1)
+works_cited_type_articles_publisher_yr25_field <- extract_topics_by_level(works_cited_type_articles_publisher_25, 2)
 
-works_cited_type_articles_publisher_yr22_23_24 <- extract_topics_by_level(works_cited_type_articles_publisher_22_23_24, 1)
-write_df_to_excel(works_cited_type_articles_publisher_yr22_23_24)
+works_cited_type_articles_publisher_yr23_24_25 <- extract_topics_by_level(works_cited_type_articles_publisher_23_24_25, 1)
+write_df_to_excel(works_cited_type_articles_publisher_yr23_24_25)
+
+#### counting each journal's citations
+df <- works_cited_type_articles_publisher_23_24_25
+issn_article_counts <- df %>%
+  count(`issn_l`, name = "article_count")
+
+issn_article_counts2 <- df %>%
+  count(`source_id`, name = "article_count")
+
+
+library(dplyr)
+library(purrr)
+library(jsonlite)
+
+# Target IDs to check
+work_ids <- c(
+  "W2060043235", "W2149374899", "W2144786034", "W2124568214", 
+  "W2112251383", "W2109800651", "W2100646399", "W2998872970", 
+  "W2109127883", "W2129482808", "W3104249855", "W2168207311", 
+  "W2138153315", "W1977014064", "W2100298862", "W2060322688", 
+  "W2167152410", "W3007757041", "W2150669288", "W2258885744", 
+  "W2288131330", "W3005437014", "W4280529476", "W2532739235", 
+  "W2094526184", "W2120996101", "W2146170189", "W2066250730", 
+  "W2111371750", "W2135647797", "W2018108516", "W2105707485", 
+  "W2153626991", "W4317751904", "W3154816736", "W4309509363", 
+  "W1979258792", "W2015866042", "W2171480972", "W2057272534", 
+  "W2768167146", "W1980991217", "W2074520327", "W2966842636", 
+  "W2022430924", "W2003676228", "W2013571030", "W1989642841", 
+  "W2020857625", "W2144891041", "W2150841203", "W2104199760", 
+  "W2131625721", "W2139620102", "W2085952814", "W2129035006", 
+  "W2016531738", "W2074177784", "W2100868544", "W2090349233", 
+  "W2517169530", "W2172202097", "W3000748576", "W1987900105", 
+  "W2149108521", "W2128347259", "W2133124008"
+)
+
+clean_ids <- unique(tolower(gsub("https://openalex.org/", "", work_ids)))
+
+# Check each target ID directly against the exact OpenAlex API filter
+results <- map_df(clean_ids, function(id) {
+  url <- paste0(
+    "https://api.openalex.org/works?filter=",
+    "referenced_works:", id,
+    ",authorships.institutions.lineage:i138006243",
+    ",publication_year:2023-2025"
+  )
+  
+  tryCatch({
+    res <- fromJSON(url)
+    tibble(
+      work_id = toupper(id),
+      target_work = paste0("https://openalex.org/", toupper(id)),
+      is_cited_by_ua_2023_2025 = res$meta$count > 0,
+      ua_citations_count = res$meta$count,
+      sample_citing_ua_id = ifelse(res$meta$count > 0, res$results$id[1], NA_character_),
+      citing_years = ifelse(res$meta$count > 0, paste(sort(unique(res$results$publication_year)), collapse = ", "), NA_character_)
+    )
+  }, error = function(e) {
+    tibble(
+      work_id = toupper(id),
+      target_work = paste0("https://openalex.org/", toupper(id)),
+      is_cited_by_ua_2023_2025 = NA,
+      ua_citations_count = NA_integer_,
+      sample_citing_ua_id = NA_character_,
+      citing_years = NA_character_
+    )
+  })
+})
+
+# Display summary
+print(as.data.frame(results))
+
+# Export clean verified records
+write.csv(results, "ua_citations_exact_api_verified.csv", row.names = FALSE)
+
+
 
 
 # This will count every unique value in the 'domain_L1' column

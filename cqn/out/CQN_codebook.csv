@@ -1,0 +1,112 @@
+position,field,r_class,n_filled,fill_pct,n_unique,example,definition,notes,documented
+1,requested_work_id,character,1194,100,1194,W3128101795,OpenAlex Work ID as supplied in the source workbook.,"Primary key. 1,194 unique IDs.",TRUE
+2,returned_openalex_id,character,1194,100,1194,W3128101795,Work ID returned by the API.,Differs from requested only if a record was merged; no merges found here.,TRUE
+3,fetch_status,character,1194,100,1,ok,ok / not_found.,"All 1,194 = ok.",TRUE
+4,fetch_method,character,1194,100,2,list_filter,How the record was retrieved.,list_filter = batch query; singleton_xpac = fetched individually.,TRUE
+5,is_xpac,logical,1194,100,2,FALSE,TRUE = expansion-corpus record.,2 works. Thinner metadata; excluded from OpenAlex queries by default.,TRUE
+6,doi,character,1170,98,1164,https://doi.org/10.1088/2515-7647/ac1ef4,Standard OpenAlex Work field: doi,,FALSE
+7,title,character,1194,100,969,2022 Roadmap on integrated quantum photonics,Standard OpenAlex Work field: title,,FALSE
+8,type,character,1194,100,10,article,Standard OpenAlex Work field: type,,FALSE
+9,raw_type,character,0,0,0,,Standard OpenAlex Work field: raw_type,,FALSE
+10,publication_year,integer,1194,100,10,2021,Standard OpenAlex Work field: publication_year,,FALSE
+11,publication_date,character,1194,100,708,2021-08-18,Standard OpenAlex Work field: publication_date,,FALSE
+12,source_display_name,character,991,83,141,Journal of Physics Photonics,Standard OpenAlex Work field: source_display_name,,FALSE
+13,author_names_clean,character,1194,100,859,Galan Moody; Volker J. Sorger; Daniel J Blumenthal; P Juodaw,"All author names, submission order preserved.","'; ' delimited. No OpenAlex IDs, no affiliations. Not limited to UA.",TRUE
+14,institution_names_clean,character,835,69.9,572,"University of California, Santa Barbara; George Washington U",Distinct institution names for the work.,"'; ' delimited, deduplicated. Names only, no OpenAlex IDs.",TRUE
+15,authorships_countries,character,1194,100,398,US | US | US | US | US | US | GB | GB | GB | GB | US | US | ,ISO country code(s) per author.,"' | ' separates authors (order preserved); ',' separates multiple countries for one author; empty slot = no country.",TRUE
+16,countries_distinct_count,integer,1194,100,9,9,OpenAlex's count of distinct author countries.,Authoritative; use this over the *_computed version.,TRUE
+17,institutions_distinct_count,integer,1194,100,20,33,OpenAlex's count of distinct author institutions.,Exceeds locally recomputed value on 12 works.,TRUE
+18,funder_display_names,character,851,71.3,658,Army Research Office; U.S. Department of Energy; Defense Adv,Funder names for the work.,"Requested as grants.funder_display_name. Union of awards[].funder_display_name and funders[]. '; ' delimited, deduplicated.",TRUE
+19,award_ids,character,790,66.2,675,FA8702-15-D-0001 | FA8702-15-D-0001 | FA8702-15-D-0001 | EP/,Funder's own grant/award numbers.,Requested as grants.award_id; sourced from awards[].funder_award_id. ' | ' delimited because 13 works have grant IDs containing ';'.,TRUE
+20,pmid,character,152,12.7,152,https://pubmed.ncbi.nlm.nih.gov/38926403,Standard OpenAlex Work field: pmid,,FALSE
+21,pmcid,character,0,0,0,,Standard OpenAlex Work field: pmcid,,FALSE
+22,mag,character,99,8.3,99,3128101795,Standard OpenAlex Work field: mag,,FALSE
+23,type_crossref,character,0,0,0,,Standard OpenAlex Work field: type_crossref,,FALSE
+24,language,character,1155,96.7,4,en,Standard OpenAlex Work field: language,,FALSE
+25,volume,character,563,47.2,126,4,Standard OpenAlex Work field: volume,,FALSE
+26,issue,character,491,41.1,53,1,Standard OpenAlex Work field: issue,,FALSE
+27,first_page,character,513,43,451,012501,Standard OpenAlex Work field: first_page,,FALSE
+28,last_page,character,512,42.9,459,012501,Standard OpenAlex Work field: last_page,,FALSE
+29,indexed_in,character,1185,99.2,19,arxiv; crossref; datacite; doaj,Standard OpenAlex Work field: indexed_in,,FALSE
+30,created_date,character,1194,100,202,2025-10-10T00:00:00,Standard OpenAlex Work field: created_date,,FALSE
+31,updated_date,character,1194,100,34,2026-08-26T07:47:46.906454,Standard OpenAlex Work field: updated_date,,FALSE
+32,source_id,character,991,83,141,S4210198424,Standard OpenAlex Work field: source_id,,FALSE
+33,source_type,character,991,83,5,journal,Standard OpenAlex Work field: source_type,,FALSE
+34,issn_l,character,952,79.7,125,2515-7647,Standard OpenAlex Work field: issn_l,,FALSE
+35,issn_all,character,952,79.7,125,2515-7647,Standard OpenAlex Work field: issn_all,,FALSE
+36,host_organization_id,character,958,80.2,40,P4310320083,Standard OpenAlex Work field: host_organization_id,,FALSE
+37,host_organization_name,character,958,80.2,40,IOP Publishing,Standard OpenAlex Work field: host_organization_name,,FALSE
+38,primary_location_version,character,1182,99,3,publishedVersion,Standard OpenAlex Work field: primary_location_version,,FALSE
+39,primary_location_license,character,421,35.3,7,cc-by,Standard OpenAlex Work field: primary_location_license,,FALSE
+40,primary_location_is_oa,logical,1194,100,2,TRUE,Standard OpenAlex Work field: primary_location_is_oa,,FALSE
+41,primary_location_landing_page,character,1193,99.9,1189,https://doi.org/10.1088/2515-7647/ac1ef4,Standard OpenAlex Work field: primary_location_landing_page,,FALSE
+42,primary_location_pdf_url,character,657,55,656,https://iopscience.iop.org/article/10.1088/2515-7647/ac1ef4/,Standard OpenAlex Work field: primary_location_pdf_url,,FALSE
+43,locations_count,integer,1194,100,12,15,Standard OpenAlex Work field: locations_count,,FALSE
+44,is_oa,logical,1194,100,2,TRUE,Standard OpenAlex Work field: is_oa,,FALSE
+45,oa_status,character,1194,100,6,gold,Standard OpenAlex Work field: oa_status,,FALSE
+46,oa_url,character,865,72.4,863,https://iopscience.iop.org/article/10.1088/2515-7647/ac1ef4/,Standard OpenAlex Work field: oa_url,,FALSE
+47,any_repository_has_fulltext,logical,1184,99.2,2,TRUE,Standard OpenAlex Work field: any_repository_has_fulltext,,FALSE
+48,best_oa_source_name,character,847,70.9,100,Journal of Physics Photonics,Standard OpenAlex Work field: best_oa_source_name,,FALSE
+49,best_oa_source_type,character,847,70.9,3,journal,Standard OpenAlex Work field: best_oa_source_type,,FALSE
+50,best_oa_license,character,451,37.8,7,cc-by,Standard OpenAlex Work field: best_oa_license,,FALSE
+51,best_oa_version,character,854,71.5,3,publishedVersion,Standard OpenAlex Work field: best_oa_version,,FALSE
+52,best_oa_landing_page,character,865,72.4,863,https://doi.org/10.1088/2515-7647/ac1ef4,Standard OpenAlex Work field: best_oa_landing_page,,FALSE
+53,best_oa_pdf_url,character,736,61.6,735,https://iopscience.iop.org/article/10.1088/2515-7647/ac1ef4/,Standard OpenAlex Work field: best_oa_pdf_url,,FALSE
+54,apc_list_value_usd,integer,418,35,48,2700,Standard OpenAlex Work field: apc_list_value_usd,,FALSE
+55,apc_paid_value_usd,integer,242,20.3,40,2700,Standard OpenAlex Work field: apc_paid_value_usd,,FALSE
+56,apc_paid_provenance,character,0,0,0,,Standard OpenAlex Work field: apc_paid_provenance,,FALSE
+57,has_fulltext,logical,1194,100,2,TRUE,Standard OpenAlex Work field: has_fulltext,,FALSE
+58,has_content_pdf,logical,1194,100,2,TRUE,Standard OpenAlex Work field: has_content_pdf,,FALSE
+59,has_content_grobid,logical,1194,100,2,TRUE,Standard OpenAlex Work field: has_content_grobid,,FALSE
+60,cited_by_count,integer,1194,100,107,6,Standard OpenAlex Work field: cited_by_count,,FALSE
+61,fwci,numeric,739,61.9,531,0.8278,Standard OpenAlex Work field: fwci,,FALSE
+62,cnp_value,numeric,740,62,740,0.77719775,Standard OpenAlex Work field: cnp_value,,FALSE
+63,is_in_top_1_percent,logical,740,62,2,FALSE,Standard OpenAlex Work field: is_in_top_1_percent,,FALSE
+64,is_in_top_10_percent,logical,740,62,2,FALSE,Standard OpenAlex Work field: is_in_top_10_percent,,FALSE
+65,cited_by_pctile_min,numeric,594,49.7,10,93,Standard OpenAlex Work field: cited_by_pctile_min,,FALSE
+66,cited_by_pctile_max,numeric,594,49.7,8,96,Standard OpenAlex Work field: cited_by_pctile_max,,FALSE
+67,referenced_works_count,integer,1194,100,134,269,Standard OpenAlex Work field: referenced_works_count,,FALSE
+68,related_works_count,integer,1194,100,4,19,Standard OpenAlex Work field: related_works_count,,FALSE
+69,is_retracted,logical,1194,100,1,FALSE,Retraction flag.,All FALSE.,TRUE
+70,is_paratext,logical,1194,100,1,FALSE,Derived from type == 'paratext'.,Native field deprecated. All FALSE.,TRUE
+71,is_paratext_raw,logical,1194,100,1,FALSE,The is_paratext value as returned.,Retained to show it agrees with the derivation.,TRUE
+72,primary_topic,character,1193,99.9,168,Neural Networks and Reservoir Computing,Standard OpenAlex Work field: primary_topic,,FALSE
+73,primary_topic_id,character,1193,99.9,168,T12611,Standard OpenAlex Work field: primary_topic_id,,FALSE
+74,primary_topic_score,numeric,1193,99.9,308,0.999899983406067,Standard OpenAlex Work field: primary_topic_score,,FALSE
+75,primary_subfield,character,1193,99.9,48,Artificial Intelligence,Standard OpenAlex Work field: primary_subfield,,FALSE
+76,primary_field,character,1193,99.9,14,Computer Science,Standard OpenAlex Work field: primary_field,,FALSE
+77,primary_domain,character,1193,99.9,4,Physical Sciences,Standard OpenAlex Work field: primary_domain,,FALSE
+78,topics_all,character,1193,99.9,729,Neural Networks and Reservoir Computing; Photonic and Optica,Standard OpenAlex Work field: topics_all,,FALSE
+79,topics_count,integer,1194,100,4,3,True number of topics.,topics_all is capped at 3.,TRUE
+80,keywords,character,1193,99.9,1167,Photonics; Computer science; Integrated circuit; Quantum com,Standard OpenAlex Work field: keywords,,FALSE
+81,keywords_count,integer,1194,100,25,11,Standard OpenAlex Work field: keywords_count,,FALSE
+82,concepts,character,1193,99.9,1143,Photonics; Computer science; Integrated circuit; Quantum com,Standard OpenAlex Work field: concepts,,FALSE
+83,concepts_count,integer,1194,100,39,12,True number of concepts.,concepts is capped at 5.,TRUE
+84,sdg_names,character,444,37.2,17,Affordable and clean energy,Standard OpenAlex Work field: sdg_names,,FALSE
+85,sdg_count,integer,1194,100,3,0,Standard OpenAlex Work field: sdg_count,,FALSE
+86,abstract,character,1123,94.1,1070,Abstract Integrated photonics will play a key role in quantu,Standard OpenAlex Work field: abstract,,FALSE
+87,has_abstract,logical,1194,100,2,TRUE,TRUE if an abstract_inverted_index was present.,,TRUE
+88,authors_count,integer,1194,100,36,55,Number of authorships on the record.,Capped at 100 by the API.,TRUE
+89,first_author_name,character,1194,100,528,Galan Moody,Standard OpenAlex Work field: first_author_name,,FALSE
+90,last_author_name,character,1194,100,277,Ryan M. Camacho,Standard OpenAlex Work field: last_author_name,,FALSE
+91,authorships_institutions,character,1194,100,712,"University of California, Santa Barbara | George Washington ","Institutions per author, positionally aligned.",' | ' between authors; ' + ' within one author (institution names contain commas).,TRUE
+92,authorships_countries_src,character,835,69.9,1,authorship.countries,Whether countries came from authorship.countries or institution.country_code.,Provenance flag.,TRUE
+93,distinct_countries_list,character,835,69.9,159,US; GB; CH; AU; DE; NL; RU; SE; FR,Deduplicated list of country codes.,'; ' delimited.,TRUE
+94,countries_distinct_computed,integer,1194,100,9,9,Country count recomputed locally.,Cross-check against OpenAlex's count.,TRUE
+95,institutions_distinct_computed,integer,1194,100,19,33,Institution count recomputed locally.,Lower than OpenAlex's on 12 works.,TRUE
+96,corresponding_author_names,character,349,29.2,280,Galan Moody,Authors flagged is_corresponding.,Often empty; upstream metadata is inconsistent.,TRUE
+97,corresponding_institution_names,character,344,28.8,193,"University of California, Santa Barbara",Standard OpenAlex Work field: corresponding_institution_names,,FALSE
+98,authorships_truncated_flag,logical,1194,100,2,FALSE,TRUE if authors_count >= 100.,List fields are truncated on these works.,TRUE
+99,award_display_names,character,637,53.4,346,Cornell Center for Materials Research - MRSEC | NEW; SISGR -,Award/grant titles.,~76% empty: Crossref grant records carry no title.,TRUE
+100,award_dois,character,0,0,0,,Standard OpenAlex Work field: award_dois,,FALSE
+101,award_count,integer,1194,100,53,12,Number of award objects.,Range 0-64.,TRUE
+102,award_ids_count,integer,1194,100,53,12,Count of non-empty grant IDs.,Equals award_count for all works (100% grant-ID fill).,TRUE
+103,award_title_count,integer,1194,100,12,0,Standard OpenAlex Work field: award_title_count,,FALSE
+104,funder_count,integer,1194,100,23,30,Standard OpenAlex Work field: funder_count,,FALSE
+105,has_funding_data,logical,1194,100,2,TRUE,Standard OpenAlex Work field: has_funding_data,,FALSE
+106,has_awards,logical,1194,100,2,TRUE,Standard OpenAlex Work field: has_awards,,FALSE
+107,award_id_has_delim,logical,1194,100,2,FALSE,Standard OpenAlex Work field: award_id_has_delim,,FALSE
+108,funding_provenance,character,1194,100,3,award_with_grant_id,award_with_grant_id / funder_only / none.,"790 / 61 / 343. Distinguishes 'unfunded' from 'funder known, grant unmatched'.",TRUE
+109,is_international_collab,logical,1194,100,2,TRUE,countries_distinct_count > 1.,,TRUE
+110,is_multi_institution,logical,1194,100,2,TRUE,institutions_distinct_count > 1.,,TRUE
+111,is_single_author,logical,1194,100,2,FALSE,authors_count == 1.,,TRUE

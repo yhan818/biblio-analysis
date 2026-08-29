@@ -1,0 +1,30 @@
+check,pass,detail
+CSV row count == 1194,TRUE,1194
+XLSX row count == 1194,TRUE,1194
+CSV/XLSX same column count,TRUE,111 vs 111
+Column names identical,TRUE,
+All requested IDs present in CSV,TRUE,
+No extra IDs in CSV,TRUE,
+CSV keys unique,TRUE,
+XLSX keys match CSV keys,TRUE,
+CSV round-trips with zero cell differences,TRUE,0 differing cells
+XLSX round-trips with zero cell differences,TRUE,0 differing cells
+authorships_countries slots == authors_count,TRUE,0
+authorships_institutions slots == authors_count,TRUE,
+positional fields share one authorship spine,TRUE,
+author_names_clean items == authors_count,TRUE,
+institution_names_clean items == institutions_distinct_computed,TRUE,
+distinct_countries_list items == countries_distinct_computed,TRUE,
+funder_display_names items == funder_count,TRUE,
+award_ids items == award_ids_count,TRUE,
+award_ids items == award_count (100% grant-ID fill),TRUE,
+award_display_names items == award_count (positional),FALSE,"expected FAIL: NA titles dropped by cc(), field is not positional"
+award_display_names items == award_title_count,TRUE,
+no author name contains ';',TRUE,
+no institution name contains ';',TRUE,
+no institution name contains ' + ',TRUE,
+no country code contains '|',TRUE,
+"no country code contains ','",TRUE,
+no grant ID contains '|',TRUE,
+no funder name contains ';',TRUE,
+grant IDs containing ';' are isolated and benign,TRUE,13 works affected

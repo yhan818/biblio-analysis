@@ -1,0 +1,248 @@
+requested_work_id,doi,author_position,author_name,n_institutions,n_countries,raw_affiliation
+W3096053761,https://doi.org/10.1088/2058-9565/abfa64,10,Karina Montilla Edmonds,0,0,"SAP, Newport Beach, CA 92663, United States of America"
+W3096053761,https://doi.org/10.1088/2058-9565/abfa64,20,Doug T McClure,0,0,"IBM T J Watson Research Center, Yorktown Heights, NY 10598, United States of America"
+W4404932601,https://doi.org/10.1038/s41467-024-54541-2,4,Beibei Zeng,0,0,"AWS Center for Quantum Networking, Boston, MA, USA"
+W4404932601,https://doi.org/10.1038/s41467-024-54541-2,5,Chawina De-Eknamkul,0,0,"AWS Center for Quantum Networking, Boston, MA, USA"
+W4404932601,https://doi.org/10.1038/s41467-024-54541-2,9,Bartholomeus Machielse,0,0,"AWS Center for Quantum Networking, Boston, MA, USA"
+W3128101795,https://doi.org/10.1088/2515-7647/ac1ef4,21,Tin Komljenović,0,0,"Nexus Photonics, Goleta, CA 93117, United States of America"
+W4385315986,https://doi.org/10.1364/cleo_si.2023.sm2p.2,8,Michael Hochberg,0,0,"Luminous Computing, 4750 Patrick Henry Dr, Santa Clara, CA 95054, USA"
+W4379251561,https://doi.org/10.48550/arxiv.2306.00027,2,Sara E. Marsh,0,0,"Instructional Designer Ontario Certified Teacher (OCT) Kitchener, ON, Canada"
+W4388214408,https://doi.org/10.1109/psc57974.2023.10297225,1,Ryan Hamerly,0,0,"NTT PHI Laboratories,Sunnyvale,CA,USA || NTT PHI Laboratories, Sunnyvale, CA, USA"
+W4413311602,https://doi.org/10.1145/3749096.3750026,6,Brian J. Smith,0,0,University of Oregon
+W3190942902,https://doi.org/10.1109/te.2022.3144943,15,Hilary M. Hurst,0,0,"Department of Physics and Astronomy, San Jos&#x00E9; State University, San Jos&#x00E9;, CA, USA"
+W3190942902,https://doi.org/10.1109/te.2022.3144943,22,Martin Laforest,0,0,"ISARA Corporation, Waterloo, ON, Canada"
+W4384080548,https://doi.org/10.1109/tqe.2023.3290593,4,Imran Bashir,0,0,"Equal1.Labs, Fremont, CA, USA"
+W4384080548,https://doi.org/10.1109/tqe.2023.3290593,11,C. Degenhardt,0,0,"Electronic Systems (ZEA-2), Central Institute of Engineering, Electronics and Analytics, Forschungszentrum J&#x00FC;lich GmbH, J&#x00FC;lich, Germany"
+W4384080548,https://doi.org/10.1109/tqe.2023.3290593,13,Lotte Geck,0,0,"Electronic Systems (ZEA-2), Central Institute of Engineering, Electronics and Analytics, Forschungszentrum J&#x00FC;lich GmbH, J&#x00FC;lich, Germany"
+W4384080548,https://doi.org/10.1109/tqe.2023.3290593,21,Dennis Nielinger,0,0,"Electronic Systems (ZEA-2), Central Institute of Engineering, Electronics and Analytics, Forschungszentrum J&#x00FC;lich GmbH, J&#x00FC;lich, Germany"
+W4384080548,https://doi.org/10.1109/tqe.2023.3290593,28,Patrick Vliex,0,0,"Electronic Systems (ZEA-2), Central Institute of Engineering, Electronics and Analytics, Forschungszentrum J&#x00FC;lich GmbH, J&#x00FC;lich, Germany"
+W4392763261,https://doi.org/10.1117/12.3003759,1,Brian J. Smith,0,0,Univ. of Oregon (United States)
+W4392763261,https://doi.org/10.1117/12.3003759,2,Michael G. Raymer,0,0,Univ. of Oregon (United States)
+W4392763261,https://doi.org/10.1117/12.3003759,3,Tiemo Landes,0,0,Univ. of Oregon (United States)
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,1,Harry Levine,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,3,Jimmy S. C. Hung,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,4,Nasser Alidoust,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,5,Mahmoud Kalaee,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,6,Laura DeLorenzo,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,7,E. Alex Wollack,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,8,Patricio Arrangoiz-Arriola,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,9,Amirhossein Khalajhedayati,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,10,Rohan Sanil,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,11,Hesam Moradinejad,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,13,Aleksander Kubica,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,14,David Hover,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,15,Shahriar Aghaeimeibodi,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,16,Joshua Ari Alcid,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,17,Chungheon Baek,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,18,J. Barnett,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,19,K. Bawdekar,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,20,Przemysław Bienias,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,21,H. A. Carson,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,22,Chen Chen,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,23,L. Chen,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,24,Harutiun Chinkezian,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,25,E M Chisholm,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,26,Alexander M. Clifford,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,27,R. Cosmic,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,28,N. Crisosto,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,29,A. M. Dalzell,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,30,Edward D. Davis,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,31,John D'Ewart,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,32,Stefan Diez,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,33,Noel D’Souza,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,34,Philipp T. Dumitrescu,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,35,E. S. Elkhouly,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,36,Ming Fang,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,37,Yawen Fang,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,38,Steven T. Flammia,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,39,Matthew J. Fling,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,40,Gonzalo Cerruela García,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,41,M. K. Gharzai,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,42,Alexey V. Gorshkov,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,43,Mason Gray,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,44,Sebastian Grimberg,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,46,Connor T. Hann,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,47,Yu He,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,48,Steven Heidel,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,49,Steve B. Howell,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,50,Matthew A. Hunt,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,51,Jana M. Iverson,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,52,Ignace Jarrige,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,54,William M. Jones,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,55,R. B. Karabalin,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,56,Peter J. Karalekas,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,57,Andrew J. Keller,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,58,D. Lasi,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,59,Menyoung Lee,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,60,Victoria Ly,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,61,Gregory S. MacCabe,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,62,Neha Mahuli,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,63,Guillaume Marcaud,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,64,Matthew H. Matheny,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,65,Sam McArdle,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,66,Gavin McCabe,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,67,G. Merton,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,68,Chris Miles,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,69,Ashley Milsted,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,70,Anurag Mishra,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,71,Lorenzo Moncelsi,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,72,Mahdi Naghiloo,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,73,Kyungjoo Noh,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,74,Eric Oblepias,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,75,Gerson Ortuno,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,76,John Clai Owens,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,77,Jason Pagdilao,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,78,Marco A. Panduro,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,79,Jean-Philip Paquette,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,80,Ram N. Patel,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,81,G. A. Peairs,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,82,David Perello,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,83,Eric Peterson,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,84,Salvatore Ponte,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,85,Harald Putterman,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,87,Philip Reinhold,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,88,Robert Resnick,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,89,Omar A. Reyna,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,90,Randolph de la Rosa Rodríguez,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,91,J. Rose,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,92,A. H. Rubin,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,93,M. C. Runyan,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,94,Colm A. Ryan,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,95,Abdulrahman Sahmoud,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,96,Thomas Scaffidi,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,97,Babar Shah,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,98,Salome Siavoshi,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,99,Prasahnt Sivarajah,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4393026571,https://doi.org/10.1103/physrevx.14.011051,100,Trenton Skogland,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4392122036,https://doi.org/10.1021/acs.chemmater.3c02603,2,Ismail El Baggari,0,0,"The Rowland Institute at Harvard, Cambridge, Massachusetts 02142, United States"
+W4396918865,https://doi.org/10.1038/s41586-024-07252-z,12,Chawina De-Eknamkul,0,0,"AWS Center for Quantum Networking, Boston, MA, USA"
+W4403130389,https://doi.org/10.1103/physrevapplied.22.044014,2,Michael G. Raymer,0,0,University of Oregon
+W4403130389,https://doi.org/10.1103/physrevapplied.22.044014,3,Clark Embleton,0,0,University of Oregon
+W4403130389,https://doi.org/10.1103/physrevapplied.22.044014,5,Brian J. Smith,0,0,University of Oregon
+W4387140883,https://doi.org/10.1117/12.2677206,6,Xufeng Zhang,0,0,Northeastern Univ. (United States)
+W4387322923,https://doi.org/10.48550/arxiv.2310.01316,12,Chawina De-Eknamkul,0,0,"AWS Center for Quantum Networking, Boston, Massachusetts 02210, USA"
+W4386072248,https://doi.org/10.1109/isit54713.2023.10206788,1,Elyakim Zlotnick,0,0,"Technion &#x2013; Israel Institute of Technology,Electrical and Computer Engineering and Hellen-Diller Quantum Center"
+W4386072248,https://doi.org/10.1109/isit54713.2023.10206788,3,Uzi Pereg,0,0,"Technion &#x2013; Israel Institute of Technology,Electrical and Computer Engineering and Hellen-Diller Quantum Center"
+W4406870466,https://doi.org/10.1364/ol.541803,3,Amirhassan Shams‐Ansari,0,0,DRS Daylight Solutions
+W4406219593,https://doi.org/10.3390/e27010049,2,Srđan Brkić,0,0,"Tannera Technologies LLC, Veljka Dugosevica 54, 11000 Belgrade, Serbia"
+W3194325089,https://doi.org/10.1103/physrevapplied.19.044093,12,S. J. Smith,0,0,"Cosmic Microwave Technology, 15703 Condon Avenue, Lawndale, California, USA"
+W3194325089,https://doi.org/10.1103/physrevapplied.19.044093,13,Wolfgang Becker,0,0,"Becker & Hickl GmbH, Nahmitzer Damm 30, Berlin, Germany"
+W4387544196,https://doi.org/10.1109/icdcs57875.2023.00027,3,Shiqiang Wang,0,0,"IBM T. J. Watson Research Center,NY,USA || IBM T. J. Watson Research Center, NY, USA"
+W4392680630,https://doi.org/10.1117/12.3009736,16,Yang Yu,0,0,"Raith America, Inc. (United States)"
+W4385354211,https://doi.org/10.1016/b978-0-323-91224-2.00011-4,13,M. Romagnoli,0,0,"CNIT, Photonics Networks and Technologies Laboratory, Pisa, Italy"
+W4385354211,https://doi.org/10.1016/b978-0-323-91224-2.00011-4,17,Ling Liao,0,0,"Photonic Integration, Silicon Photonics Product Division, Intel Corporation, Santa Clara, CA, United States"
+W4399039919,https://doi.org/10.1109/jlt.2024.3405799,1,Ryan Hamerly,0,0,"MIT Research Laboratory of Electronics, Cambridge, MA, USA || NTT Research Inc., Physics & Informatics Laboratories, Sunnyvale, USA"
+W4399039919,https://doi.org/10.1109/jlt.2024.3405799,2,Alexander Sludds,0,0,"MIT Research Laboratory of Electronics, Cambridge, MA, USA"
+W4399039919,https://doi.org/10.1109/jlt.2024.3405799,3,Saumil Bandyopadhyay,0,0,"MIT Research Laboratory of Electronics, Cambridge, MA, USA || NTT Research Inc., Physics & Informatics Laboratories, Sunnyvale, USA"
+W4399039919,https://doi.org/10.1109/jlt.2024.3405799,4,Zaijun Chen,0,0,"MIT Research Laboratory of Electronics, Cambridge, MA, USA"
+W4399039919,https://doi.org/10.1109/jlt.2024.3405799,6,Liane Bernstein,0,0,"MIT Research Laboratory of Electronics, Cambridge, MA, USA"
+W4399039919,https://doi.org/10.1109/jlt.2024.3405799,7,Dirk Englund,0,0,"MIT Research Laboratory of Electronics, Cambridge, MA, USA"
+W4406014403,https://doi.org/10.1109/telfor63250.2024.10819061,2,Srdjan Brkić,0,0,"Tannera Technologies LLC,Belgrade,Serbia"
+W4310647961,https://doi.org/10.48550/arxiv.1901.06786,3,Saikat Guha,0,0,Dynamic Networks : Temporal and Structural Capture Approach
+W4310647961,https://doi.org/10.48550/arxiv.1901.06786,4,Don Towsley,0,0,Department of Computer Science [Amherst]
+W4391877080,https://doi.org/10.1109/comsnets59351.2024.10427450,1,Lakshika Rathi,0,0,"Cisco Quantum Lab,Garching bei M&#x00FC;nchen,Germany"
+W4391877080,https://doi.org/10.1109/comsnets59351.2024.10427450,2,Stephen DiAdamo,0,0,"Cisco Quantum Lab,Garching bei M&#x00FC;nchen,Germany"
+W4391877080,https://doi.org/10.1109/comsnets59351.2024.10427450,3,Alireza Shabani,0,0,"Cisco Quantum Lab,Los Angeles,USA || Cisco Quantum Lab, Los Angeles, USA"
+W3110343652,https://doi.org/10.1038/s41534-021-00438-7,2,Kyungjoo Noh,0,0,"AWS Center for Quantum Computing, Pasadena, CA, USA"
+W4386580568,https://doi.org/10.1038/s41534-023-00757-x,2,Stephen DiAdamo,0,0,"Cisco Quantum Lab, Garching bei München,  Bavaria, Germany"
+W4386580568,https://doi.org/10.1038/s41534-023-00757-x,3,Bing Qi,0,0,"Cisco Quantum Lab, Los Angeles, California, USA"
+W4386580568,https://doi.org/10.1038/s41534-023-00757-x,4,Alireza Shabani,0,0,"Cisco Quantum Lab, Los Angeles, California, USA"
+W4385861740,https://doi.org/10.1145/3610251.3610553,2,Hassan Shapourian,0,0,"Cisco Quantum Lab, San Jose, USA"
+W4385861740,https://doi.org/10.1145/3610251.3610553,3,Alireza Shabani,0,0,"Cisco Quantum Lab, California, USA"
+W3133136683,https://doi.org/10.5753/sbc.5033.7.2,2,Gayane Vardoyan,0,0,University of Massachusetts
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,2,K. D. Irwin,0,0,SLAC || Stanford U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,3,R. Maruyama,0,0,Yale U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,4,O. K. Baker,0,0,Yale U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,5,C. Bartram,0,0,SLAC
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,6,Karl K. Berggren,0,0,"MIT, LNS"
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,8,Daniel Carney,0,0,"LBL, Berkeley"
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,10,Hsiao-Mei Cho,0,0,SLAC
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,11,M. Garcia-Sciveres,0,0,"LBL, Berkeley"
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,12,Peter W. Graham,0,0,Stanford U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,15,Jack Harris,0,0,Yale U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,17,David Hume,0,0,"NIST, Boulder"
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,20,Noah Kurinsky,0,0,SLAC
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,21,S. K. Lamoreaux,0,0,Yale U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,24,Dale Li,0,0,SLAC
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,25,B. Loer,0,0,"PNL, Richland"
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,28,David C. Moore,0,0,Yale U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,35,David Schuster,0,0,SLAC || Stanford U
+W4388444730,https://doi.org/10.48550/arxiv.2311.01930,40,L. A. Winslow,0,0,"MIT, LNS"
+W4385316027,https://doi.org/10.1364/cleo_si.2023.sth4o.2,5,Lingyan He,0,0,"Hyperlight corporation, 1 Bow Street, Suite 420 Cambridge, MA 02138, USA"
+W4385316027,https://doi.org/10.1364/cleo_si.2023.sth4o.2,10,Mian Zhang,0,0,"Hyperlight corporation, 1 Bow Street, Suite 420 Cambridge, MA 02138, USA"
+W4389159456,https://doi.org/10.1109/qce57702.2023.10216,7,Mekena Metcalf,0,0,"HSBC Holdings Plc.,Innovation and Ventures,San Francisco,CA,USA || Innovation and Ventures, HSBC Holdings Plc., San Francisco, CA, USA"
+W4396891988,https://doi.org/10.1364/ofc.2024.tu3c.4,12,Chawina De-Eknamkul,0,0,"AWS Center for Quantum Networking, Boston, Massachusetts 02210, USA"
+W4399081709,https://doi.org/10.1364/ol.527659,3,Christian Reimer,0,0,HyperLight
+W4399081709,https://doi.org/10.1364/ol.527659,8,Mian Zhang,0,0,HyperLight
+W4413184743,https://doi.org/10.1364/oe.562219,1,Michael G. Raymer,0,0,University of Oregon
+W4383873702,https://doi.org/10.1088/2058-9565/ace64d,2,Luís F. Gonçalves,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, Pasadena, 91125, UNITED STATES"
+W4383873702,https://doi.org/10.1088/2058-9565/ace64d,3,Prasahnt Sivarajah,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, Pasadena, 91125, UNITED STATES"
+W4383873702,https://doi.org/10.1088/2058-9565/ace64d,4,Eric D. Peterson,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, Pasadena, 91125, UNITED STATES"
+W4383873702,https://doi.org/10.1088/2058-9565/ace64d,5,Sebastian Grimberg,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, Pasadena, 91125, UNITED STATES"
+W4321446177,https://doi.org/10.1103/physreva.107.022615,6,James E. Troupe,0,0,"Xairos Systems, Inc., Denver, Colorado 80124, USA"
+W4403130239,https://doi.org/10.1103/physrevapplied.22.044013,1,Michael G. Raymer,0,0,University of Oregon
+W4403130239,https://doi.org/10.1103/physrevapplied.22.044013,2,Clark Embleton,0,0,University of Oregon
+W4385316347,https://doi.org/10.1364/cleo_fs.2023.fm2e.5,11,Yang Yu,0,0,"Raith America Inc., Troy, NY, USA"
+W4391246436,https://doi.org/10.1117/12.3023043,6,Paul Blase,0,0,"Space Initiatives, Inc. (United States)"
+W4391246436,https://doi.org/10.1117/12.3023043,9,T. M. Eubanks,0,0,"Space Initiatives, Inc. (United States)"
+W4387308136,https://doi.org/10.1117/12.2677724,1,Matthew R. Brown,0,0,Univ. of Oregon (United States)
+W4387308136,https://doi.org/10.1117/12.2677724,2,Markus Allgaier,0,0,Univ. of Oregon (United States)
+W4387308136,https://doi.org/10.1117/12.2677724,3,Valérian Thiel,0,0,Univ. of Oregon (United States)
+W4387308136,https://doi.org/10.1117/12.2677724,5,Michael G. Raymer,0,0,Univ. of Oregon (United States)
+W4387308136,https://doi.org/10.1117/12.2677724,6,Brian J. Smith,0,0,Univ. of Oregon (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,1,Georgios Kyriazidis,0,0,Harvard John A. Paulson School of Engineering and Applied Sciences (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,2,Norman Lippok,0,0,Wellman Ctr. for Photomedicine (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,3,J. P. Davis,0,0,Harvard John A. Paulson School of Engineering and Applied Sciences (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,4,Xinrui Zhu,0,0,Harvard John A. Paulson School of Engineering and Applied Sciences (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,5,Hana Warner,0,0,Harvard John A. Paulson School of Engineering and Applied Sciences (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,6,Yaowen Hu,0,0,Harvard John A. Paulson School of Engineering and Applied Sciences (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,7,Marko Lončar,0,0,Harvard John A. Paulson School of Engineering and Applied Sciences (United States)
+W4392604420,https://doi.org/10.1117/12.3003029,9,Gage Hills,0,0,Harvard John A. Paulson School of Engineering and Applied Sciences (United States)
+W4398184196,https://doi.org/10.1364/prj.521172,8,Amirhassan Shams‐Ansari,0,0,DRS Daylight Solutions
+W4405722552,https://doi.org/10.1103/physrevapplied.22.064085,4,Don Towsley,0,0,University of Massachusetts
+W3125096989,https://doi.org/10.1103/physreva.104.022407,2,Kyungjoo Noh,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4400952054,https://doi.org/10.1103/prxquantum.5.030315,4,Derek S. Wang,0,0,"IBM T.J. Watson Research Center || IBM Quantum, IBM T.J. Watson Research Center, Yorktown Heights, New York, USA"
+W4400952054,https://doi.org/10.1103/prxquantum.5.030315,5,Alireza Seif,0,0,"IBM T.J. Watson Research Center || IBM Quantum, IBM T.J. Watson Research Center, Yorktown Heights, New York, USA"
+W7162084079,https://doi.org/10.1364/oe.599227,2,Clark Embleton,0,0,University of Oregon
+W3093986290,https://doi.org/10.1103/physrevx.11.031066,5,Steven T. Flammia,0,0,"AWS Center for Quantum Computing, Pasadena, California 91125, USA"
+W4408450106,https://doi.org/10.1364/prj.546543,3,Liang Jiang,0,0,International Quantum Academy
+W4396789163,https://doi.org/10.1038/s41467-024-47353-x,6,Yang Yu,0,0,"Raith America, Inc., 300 Jordan Road, Troy, NY, 12180, USA"
+W4286001559,https://doi.org/10.21203/rs.3.rs-1795626/v1,13,Mian Zhang,0,0,HyperLight
+W4387673528,https://doi.org/10.1063/5.0170324,1,Beibei Zeng,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,2,Chawina De-Eknamkul,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,5,Zhuoxian Wang,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,6,Daniel Riedel,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,7,J.C. Ha,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,8,Carsten Robens,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,9,David Levonian,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,12,Mihir K. Bhaskar,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,13,Denis D. Sukachev,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4387673528,https://doi.org/10.1063/5.0170324,15,Bart Machielse,0,0,"AWS Center for Quantum Networking 1 , Boston, Massachusetts 02135, USA"
+W4409347112,https://doi.org/10.1609/aaai.v39i16.33819,4,Zhen Dong,0,0,Collov Labs
+W4409347112,https://doi.org/10.1609/aaai.v39i16.33819,5,Kaicheng Zhou,0,0,Collov Labs
+W4409347112,https://doi.org/10.1609/aaai.v39i16.33819,6,Xiao Zhang,0,0,Collov Labs
+W4379924469,https://doi.org/10.48550/arxiv.2306.03487,1,Daniel Bochen Tan,0,0,", of , , 2 of , , ,"
+W4379924469,https://doi.org/10.48550/arxiv.2306.03487,2,Dolev Bluvstein,0,0,", of , , 2 of , , ,"
+W4379924469,https://doi.org/10.48550/arxiv.2306.03487,3,Mikhail D. Lukin,0,0,", of , , 2 of , , ,"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,1,Harry Levine,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,3,Jimmy S. C. Hung,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,4,Nasser Alidoust,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,5,Mahmoud Kalaee,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,6,Laura DeLorenzo,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,7,E. Alex Wollack,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,8,Patricio Arrangoiz Arriola,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,9,Amirhossein Khalajhedayati,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,10,Rohan Sanil,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,12,Yotam Vaknin,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W4384807589,https://doi.org/10.48550/arxiv.2307.08737,14,David Hover,0,0,"AWS Center for Quantum Computing, Pasadena, CA 91125, USA"
+W7119958108,https://doi.org/10.1103/fwjt-mw2c,1,Anonymous,0,0,Pritzker School of Molecular Engineering
+W7119958108,https://doi.org/10.1103/fwjt-mw2c,2,Ming Yuan,0,0,Pritzker School of Molecular Engineering
+W7119958108,https://doi.org/10.1103/fwjt-mw2c,3,Senrui Chen,0,0,Pritzker School of Molecular Engineering
+W7119958108,https://doi.org/10.1103/fwjt-mw2c,5,L. Jiang,0,0,Pritzker School of Molecular Engineering
+W4403331658,https://doi.org/10.1109/tnsm.2024.3468997,2,Daniel Sadoc Menasché,0,0,"Institute of Computing, UFRJ, Rio de Janeiro, Brazil || Institute of Computing, UFRJ, Brazil"
+W4399207709,https://doi.org/10.1016/j.future.2024.04.060,84,Yu‐ya Ohnishi,0,0,"JSR Corporation, 3-103-9, Tonomachi, Kawasaki-ku, Kawasaki, Kanagawa, 210-0821, Japan"
+W4399207709,https://doi.org/10.1016/j.future.2024.04.060,85,Daniele Ottaviani,0,0,CINECA
+W4399207709,https://doi.org/10.1016/j.future.2024.04.060,95,Matteo A. C. Rossi,0,0,"Algorithmiq Ltd, Kanavakatu 3 C, FI-00160 Helsinki, Finland"
+W4389912021,https://doi.org/10.48550/arxiv.2312.09733,84,Yu‐ya Ohnishi,0,0,"JSR Corporation, 3-103-9, Tonomachi, Kawasaki-ku, Kawasaki, Kanagawa, 210-0821, Japan"
+W4389912021,https://doi.org/10.48550/arxiv.2312.09733,85,"Ottaviani, Daniele",0,0,CINECA
+W4389912021,https://doi.org/10.48550/arxiv.2312.09733,95,Matteo A. C. Rossi,0,0,"Algorithmiq Ltd, Kanavakatu 3 C, FI-00160 Helsinki, Finland"

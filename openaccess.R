@@ -59,6 +59,224 @@ start_year <- 2025
 end_year <- 2025
 years <- start_year:end_year
 
+
+
+# ============================================================
+# FETCH ALL UA OPEN ACCESS WORKS
+# Filter: open_access.is_oa = TRUE
+# This returns ALL OA works regardless of oa_status
+# (gold, diamond, green, hybrid, bronze -- all included)
+#
+# Valid filter from OpenAlex API [6]:
+#   open_access.is_oa    TRUE/FALSE
+#   open_access.oa_status "gold","green","hybrid","bronze","diamond","closed"
+# ============================================================
+
+library(openalexR)
+library(dplyr)
+library(readr)
+library(writexl)
+
+ua_openalex_id <- "I138006243"
+yr <- 2025
+
+# --- Step 1: Check count first before fetching all records ---
+count_result <- oa_fetch(
+  entity      = "works",
+  authorships.institutions.id = ua_openalex_id,
+  from_publication_date = paste0(yr, "-01-01"),
+  to_publication_date   = paste0(yr, "-12-31"),
+  open_access.is_oa     = TRUE,
+  count_only  = TRUE,
+  verbose     = FALSE
+)
+
+message("Total UA OA works in ", yr, ": ", count_result$count)
+
+# --- Step 2: Fetch all OA works with all fields ---
+ua_oa_works <- oa_fetch(
+  entity      = "works",
+  authorships.institutions.id = ua_openalex_id,
+  from_publication_date = paste0(yr, "-01-01"),
+  to_publication_date   = paste0(yr, "-12-31"),
+  open_access.is_oa     = TRUE,
+  verbose = TRUE
+)
+
+message("Fetched ", nrow(ua_oa_works), " OA works")
+
+# --- Step 3: Inspect columns ---
+# open_access is flattened to top-level columns [4]:
+#   oa_status, is_oa_anywhere, any_repository_has_fulltext, oa_url
+message("Columns: ", paste(names(ua_oa_works), collapse = ", "))
+
+rm(ua_oa_works_clean)
+# --- Step 4: Keep only columns we need ---
+# oa_status is already a top-level column [4]
+ua_oa_works_clean <- ua_oa_works |>
+  select(
+    id,
+    doi,
+    title,
+    publication_year,
+    type,
+    oa_status,
+    is_oa_anywhere,
+    any_repository_has_fulltext,
+    oa_url,
+    cited_by_count
+  )
+
+# --- Step 5: Summary breakdown by oa_status ---
+message("\n  OA status breakdown:")
+print(
+  ua_oa_works_clean |>
+    count(oa_status, sort = TRUE) |>
+    mutate(pct = round(n / sum(n) * 100, 1))
+)
+
+# --- Step 6: Summary breakdown by work type ---
+message("\n  Work type breakdown:")
+print(
+  ua_oa_works_clean |>
+    count(type, sort = TRUE) |>
+    mutate(pct = round(n / sum(n) * 100, 1))
+)
+
+# --- Step 7: Export ---
+write_csv(ua_oa_works_clean,     "UA_OA_works_all.csv")
+writexl::write_xlsx(ua_oa_works_clean, "UA_OA_works_all.xlsx")
+message("Saved to UA_OA_works_all.csv and UA_OA_works_all.xlsx")
+
+
+############### Get topics !!!! 
+ua_oa_works_w_topics_2025 <- extract_topics_by_level(ua_oa_works, 1)
+write_df_to_excel(ua_oa_works_w_topics_2025)
+
+
+##########################################
+
+# ============================================================
+# VERIFY UA AUTHORSHIP - Alternative Method
+# Instead of relying on OpenAlex institution ID matching,
+# check the raw affiliation string published with the article.
+#
+# From Method A results, the confirmed column names after
+# unnesting authorships are:
+#   authorships_id, authorships_display_name, authorships_orcid,
+#   authorships_author_position, authorships_is_corresponding,
+#   authorships_affiliations, authorships_affiliation_raw [2]
+#
+# authorships_affiliation_raw is the raw string exactly as
+# it appeared in the published article byline -- this is
+# the most direct, independent check possible.
+# ============================================================
+
+library(openalexR)
+library(dplyr)
+library(tidyr)
+library(readr)
+
+ua_openalex_id <- "I138006243"
+
+# --- Step 1: Fetch a small sample ---
+sample_works <- oa_fetch(
+  entity = "works",
+  authorships.institutions.id = ua_openalex_id,
+  from_publication_date = "2023-01-01",
+  to_publication_date = "2023-12-31",
+  type = "article",
+  options = list(
+    select = c("id", "doi", "title", "authorships"),
+    sample = 20,
+    seed = 99
+  ),
+  verbose = TRUE
+)
+
+message("Fetched ", nrow(sample_works), " works")
+
+# --- Step 2: Unnest authorships to get raw affiliation strings ---
+# Confirmed working column: authorships_affiliation_raw [2]
+authorships_flat <- sample_works |>
+  select(id, doi, title, authorships) |>
+  tidyr::unnest(authorships, names_sep = "_")
+
+message("Columns after unnesting: ", paste(names(authorships_flat), collapse = ", "))
+
+# --- Step 3: Check authorships_affiliation_raw directly ---
+# This is the raw string as published in the article [2]
+ua_check <- authorships_flat |>
+  mutate(
+    # Check raw affiliation string for UA variants
+    raw_mentions_ua = grepl(
+      "University of Arizona|Univ.*Arizona|UArizona|Tucson.*AZ|AZ 85721",
+      authorships_affiliation_raw,
+      ignore.case = TRUE
+    ),
+    # Check display name for UA
+    display_name_mentions_ua = grepl(
+      "University of Arizona",
+      authorships_display_name,
+      ignore.case = TRUE
+    )
+  )
+
+# --- Step 4: Summary per work ---
+work_summary <- ua_check |>
+  group_by(id, doi, title) |>
+  summarise(
+    n_authors = n(),
+    n_raw_ua = sum(raw_mentions_ua, na.rm = TRUE),
+    n_display_ua = sum(display_name_mentions_ua, na.rm = TRUE),
+    confirmed_by_raw = n_raw_ua > 0,
+    confirmed_by_display = n_display_ua > 0,
+    .groups = "drop"
+  )
+
+message("\n  VERIFICATION SUMMARY:")
+message("    Total works: ", nrow(work_summary))
+message("    Confirmed by raw affiliation string:  ",
+        sum(work_summary$confirmed_by_raw), " (",
+        round(mean(work_summary$confirmed_by_raw) * 100, 1), "%)")
+message("    Confirmed by display_name:            ",
+        sum(work_summary$confirmed_by_display), " (",
+        round(mean(work_summary$confirmed_by_display) * 100, 1), "%)")
+
+# --- Step 5: Show cases where raw string differs from display name ---
+# These are the most interesting cases for manual inspection
+discrepancies <- work_summary |>
+  filter(confirmed_by_raw != confirmed_by_display)
+
+if (nrow(discrepancies) > 0) {
+  message("\n  Discrepancies (raw vs display name disagree): ", nrow(discrepancies))
+  print(discrepancies |> select(doi, title, confirmed_by_raw, confirmed_by_display))
+} else {
+  message("\n  PASS: Raw affiliation and display name agree for all works")
+}
+
+# --- Step 6: Print a few raw affiliation strings for manual inspection ---
+message("\n  Sample raw affiliation strings (first 5 UA authors found):")
+ua_check |>
+  filter(raw_mentions_ua) |>
+  select(doi, authorships_display_name, authorships_affiliation_raw) |>
+  head(5) |>
+  print()
+
+# --- Step 7: Export for manual review ---
+write_csv(work_summary, "verification_ua_affiliation_check.csv")
+write_csv(
+  ua_check |>
+    select(id, doi, authorships_display_name,
+           authorships_affiliation_raw,
+           raw_mentions_ua,
+           display_name_mentions_ua),
+  "verification_ua_raw_affiliations.csv"
+)
+
+###################################
+
+
 # ============================================================
 # SECTION 1: UA AUTHORSHIP BY CALENDAR YEAR - ALL ARTICLES
 # Counts total articles affiliated with UA per calendar year
@@ -86,7 +304,6 @@ for (yr in years) {
     authorships.institutions.id = ua_openalex_id,
     from_publication_date = paste0(yr, "-01-01"),
     to_publication_date = paste0(yr, "-12-31"),
-    #type = "article",
     count_only = TRUE,
     verbose = FALSE
   )
@@ -101,6 +318,13 @@ for (yr in years) {
 
 message("  Total publications by year:")
 print(ua_articles_by_year)
+
+
+############### Get topics !!!! 
+works_published_topics_2025 <- extract_topics_by_level(works_published, 1)
+write_df_to_excel(works_published_topics_2025)
+
+
 
 # ============================================================
 # SECTION 2: OA STATUS BREAKDOWN BY YEAR
@@ -142,7 +366,6 @@ for (yr in years) {
       authorships.institutions.id = ua_openalex_id,
       from_publication_date = paste0(yr, "-01-01"),
       to_publication_date = paste0(yr, "-12-31"),
-      #type = "article",
       open_access.oa_status = status,
       count_only = TRUE,
       verbose = FALSE
@@ -728,12 +951,6 @@ message("  recent corpora show only ~2.5% internal citation coverage [Samarek & 
 # are top-level columns in the tibble output, NOT nested
 # inside an `open_access` column [1].
 # ============================================================
-
-options(openalexR.apikey = Sys.getenv("OPENALEXR_APIKEY"))
-
-library(openalexR)
-library(dplyr)
-library(tidyr)
 library(readr)
 library(stringr)
 
