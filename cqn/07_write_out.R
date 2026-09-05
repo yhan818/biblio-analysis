@@ -73,13 +73,110 @@ defs <- tibble::tribble(
   "has_abstract", "TRUE if an abstract_inverted_index was present.", "",
   "topics_count", "True number of topics.", "topics_all is capped at 3.",
   "concepts_count", "True number of concepts.", "concepts is capped at 5."
+
+  ## -- identifiers
+  "doi",   "DOI, normalized to https://doi.org/ form.", "One DOI per work (the published version) even if several exist.",
+  "pmid",  "PubMed ID.", "Sparse outside biomedical venues.",
+  "pmcid", "PubMed Central ID.", "",
+  "mag",   "Legacy Microsoft Academic Graph ID.", "Retired source; older records only.",
+  
+  ## -- bibliographic
+  "title",            "Work title (OpenAlex display_name).", "",
+  "type",             "OpenAlex work type.", "article 530 / preprint 434 / conference-paper 208 / conference-abstract 6 / other 5 / report 4 / book-chapter 3 / software-paper 2 / data-paper 1 / dissertation 1.",
+  "raw_type",         "Type string as supplied by the upstream source.", "Check here for posters, which OpenAlex maps to conference-abstract or other.",
+  "type_crossref",    "Legacy Crossref type.", "Superseded by raw_type; may be empty.",
+  "language",         "Detected language code.", "",
+  "publication_year", "Year of publication.", "Range 2016-2026 in this corpus.",
+  "publication_date", "Publication date (YYYY-MM-DD).", "Day precision not always reliable.",
+  "volume",     "Journal volume.", "",
+  "issue",      "Journal issue.", "",
+  "first_page", "First page.", "",
+  "last_page",  "Last page.", "",
+  "indexed_in",   "Indexes containing this record (crossref, pubmed, arxiv, doaj).", "'; ' delimited.",
+  "created_date", "Date the record entered OpenAlex.", "",
+  "updated_date", "Date the record was last modified.", "Retrieval-date dependent.",
+  
+  ## -- venue
+  "source_display_name",    "Primary venue name (journal, conference, repository).", "",
+  "source_id",              "OpenAlex Source ID for the primary venue.", "",
+  "source_type",            "Venue type.", "journal / conference / repository / book-series. Distinguishes article subtypes.",
+  "issn_l",                 "Linking ISSN.", "",
+  "issn_all",               "All ISSNs for the venue.", "'; ' delimited.",
+  "host_organization_id",   "OpenAlex ID of the publisher or repository operator.", "",
+  "host_organization_name", "Publisher or repository operator.", "",
+  "primary_location_version",      "Version at the primary location.", "submittedVersion / acceptedVersion / publishedVersion.",
+  "primary_location_license",      "License at the primary location.", "Often empty.",
+  "primary_location_is_oa",        "Whether the primary copy is free to read.", "",
+  "primary_location_landing_page", "Landing page of the primary copy.", "Equals the DOI URL for publisher copies; a repository record page otherwise. Differs from doi for the 434 preprints.",
+  "primary_location_pdf_url",      "Direct PDF URL at the primary location.", "",
+  "locations_count",               "Number of known locations (copies) for this work.", "",
+  
+  ## -- open access
+  "is_oa",     "Free-to-read copy exists anywhere.", "72.4% of this corpus.",
+  "oa_status", "OA colour.", "green 553 / closed 329 / gold 228 / hybrid 51 / bronze 20 / diamond 13. Green-dominant because preprint servers count as repositories.",
+  "oa_url",    "URL of the best free copy.", "",
+  "any_repository_has_fulltext", "A repository holds a full-text copy.", "",
+  "best_oa_source_name", "Venue hosting the best free copy.", "",
+  "best_oa_source_type", "Type of that venue.", "",
+  "best_oa_license",     "License on the best free copy.", "Often empty for green copies.",
+  "best_oa_version",     "Version of the best free copy.", "submittedVersion / acceptedVersion / publishedVersion.",
+  "best_oa_landing_page","Landing page of the best free copy.", "",
+  "best_oa_pdf_url",     "Direct PDF URL of the best free copy.", "",
+  "apc_list_value_usd",  "List article-processing charge, USD.", "Venue-level list price, not what was paid.",
+  "apc_paid_value_usd",  "APC actually paid, USD.", "Very sparse.",
+  "apc_paid_provenance", "Source of the APC-paid figure.", "",
+  "has_fulltext",        "OpenAlex holds searchable full text.", "",
+  "has_content_pdf",     "A PDF is held for this work.", "",
+  "has_content_grobid",  "GROBID-parsed XML is held for this work.", "",
+  
+  ## -- impact
+  "cited_by_count",  "Citations recorded by OpenAlex.", "Lower bound; grows over time.",
+  "fwci",            "Field-Weighted Citation Impact.", "1.0 = field/year average. NA for very recent works.",
+  "cnp_value",       "Citation percentile within field and year.", "",
+  "is_in_top_1_percent",  "Top 1% by citations for field and year.", "",
+  "is_in_top_10_percent", "Top 10% by citations for field and year.", "",
+  "cited_by_pctile_min",  "Lower bound of the citation percentile band.", "",
+  "cited_by_pctile_max",  "Upper bound of the citation percentile band.", "",
+  "referenced_works_count", "Number of outgoing references.", "0 where reference lists were not deposited.",
+  "related_works_count",    "Number of related works OpenAlex links.", "Algorithmically derived.",
+  
+  ## -- aboutness
+  "primary_topic",       "Highest-scoring topic.", "OpenAlex taxonomy: topic > subfield > field > domain.",
+  "primary_topic_id",    "OpenAlex Topic ID.", "",
+  "primary_topic_score", "Confidence score for the primary topic.", "",
+  "primary_subfield",    "Subfield of the primary topic.", "",
+  "primary_field",       "Field of the primary topic.", "",
+  "primary_domain",      "Domain of the primary topic.", "Broadest level (e.g. Physical Sciences).",
+  "topics_all",     "Up to 3 highest-scoring topics.", "'; ' delimited. See topics_count for the true total.",
+  "keywords",       "Keywords assigned by OpenAlex.", "'; ' delimited.",
+  "keywords_count", "Number of keywords.", "",
+  "concepts",       "Up to 5 legacy Concepts.", "'; ' delimited. Concepts are deprecated in favour of Topics.",
+  "sdg_names",      "UN Sustainable Development Goals matched to this work.", "'; ' delimited.",
+  "sdg_count",      "Number of SDGs matched.", "",
+  
+  ## -- abstract
+  "abstract", "Abstract reconstructed from OpenAlex's inverted index.", "Full text in the CSV; may be clipped in the XLSX at Excel's 32,767-character cell limit.",
+  
+  ## -- people fields not already in defs
+  "first_author_name", "First author in submission order.", "",
+  "last_author_name",  "Last author in submission order.", "Often the senior author, but not guaranteed.",
+  "corresponding_institution_names", "Institutions of the corresponding author(s).", "'; ' delimited, deduplicated.",
+  
+  ## -- awards fields not already in defs
+  "award_dois",         "DOIs of award records, where present.", "' | ' delimited.",
+  "award_title_count",  "Number of awards carrying a title.", "Much lower than award_count; ~76% of awards have no title.",
+  "funder_count",       "Number of distinct funders.", "",
+  "has_funding_data",   "TRUE if any funder name is present.", "851 works. Use funding_provenance for the finer distinction.",
+  "has_awards",         "TRUE if any structured award record is present.", "790 works.",
+  "award_id_has_delim", "TRUE if a grant ID contains a semicolon.", "13 works. Harmless: award_ids uses ' | ' as its delimiter."
 )
 
 ## ---- 7c. Join, and flag anything undocumented ----
 codebook <- field_stats |>
   dplyr::left_join(defs, by = "field") |>
   dplyr::mutate(
-    documented = !is.na(definition),
+    #documented = !is.na(definition),
+    definition_source = dplyr::if_else(!is.na(definition), "curated", "auto_generated"),
     definition = dplyr::coalesce(definition,
                                  paste0("Standard OpenAlex Work field: ", field)),
     notes = dplyr::coalesce(notes, "")
@@ -87,12 +184,14 @@ codebook <- field_stats |>
   dplyr::arrange(position)
 
 ## nothing should ship with a placeholder you haven't reviewed
-codebook |> dplyr::filter(!documented) |> dplyr::pull(field)
+#codebook |> dplyr::filter(!documented) |> dplyr::pull(field)
+codebook |>
+  dplyr::filter(definition_source == "auto_generated") |>
+  dplyr::pull(field)
 
 
 notes_tbl <- tibble::tribble(
   ~topic, ~note,
-  "Source list", "Workbook lists 1,195 rows; W4389192884 appears twice, so 1,194 unique Work IDs. [1]",
   "Retrieval", "1,192 returned by batch query; 2 (W7028777612, W7084109945) required individual fetch because they are expansion-corpus records excluded from queries by default.",
   "grants -> awards", "The requested grants.funder_display_name / grants.award_id no longer exist on the Work object; the payload carries awards[] and funders[]. Delivered columns keep the requested names and are sourced from awards[].funder_display_name and awards[].funder_award_id.",
   "Delimiters", "'; ' = deduplicated name lists. ' | ' = positional, one slot per author (also used for award_ids). ' + ' = multiple institutions within a single author.",

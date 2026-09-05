@@ -564,7 +564,9 @@ source("cqn/07_write_out.R")
 
 source("cqn/08_validate.R")
 
-
+## 1. Does the saved file actually define a working function?
+source("cqn/04_extract.R")   # re-source fresh, no reliance on session state
+extract_people(works_raw_full[[1]])
 
 
 ################## TBD: TALK TO OPENALEX

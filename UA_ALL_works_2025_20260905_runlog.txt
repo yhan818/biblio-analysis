@@ -1,0 +1,64 @@
+UA ALL WORKS 2025 -- RUN LOG
+==============================================================
+
+PROVENANCE
+  Date pulled        : 2026-09-05
+  Time pulled        : 21:02:33 America/Phoenix
+  Data source        : OpenAlex REST API, direct JSON
+  Institution        : University of Arizona (I138006243)
+  Publication window : 2025-01-01 to 2025-12-31
+  OA filter          : NONE (all works, OA and closed)
+  Pagination         : cursor paging, per-page=200
+
+COUNTS
+  API count_only     : 9,734
+  Records fetched    : 9,734
+  Rows in table      : 9,734
+  Unique OpenAlex ids: 9,734
+  Author-level rows  : 100,341
+
+HEADLINE RESULTS
+  Overall OA rate    : 65.2%  (all work types, n=9,734)
+  Total articles     : 6,448
+  ARTICLE OA RATE    : 67%
+
+TARGET FIELDS -- all three direct from OpenAlex, none calculated
+  countries_distinct_count    : populated on 9734 / 9734 works
+  institutions_distinct_count : populated on 9734 / 9734 works
+  best_oa_location            : non-null on 6344 / 9734 works (null = closed, by design)
+
+FILES WRITTEN
+  UA_ALL_works_2025_20260905_raw_json.rds       (raw API response, re-derivable)
+  UA_ALL_works_2025_20260905_works.rds          (flattened works table)
+  UA_ALL_works_2025_20260905_authors_long.rds   (author-level table)
+  UA_ALL_works_2025_20260905.xlsx   (multi-sheet workbook)
+  UA_ALL_works_2025_20260905_*.csv             (23 files)
+  UA_ALL_works_2025_20260905_sessionInfo.txt
+
+CAVEATS
+  1. OpenAlex caps the authorships array at the first 100 authors.
+     Affects: authors_listed_in_payload, ua_author_count, ua_is_first_author.
+     Does NOT affect: countries_distinct_count, institutions_distinct_count
+     (computed upstream by OpenAlex). Works at the cap are flagged in
+     the authorships_maybe_capped column: 
+     162 work(s).
+
+  2. 2025 is a recent year. Indexing continues, and green OA accrues
+     as accepted manuscripts land in repositories and embargoes lapse.
+     The OA rates above are a FLOOR. Re-running later will yield higher
+     figures -- which is why date_pulled is recorded on every output.
+
+  3. best_oa_location is null for closed works by design. A missing value
+     there is informative, not an error.
+
+  4. apc_paid is populated for only a subset of works. APC totals are a
+     lower bound, not a complete accounting.
+
+  5. topic_field / topic_domain come from primary_topic, i.e. the single
+     highest-scoring topic. Multi-disciplinary works are assigned to one
+     field only. Use the all_fields column for a fuller picture.
+
+REPRODUCING WITHOUT RE-QUERYING THE API
+  works_raw <- readRDS("UA_ALL_works_2025_20260905_raw_json.rds")
+  # then re-run Step 4 onward
+
