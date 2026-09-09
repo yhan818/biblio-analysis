@@ -1,9 +1,9 @@
 UA ALL WORKS 2025 -- session information
-Written: 2026-09-04 21:19:31 America/Phoenix
+Written: 2026-09-08 22:27:50 America/Phoenix
 Data source: OpenAlex REST API, direct JSON (openalexR not used)
 --------------------------------------------------------------
 
-─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─ Session info ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.6.1 (2026-06-24)
  os       Ubuntu 22.04.5 LTS
@@ -13,16 +13,15 @@ Data source: OpenAlex REST API, direct JSON (openalexR not used)
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       America/Phoenix
- date     2026-09-04
+ date     2026-09-08
  rstudio  2025.09.0+387 Cucumberleaf Sunflower (desktop)
  pandoc   NA
  quarto   1.7.32 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/quarto
 
-─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─ Packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
  package     * version   date (UTC) lib source
  bit           4.6.0     2025-03-06 [1] CRAN (R 4.6.0)
  bit64         4.8.0     2026-04-21 [1] CRAN (R 4.6.0)
- cellranger    1.1.0     2016-07-27 [1] CRAN (R 4.6.0)
  cli           3.6.6     2026-04-09 [1] CRAN (R 4.6.0)
  crayon        1.5.3     2024-06-20 [1] CRAN (R 4.6.0)
  curl          7.1.0     2026-04-22 [1] CRAN (R 4.6.0)
@@ -30,12 +29,10 @@ Data source: OpenAlex REST API, direct JSON (openalexR not used)
  generics      0.1.4     2025-05-09 [1] CRAN (R 4.6.0)
  glue          1.8.1     2026-04-17 [1] CRAN (R 4.6.0)
  hms           1.1.4     2025-10-17 [1] CRAN (R 4.6.0)
- httr          1.4.8     2026-02-13 [1] CRAN (R 4.6.0)
  httr2       * 1.3.0     2026-07-13 [1] CRAN (R 4.6.1)
  jsonlite    * 2.0.0     2025-03-27 [1] CRAN (R 4.6.0)
  lifecycle     1.0.5     2026-01-08 [1] CRAN (R 4.6.0)
  magrittr      2.0.5     2026-04-04 [1] CRAN (R 4.6.0)
- openalexR   * 3.1.0     2026-07-03 [1] CRAN (R 4.6.1)
  openxlsx      4.2.8.1   2025-10-31 [1] CRAN (R 4.6.1)
  pillar        1.11.1    2025-09-17 [1] CRAN (R 4.6.0)
  pkgconfig     2.0.3     2019-09-22 [1] CRAN (R 4.6.0)
@@ -43,7 +40,6 @@ Data source: OpenAlex REST API, direct JSON (openalexR not used)
  R6            2.6.1     2025-02-15 [1] CRAN (R 4.6.0)
  Rcpp          1.1.1-1.1 2026-04-24 [1] CRAN (R 4.6.0)
  readr       * 2.2.0     2026-02-19 [1] CRAN (R 4.6.1)
- readxl      * 1.4.5     2025-03-07 [1] CRAN (R 4.6.0)
  rlang         1.3.0     2026-07-05 [1] CRAN (R 4.6.1)
  rstudioapi    0.18.0    2026-01-16 [1] CRAN (R 4.6.0)
  sessioninfo   1.2.4     2026-06-04 [1] CRAN (R 4.6.1)
@@ -57,7 +53,6 @@ Data source: OpenAlex REST API, direct JSON (openalexR not used)
  vctrs         0.7.3     2026-04-11 [1] CRAN (R 4.6.0)
  vroom         1.7.1     2026-03-31 [1] CRAN (R 4.6.0)
  withr         3.0.2     2024-10-28 [1] CRAN (R 4.6.0)
- writexl       2.0.0     2026-08-05 [1] CRAN (R 4.6.1)
  zip           2.3.3     2025-05-13 [1] CRAN (R 4.6.0)
 
  [1] /home/yhan/R/x86_64-pc-linux-gnu-library/4.6
@@ -66,4 +61,4 @@ Data source: OpenAlex REST API, direct JSON (openalexR not used)
  [4] /usr/lib/R/library
  * ── Packages attached to the search path.
 
-──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -47,12 +47,18 @@ library(stringr)
 
 # ---- Configuration -------------------------------------------
 UA_ID       <- "I138006243"          # University of Arizona
+UA_ROR      <- "https://ror.org/03m2x1q45"
 YR          <- 2025
-MAILTO      <- "you@arizona.edu"     # <-- EDIT: polite pool
+MAILTO      <- "yhan@arizona.edu"     # <-- EDIT: polite pool
 API_KEY     <- Sys.getenv("OPENALEX_KEY", unset = "")  # optional
 PER_PAGE    <- 200                   # API maximum
-INCLUDE_ABSTRACT <- FALSE            # TRUE roughly triples payload size
+INCLUDE_ABSTRACT <- TRUE            # TRUE roughly triples payload size
 BASE        <- "https://api.openalex.org/works"
+
+
+PATH <- "/home/yhan/Documents/biblio-analysis"
+setwd(PATH)
+getwd()
 
 date_pulled <- Sys.time()
 stamp       <- format(as.Date(date_pulled), "%Y%m%d")
@@ -238,6 +244,9 @@ stopifnot(length(works_raw) > 0)
 saveRDS(works_raw, paste0(prefix, "_raw_json.rds"))
 message("Raw JSON list saved: ", prefix, "_raw_json.rds")
 
+########################### 
+#works_raw <- readRDS(paste0(prefix, "_raw_json.rds"))
+ 
 # ============================================================
 # STEP 4 -- Flatten each work to a single row
 #
@@ -292,10 +301,6 @@ undo_inverted <- function(ii) {
   paste(wrd[order(pos)], collapse = " ")
 }
 
-
-UA_ROR <- "https://ror.org/03m2x1q45"   # verify against /institutions/I138006243
-UA_ID  <- "I138006243"
-
 # UA name variants for raw-string fallback detection
 ua_regex <- paste0(
   "University of Arizona|Univ(ersity)?\\.? of Ariz|UArizona|",
@@ -340,6 +345,43 @@ flatten_work <- function(w) {
     length(a$institutions %||% list()) == 0 &&
       length(a$countries %||% list()) > 0, logical(1)))
  
+  grant_source <- if (length(w$awards %||% list()) > 0) w$awards
+  else if (length(w$grants %||% list()) > 0) w$grants
+  else list()
+  
+  aw <- w$awards  %||% list()   # specific grants [1]
+  fu <- w$funders %||% list()   # funding organizations [1]
+  # NOTE: w$grants is gone -- removed from the Work object [6]
+  
+  # Collect every (institution, country) pair across all authorships.
+  # Each dehydrated institution carries id, display_name, ror,
+  # country_code, type, and lineage [3].
+  inst_rows <- do.call(rbind, lapply(au, function(a) {
+    ins <- a$institutions %||% list()
+    if (!length(ins)) return(NULL)
+    do.call(rbind, lapply(ins, function(i) data.frame(
+      inst_id   = short_id(i$id),
+      name      = i$display_name %||% NA_character_,
+      ror       = i$ror          %||% NA_character_,
+      cc        = i$country_code %||% NA_character_,
+      itype     = i$type         %||% NA_character_,
+      stringsAsFactors = FALSE
+    )))
+  }))
+  
+  if (is.null(inst_rows)) {
+    inst_rows <- data.frame(inst_id = character(0), name = character(0),
+                            ror = character(0), cc = character(0),
+                            itype = character(0), stringsAsFactors = FALSE)
+  } else {
+    # Dedupe on institution ID only, not on all columns.
+    # unique() compares every column, so the same institution
+    # appearing with a differing display_name or country_code
+    # across authorships would survive twice and inflate
+    
+    inst_rows <- inst_rows[!duplicated(inst_rows$inst_id), , drop = FALSE]
+  }
+  
   
   tibble(
     # ---------- identity ----------
@@ -383,10 +425,12 @@ flatten_work <- function(w) {
     # ---------- primary (version of record) location ----------
     primary_source_id         = short_id(purrr::pluck(pl, "source", "id")),
     primary_source_name       = s_chr(pl, "source", "display_name"),
+    source_display_name       = s_chr(pl, "source", "display_name"), # alias
     primary_source_type       = s_chr(pl, "source", "type"),
     primary_source_issn_l     = s_chr(pl, "source", "issn_l"),
     primary_source_is_in_doaj = s_lgl(pl, "source", "is_in_doaj"),
     primary_publisher         = s_chr(pl, "source", "host_organization_name"),
+    host_organization_name    = s_chr(pl, "source", "host_organization_name"), # alias
     primary_is_oa             = s_lgl(pl, "is_oa"),
     primary_version           = s_chr(pl, "version"),
     primary_license           = s_chr(pl, "license"),
@@ -408,9 +452,7 @@ flatten_work <- function(w) {
     # authorships array -- named so the distinction is obvious.
     authors_listed_in_payload = n_listed,
     authors_count_api         = s_int(w, "authors_count"),
-    authorships_maybe_capped  = n_listed >= 100,
     
-    # UA-specific flags derived from the authorships array
     # UA-specific flags derived from the authorships array
     ua_author_count       = sum(ua_hit),
     ua_exact_parent_count = sum(vapply(au, function(a)
@@ -438,12 +480,41 @@ flatten_work <- function(w) {
     apc_list_currency  = s_chr(w, "apc_list", "currency"),
     apc_paid_value_usd = s_int(w, "apc_paid", "value_usd"),
     apc_paid_provenance = s_chr(w, "apc_paid", "provenance"),
-    funder_names = join_map(w$funders %||% w$grants,
-                            function(e) e$display_name %||% e$funder_display_name),
-    funder_ids   = join_map(w$funders %||% w$grants,
-                            function(e) short_id(e$id %||% e$funder)),
-    award_ids    = join_map(w$awards %||% w$grants,
-                            function(e) e$award_id),
+    
+    # --- Awards (grants) ---
+    n_awards           = length(aw),
+    award_ids          = join_map(aw, function(e) e$funder_award_id %||% NA_character_),
+    award_openalex_ids = join_map(aw, function(e) short_id(e$id %||% NA_character_)),
+    award_dois         = join_map(aw, function(e) e$doi %||% NA_character_),
+    award_funder_names = join_map(aw, function(e) e$funder_display_name %||% NA_character_),
+    award_funder_ids   = join_map(aw, function(e) short_id(e$funder_id %||% NA_character_)),
+    
+    # --- Funders (organizations) — separate array, no award numbers ---
+    n_funders    = length(fu),
+    funder_names = join_map(fu, function(e) e$display_name %||% NA_character_),
+    funder_ids   = join_map(fu, function(e) short_id(e$id %||% NA_character_)),
+    funder_rors  = join_map(fu, function(e) e$ror %||% NA_character_),
+    
+    # --- Institutions paired with country codes (one row per work) ---
+    institutions_with_countries = if (!nrow(inst_rows)) NA_character_ else
+      paste(sprintf("%s (%s)",
+                    inst_rows$name,
+                    ifelse(is.na(inst_rows$cc), "??", inst_rows$cc)),
+            collapse = "; "),
+    
+    institution_names   = if (!nrow(inst_rows)) NA_character_ else
+      paste(unique(stats::na.omit(inst_rows$name)),    collapse = "; "),
+    institution_ids     = if (!nrow(inst_rows)) NA_character_ else
+      paste(unique(stats::na.omit(inst_rows$inst_id)), collapse = "; "),
+    institution_rors    = if (!nrow(inst_rows)) NA_character_ else
+      paste(unique(stats::na.omit(inst_rows$ror)),     collapse = "; "),
+    institution_types   = if (!nrow(inst_rows)) NA_character_ else
+      paste(unique(stats::na.omit(inst_rows$itype)),   collapse = "; "),
+    
+    # --- Country codes ---
+    # From institution country_code only -- will be narrower than
+    institution_country_codes = if (!nrow(inst_rows)) NA_character_ else
+      paste(sort(unique(stats::na.omit(inst_rows$cc))), collapse = "; "),
     
     # ---------- classification ----------
     # primary_topic carries field / subfield / domain directly,
@@ -460,7 +531,6 @@ flatten_work <- function(w) {
     concepts        = join_map(w$concepts, function(e) e$display_name),
     sdgs            = join_map(w$sustainable_development_goals,
                                function(e) e$display_name),
-    
     # ---------- impact ----------
     cited_by_count         = s_int(w, "cited_by_count"),
     fwci                   = s_dbl(w, "fwci"),
@@ -485,6 +555,8 @@ message("\nSTEP 5  Flattening ", format(length(works_raw), big.mark = ","),
 
 ua <- purrr::map_dfr(works_raw, flatten_work)
 
+
+
 # Derived convenience columns
 ua <- ua |>
   mutate(
@@ -499,31 +571,74 @@ ua <- ua |>
       ~ "publisher",
       TRUE                                 ~ "other"
     ),
-    collab_class = case_when(
-      is.na(countries_distinct_count) ~ "unknown",
-      countries_distinct_count <= 1   ~ "1 country (domestic)",
-      countries_distinct_count == 2   ~ "2 countries",
-      countries_distinct_count <= 5   ~ "3-5 countries",
-      countries_distinct_count <= 10  ~ "6-10 countries",
-      TRUE                            ~ "11+ countries"
-    ),
-    collab_class = factor(collab_class, levels = c(
-      "1 country (domestic)", "2 countries", "3-5 countries",
-      "6-10 countries", "11+ countries", "unknown")),
     publication_date = as.Date(publication_date),
     pub_month = format(publication_date, "%Y-%m")
   )
 
+
+# =========================================================
+# Collapse any remaining list columns to delimited strings
+# This handles fields that flatten_work() returned as lists
+# rather than scalars (e.g., nested arrays that join_map
+# missed, or fields with unexpected structure)
+# =========================================================
+list_cols <- names(ua)[vapply(ua, is.list, logical(1))]
+
+if (length(list_cols) > 0) {
+  message("Collapsing ", length(list_cols), " remaining list column(s): ",
+          paste(list_cols, collapse = ", "))
+  
+  collapse_to_string <- function(x, sep = "; ") {
+    if (is.null(x) || length(x) == 0) return(NA_character_)
+    if (is.data.frame(x)) {
+      # Nested tibble: prefer display_name, fall back to first column
+      name_col <- intersect(
+        c("display_name", "name", "title", "id"),
+        names(x)
+      )
+      if (length(name_col) > 0) {
+        vals <- unique(stats::na.omit(as.character(x[[name_col[1]]])))
+      } else if (ncol(x) > 0) {
+        vals <- unique(stats::na.omit(as.character(x[[1]])))
+      } else {
+        return(NA_character_)
+      }
+    } else if (is.list(x)) {
+      vals <- unique(stats::na.omit(as.character(unlist(x, use.names = FALSE))))
+    } else {
+      vals <- unique(stats::na.omit(as.character(x)))
+    }
+    if (length(vals) == 0) return(NA_character_)
+    # Excel cells cap at 32,767 characters
+    out <- paste(vals, collapse = sep)
+    if (nchar(out) > 32000) out <- paste0(substr(out, 1, 32000), " ...[TRUNCATED]")
+    out
+  }
+  
+  for (lc in list_cols) {
+    ua[[lc]] <- vapply(ua[[lc]], collapse_to_string, character(1))
+    message("  collapsed: ", lc)
+  }
+}
+
+# Now verify — should pass
+remaining <- names(ua)[vapply(ua, is.list, logical(1))]
+if (length(remaining) > 0) {
+  stop("Still have list columns after collapsing: ",
+       paste(remaining, collapse = ", "))
+} else {
+  message("PASS: all columns are scalar. Frame is fully rectangular.")
+}
 # --- Hard checks ---
 stopifnot(!any(vapply(ua, is.list, logical(1))))   # fully rectangular
+
 
 reconciliation <- tibble(
   check = c("API count_only", "Records fetched", "Difference",
             "Rows flattened", "Unique ids", "Duplicate ids",
             "countries_distinct_count present",
             "institutions_distinct_count present",
-            "best_oa_location present (non-null)",
-            "Works at/over 100-author cap"),
+            "best_oa_location present (non-null)"),
   value = c(
     expected_n,
     length(works_raw),
@@ -533,8 +648,7 @@ reconciliation <- tibble(
     nrow(ua) - dplyr::n_distinct(ua$id),
     sum(!is.na(ua$countries_distinct_count)),
     sum(!is.na(ua$institutions_distinct_count)),
-    sum(ua$best_oa_exists),
-    sum(ua$authorships_maybe_capped, na.rm = TRUE)
+    sum(ua$best_oa_exists)
   )
 )
 
@@ -736,13 +850,18 @@ print(type_by_field, n = 25)
 
 # --- 7h: collaboration breadth vs OA (API counts, uncapped) ---
 oa_by_collaboration <- ua |>
-  group_by(collab_class) |>
-  summarise(
-    n_works      = n(),
-    n_oa         = sum(oa_status != "closed", na.rm = TRUE),
-    oa_rate      = round(sum(oa_status != "closed", na.rm = TRUE) / n() * 100, 1),
-    median_insts = median(institutions_distinct_count, na.rm = TRUE),
-    max_insts    = max(institutions_distinct_count, na.rm = TRUE),
+  dplyr::mutate(band = dplyr::case_when(
+    is.na(countries_distinct_count) ~ "unknown",
+    countries_distinct_count <= 1   ~ "1 country",
+    countries_distinct_count == 2   ~ "2 countries",
+    countries_distinct_count <= 5   ~ "3-5 countries",
+    countries_distinct_count <= 10  ~ "6-10 countries",
+    TRUE                            ~ "11+ countries"
+  )) |>
+  dplyr::group_by(band) |>
+  dplyr::summarise(
+    n_works = dplyr::n(),
+    oa_rate = round(sum(oa_status != "closed", na.rm = TRUE) / dplyr::n() * 100, 1),
     .groups = "drop"
   )
 
@@ -840,7 +959,7 @@ ua_role_summary <- ua |>
     median_ua_authors       = median(ua_author_count, na.rm = TRUE),
     zero_ua_authors         = sum(ua_author_count == 0),
     recovered_by_lineage    = sum(ua_author_count > 0 & ua_exact_parent_count == 0),
-    works_capped_authorship = sum(authorships_maybe_capped, na.rm = TRUE)
+ 
   )
 
 message("\nUA authorship role:")
@@ -970,6 +1089,434 @@ field_probe_log <- probe_tbl |>
 # ============================================================
 # STEP 9 -- Write outputs
 # ============================================================
+# =========================================================
+# Build the data dictionary as a data frame
+# =========================================================
+
+data_dictionary <- tibble::tribble(
+  ~column_name, ~display_name, ~data_type, ~source, ~definition, ~null_means,
+  
+  # ================ IDENTITY ================
+  "id", "OpenAlex Work ID", "string", "API direct",
+  "Unique OpenAlex identifier, e.g. W4415739261.",
+  "Should not be null",
+  
+  "openalex_url", "OpenAlex URL", "string", "API direct",
+  "Full URL to this work on openalex.org.",
+  "Should not be null",
+  
+  "doi", "DOI", "string", "API direct, prefix stripped",
+  "Digital Object Identifier without the https://doi.org/ prefix. Where a work has both preprint and published DOIs, this is the published one.",
+  "No DOI registered (common for datasets, dissertations, repository records)",
+  
+  "pmid", "PubMed ID", "string", "API via ids object",
+  "PubMed identifier, URL prefix stripped.",
+  "Not indexed in PubMed",
+  
+  "pmcid", "PubMed Central ID", "string", "API via ids object",
+  "PubMed Central identifier.",
+  "No PMC deposit exists",
+  
+  "title", "Title", "string", "API direct",
+  "Title of the work as recorded by OpenAlex.",
+  "Rare; some repository records lack titles",
+  
+  "publication_year", "Publication Year", "integer", "API direct",
+  "Year of publication. All records in this dataset are 2025.",
+  "Should not be null in this dataset",
+  
+  "publication_date", "Publication Date", "date", "API direct",
+  "Full publication date (ISO 8601). Where several dates exist, OpenAlex generally uses the earliest electronic publication date.",
+  "Date could not be determined beyond the year",
+  
+  "language", "Language", "string", "API direct",
+  "Auto-detected language of title and abstract, ISO 639-1 two-letter code.",
+  "Language could not be detected (insufficient text)",
+  
+  "type", "Work Type", "string", "API direct",
+  "Type of scholarly output (article, book-chapter, dataset, preprint, review, dissertation, etc.), assigned by OpenAlex's classifier.",
+  "Should not be null",
+  
+  "raw_type", "Raw Type (from source)", "string", "API direct",
+  "Type label as supplied by the registering source (Crossref, DataCite, repository), before OpenAlex reclassification.",
+  "Source did not supply a type",
+  
+  # ================ OPEN ACCESS ================
+  "is_oa", "Is Open Access", "logical", "API via open_access",
+  "Whether any free, legal full-text copy exists anywhere. OpenAlex uses a broad definition: readable without paying or logging in.",
+  "Should not be null",
+  
+  "oa_status", "OA Status", "string", "API via open_access",
+  "OA classification. diamond = fully OA journal, no APC. gold = fully OA journal. hybrid = open-licensed article in a toll journal. green = toll at publisher, free copy in a repository. bronze = free at publisher, no open license. closed = no free copy found.",
+  "Should not be null",
+  
+  "oa_binary", "OA Binary", "string", "Derived in script",
+  "Simplified two-value grouping: everything except 'closed' becomes 'OA'.",
+  "Should not be null",
+  
+  "oa_url", "Best OA URL", "string", "API via open_access",
+  "URL of the best available OA copy. Same target as best_oa_location.",
+  "Work is closed",
+  
+  "any_repository_has_fulltext", "Repository Has Fulltext", "logical", "API via open_access",
+  "Whether at least one repository holds a full text. Surfaces repository deposits that oa_status hides when a publisher copy also exists.",
+  "Should not be null",
+  
+  # ================ BEST OA LOCATION ================
+  
+  "best_oa_exists", "Best OA Location Exists", "logical", "Derived from API",
+  "Whether best_oa_location was non-null in the API response. FALSE for closed works by design — not missing data.",
+  "Never null (TRUE/FALSE only)",
+  
+  "best_oa_is_oa", "Best OA Is OA", "logical", "API via best_oa_location",
+  "Should always be TRUE when a best OA location exists.",
+  "No OA location (work is closed)",
+  
+  "best_oa_version", "Best OA Version", "string", "API via best_oa_location",
+  "Manuscript version at the best OA copy. Scoring prefers publishedVersion, then acceptedVersion, then submittedVersion.",
+  "No OA location (work is closed)",
+  
+  "best_oa_license", "Best OA License", "string", "API via best_oa_location",
+  "License on the best OA copy. OpenAlex counts even restrictive Creative Commons variants (cc-by-nc-nd) as open.",
+  "No license identified. For bronze works this is INFORMATIVE, not missing: free to read with no open license is precisely what defines bronze.",
+  
+  "best_oa_license_id", "Best OA License ID", "string", "API via best_oa_location",
+  "The license identifier string (e.g. 'cc-by-4.0').",
+  "No license identified",
+  
+  "best_oa_is_accepted", "Best OA Is Accepted Version", "logical", "API via best_oa_location",
+  "Whether the best OA location holds an accepted manuscript.",
+  "No OA location",
+  
+  "best_oa_is_published", "Best OA Is Published Version", "logical", "API via best_oa_location",
+  "Whether the best OA location holds the published version.",
+  "No OA location",
+  
+  "best_oa_landing_page_url", "Best OA Landing Page", "string", "API via best_oa_location",
+  "Landing page URL of the best OA copy.",
+  "No OA location",
+  
+  "best_oa_pdf_url", "Best OA PDF URL", "string", "API via best_oa_location",
+  "Direct PDF link for the best OA copy.",
+  "No direct PDF link (landing page may still provide access via embedded reader)",
+  
+  "best_oa_source_id", "Best OA Source ID", "string", "API via best_oa_location.source",
+  "OpenAlex ID of the source (journal or repository) hosting the best OA copy.",
+  "Source could not be identified",
+  
+  "best_oa_source_name", "Best OA Source Name", "string", "API via best_oa_location.source",
+  "Display name of the source hosting the best OA copy (e.g. 'PubMed Central', 'arXiv', 'PLOS ONE').",
+  "Source could not be identified",
+  
+  "best_oa_source_type", "Best OA Source Type", "string", "API via best_oa_location.source",
+  "Whether the best OA copy is at a publisher venue or in a repository. Preprint servers count as 'repository'.",
+  "Source could not be identified",
+  
+  "best_oa_source_issn_l", "Best OA Source ISSN-L", "string", "API via best_oa_location.source",
+  "Linking ISSN of the source hosting the best OA copy.",
+  "Source is not a serial (e.g. a repository)",
+  
+  "best_oa_source_is_in_doaj", "Best OA Source in DOAJ", "logical", "API via best_oa_location.source",
+  "Whether the source is listed in the Directory of Open Access Journals.",
+  "Source could not be identified",
+  
+  "best_oa_host_org", "Best OA Host Organization", "string", "API via best_oa_location.source",
+  "Publisher or organization operating the source hosting the best OA copy.",
+  "Not recorded",
+  
+  "best_oa_venue_class", "Best OA Venue Class", "string", "Derived in script",
+  "Simplified grouping of best_oa_source_type: 'publisher', 'repository', 'OA source unknown', 'none (closed)', or 'other'.",
+  "Should not be null",
+  
+  # ================ PRIMARY LOCATION ================
+  
+  "primary_source_id", "Primary Source ID", "string", "API via primary_location.source",
+  "OpenAlex ID of the journal, conference, or repository where the work was published.",
+  "Source not identified",
+  
+  "primary_source_name", "Primary Source Name (Journal Title)", "string", "API via primary_location.source",
+  "Display name of the primary source — THIS IS THE JOURNAL TITLE (e.g. 'Nature', 'PLOS ONE', 'arXiv').",
+  "Source not identified",
+  
+  "source_display_name", "Journal Title (alias)", "string", "Alias for primary_source_name",
+  "Alias for primary_source_name. Equivalent to 'so' or 'source_display_name' in openalexR output. Included for backward compatibility with earlier data pulls.",
+  "Same as primary_source_name",
+  
+  "primary_source_type", "Primary Source Type", "string", "API via primary_location.source",
+  "Type of the primary venue: journal, repository, conference, book series, ebook platform.",
+  "Source not identified",
+  
+  "primary_source_issn_l", "Primary Source ISSN-L", "string", "API via primary_location.source",
+  "Linking ISSN of the primary source.",
+  "Not a serial",
+  
+  "primary_source_is_in_doaj", "Primary Source in DOAJ", "logical", "API via primary_location.source",
+  "Whether the primary source is listed in DOAJ. TRUE for gold/diamond journals.",
+  "Source not identified",
+  
+  "primary_publisher", "Publisher", "string", "API via primary_location.source",
+  "Name of the host organization — THIS IS THE PUBLISHER (e.g. 'Elsevier', 'Springer Nature', 'MDPI'). Extracted from primary_location.source.host_organization_name.",
+  "Not recorded",
+  
+  "host_organization_name", "Publisher (alias)", "string", "Alias for primary_publisher",
+  "Alias for primary_publisher. Equivalent to 'host_organization' in openalexR output. Included for backward compatibility with earlier data pulls.",
+  "Same as primary_publisher",
+  
+  "primary_is_oa", "Primary Location Is OA", "logical", "API via primary_location",
+  "Whether the primary (publisher) copy itself is freely available.",
+  "No primary location",
+  
+  "primary_version", "Primary Location Version", "string", "API via primary_location",
+  "Version type at the primary location: publishedVersion, acceptedVersion, submittedVersion.",
+  "Not recorded",
+  
+  "primary_license", "Primary Location License", "string", "API via primary_location",
+  "License at the primary location.",
+  "No license identified",
+  
+  "primary_landing_page_url", "Primary Landing Page", "string", "API via primary_location",
+  "Publisher landing page URL.",
+  "Not recorded",
+  
+  "primary_pdf_url", "Primary PDF URL", "string", "API via primary_location",
+  "Direct PDF link at the publisher.",
+  "No direct PDF available",
+  
+  "locations_count", "Total Locations Count", "integer", "API direct",
+  "How many distinct locations (publisher + repositories) OpenAlex found for this work.",
+  "Should not be null",
+  
+  "indexed_in", "Indexed In", "string", "Derived: collapsed list",
+  "Which indexes carry this work, e.g. 'crossref; doaj; pubmed'.",
+  "No indexing information",
+  
+  "has_fulltext", "Has Fulltext", "logical", "API direct",
+  "Whether OpenAlex has been able to access the full text of this work (for abstract extraction, topic classification, etc.).",
+  "Should not be null",
+  
+
+  # ================ INSTITUTIONS & COUNTRIES ================
+  
+  "institutions_distinct_count", "Distinct Author Institutions", "integer", "API direct — AUTHORITATIVE",
+  "Number of distinct institutions across all authorships on this work, as computed by OpenAlex. Verified against local extraction on all 9,740 works: 96.8% exact agreement. Disagreements concentrate on works with 100+ listed authors, where the served authorships array is capped but this count appears to be computed over the complete record (136 of 137 large gaps are at the cap). OpenAlex documentation does not state whether this count inherits the cap; the behaviour was determined empirically. Twelve works show the local count exceeding the API count, consistent with umbrella organizations flagged is_super_system being excluded from certain analyses. Use this column for any reported figure.",
+  "No authorship data available",
+  
+  "countries_distinct_count", "Distinct Author Countries", "integer", "API direct — AUTHORITATIVE",
+  "Number of distinct author country codes across all authorships, as computed by OpenAlex. 98.5% exact agreement with local extraction. Same cap behaviour as institutions_distinct_count.",
+  "No authorship data available",
+  
+  "institutions_with_countries", "Institutions with Country Codes", "string", "Derived: paired from authorships[].institutions[]",
+  "Every distinct institution on the work paired with its ISO 3166-1 alpha-2 country code, semicolon-delimited. Example: 'University of Arizona (US); ETH Zurich (CH); Kyoto University (JP)'. Built as PAIRED strings deliberately — deduplicating names and codes into separate columns loses the mapping. '(??)' marks an institution with no country code.",
+  "No institutions matched on any authorship",
+  
+  "institution_names", "Institution Names", "string", "Derived: collapsed from authorships[].institutions[]",
+  "Distinct institution display names, semicolon-delimited. Deduplicated on institution ID, so an institution appearing under slightly different display names is counted once.",
+  "No institutions matched on any authorship",
+  
+  "institution_ids", "Institution OpenAlex IDs", "string", "Derived: collapsed from authorships[].institutions[]",
+  "Distinct OpenAlex institution IDs (I-prefixed), semicolon-delimited. Useful for joining to the institutions endpoint or for programmatic filtering.",
+  "No institutions matched on any authorship",
+  
+  "institution_rors", "Institution ROR IDs", "string", "Derived: collapsed from authorships[].institutions[]",
+  "Distinct Research Organization Registry identifiers, semicolon-delimited. ROR is the external registry OpenAlex inherits institutional identity and hierarchy from.",
+  "No institutions matched, or matched institutions carry no ROR record",
+  
+  "institution_types", "Institution Types", "string", "Derived: collapsed from authorships[].institutions[]",
+  "Distinct institution types on this work: education, healthcare, company, nonprofit, government, facility, archive, funder, other. Useful for separating academic from industry or clinical collaboration.",
+  "No institutions matched on any authorship",
+  
+  "institution_country_codes", "Institution Country Codes", "string", "Derived: collapsed from authorships[].institutions[].country_code",
+  "Distinct country codes taken ONLY from matched institutions, semicolon-delimited and sorted. Deliberately narrower than authorship_countries. Where this is blank but authorship_countries is populated, OpenAlex read a country from the address but could not place the institution.",
+  "No institutions matched, or matched institutions carry no country code",
+  
+  "inst_count_gap", "Institution Count Gap (QA)", "integer", "Derived in script",
+  "institutions_distinct_count minus n_institutions_listed. Zero on 96.8% of works. Large positive = hyperauthorship truncation. Small negative = possible super-system exclusion. QA column.",
+  "Should not be null",
+  
+  # ================ AUTHORSHIP ================
+  
+  "authors_listed_in_payload", "Authors in Payload", "integer", "Derived: length of authorships array",
+  "Number of authors present in the served JSON. CAPPED AT 100 — OpenAlex states the authorships list is capped at the first 100 authors.",
+  "Should not be null",
+  
+  "authors_count_api", "Authors Count (API)", "integer", "API filter-only attribute",
+  "Total author count as reported by the API. Note: this is a filter-only attribute and may not populate via select.",
+  "Not returned by API for this work",
+  
+  "ua_author_count", "UA Author Count", "integer", "Derived in script via inst_is_ua()",
+  "Number of authors matched to UA via institution ID, ROR, or lineage. CAN BE 0 even though the work matched the UA filter — see ua_detect_zero_reason. Causes include parser misses (~92% recall), country-only resolutions, and over-merges. OpenAlex's blog uses UA's Optical Sciences Center as a worked example of the over-merge problem.",
+  "Should not be null (but can be 0)",
+  
+  "ua_exact_parent_count", "UA Exact Parent Match Count", "integer", "Derived in script",
+  "Number of authors whose institution ID is exactly I138006243 (parent UA), not via lineage or ROR fallback. Useful for distinguishing parent from child-institution matches.",
+  "Should not be null",
+  
+  "n_raw_affil_strings", "Raw Affiliation Strings Count", "integer", "Derived in script",
+  "How many raw affiliation text strings were present across all authorships. When 0, there is no text for the regex fallback to search.",
+  "Should not be null",
+  
+  "ua_in_raw_text", "UA in Raw Affiliation Text", "logical", "Derived in script via regex",
+  "Whether a regex pattern for UA name variants matched anywhere in the raw affiliation strings. TRUE with ua_author_count == 0 means 'UA is printed on the paper but OpenAlex did not link it' — a directly actionable parser miss.",
+  "Should not be null",
+  
+  "ua_detect_zero_reason", "UA Zero-Count Reason", "string", "Derived in script",
+  "Classifies why ua_author_count is 0. Values: 'no authorships in payload', 'no affiliation text in payload', 'UA in raw string, not linked (parser miss/over-merge)', 'affiliation resolved to country only', 'no UA signal in payload'. NA when count >= 1.",
+  "ua_author_count >= 1 (column is NA when count is positive)",
+  
+  "ua_is_first_author", "UA Is First Author", "logical", "Derived in script",
+  "Whether the first-listed author is affiliated with UA.",
+  "Should not be null",
+  
+  "ua_is_corresponding", "UA Is Corresponding", "logical", "Derived in script",
+  "Whether UA appears in the work's corresponding_institution_ids.",
+  "Should not be null",
+  
+  # ================ FUNDING ================
+  
+  "apc_list_value_usd", "APC List Price (USD)", "integer", "API via apc_list",
+  "The journal's listed article processing charge in USD. Source is DOAJ only. VALUE OF 0 = DIAMOND OA (journal charges no APC). NULL does NOT mean free — it means the price is unknown because the journal is not in DOAJ.",
+  "Journal not in DOAJ; list price unknown",
+  
+  "apc_list_currency", "APC List Currency", "string", "API via apc_list",
+  "Original currency of the list APC.",
+  "Not available",
+  
+  "apc_paid_value_usd", "APC Paid (USD)", "integer", "API via apc_paid",
+  "The APC actually paid, in USD. Prefers article-level data from OpenAPC; falls back to list price. COVERAGE IS PARTIAL — treat as a lower bound. VALUE OF 0 = waiver, diamond, or covered by agreement. NULL does not mean free — for gold/hybrid works an APC was almost certainly paid but the amount is unknown.",
+  "No payment data from any source (most common case)",
+  
+  "apc_paid_provenance", "APC Paid Provenance", "string", "API via apc_paid",
+  "Where the apc_paid figure came from: 'openapc' (article-level, most reliable) or 'doaj' (fell back to journal list price). For verified data only, filter to provenance == 'openapc'.",
+  "No data from any source",
+  
+  "n_awards", "Number of Awards", "integer", "Derived: length of awards array",
+  "How many distinct awards (grants) are linked to this work in OpenAlex. The awards array replaced the retired grants field on the Work object.",
+  "Should not be null (0 means no awards linked)",
+  
+  "award_ids", "Award/Grant IDs", "string", "Derived: collapsed from awards[].funder_award_id",
+  "The funder's own grant/award numbers (e.g. 'R01-AG018016; CDS9923G0006'), semicolon-delimited. Extracted from awards[].funder_award_id, which replaced the retired grants[].award_id. Only ~32% of works in this dataset carry award data — this reflects OpenAlex's current coverage, not a code issue. Blank means no funding metadata was deposited by the publisher or mined from the full text, not that the work was unfunded.",
+  "No award numbers recorded",
+  
+  "award_openalex_ids", "Award OpenAlex IDs", "string", "Derived: collapsed from awards[].id",
+  "OpenAlex award IDs (G-prefixed), semicolon-delimited. Useful for joining to the awards endpoint (api.openalex.org/awards), which carries additional fields including institution_awarded and amount_usd.",
+  "No awards linked",
+  
+  "award_dois", "Award DOIs", "string", "Derived: collapsed from awards[].doi",
+  "DOIs registered for awards/grants, where the funder has registered one.",
+  "No award DOIs registered (most common case)",
+  
+  "award_funder_names", "Award Funder Names", "string", "Derived: collapsed from awards[].funder_display_name",
+  "Funder names as recorded on each award, semicolon-delimited. Note: funder attribution on awards is subject to ongoing disambiguation; the National Natural Science Foundation of China (NNSFC) in particular has a documented history of over-attribution in OpenAlex.",
+  "No awards linked",
+  
+  "award_funder_ids", "Award Funder IDs", "string", "Derived: collapsed from awards[].funder_id",
+  "OpenAlex funder IDs (F-prefixed) from the awards array.",
+  "No awards linked",
+  
+  "n_funders", "Number of Funders", "integer", "Derived: length of funders array",
+  "How many distinct funding organizations are credited on this work. The funders array is SEPARATE from awards — funders lists organizations, awards lists specific grants.",
+  "Should not be null (0 means no funders credited)",
+  
+  "funder_names", "Funder Names", "string", "Derived: collapsed from funders[].display_name",
+  "Display names of all funding organizations, semicolon-delimited.",
+  "No funder information",
+  
+  "funder_ids", "Funder IDs", "string", "Derived: collapsed from funders[].id",
+  "OpenAlex funder IDs (F-prefixed), semicolon-delimited.",
+  "No funder information",
+  
+  "funder_rors", "Funder ROR IDs", "string", "Derived: collapsed from funders[].ror",
+  "ROR identifiers for funding organizations.",
+  "No funder information, or funders carry no ROR record",
+  
+  # ================ CLASSIFICATION ================
+  
+  "topic_id", "Primary Topic ID", "string", "API via primary_topic",
+  "OpenAlex ID of the work's primary (highest-scoring) topic. Topics are assigned by a machine-learning model from the work's title, abstract, citations, and journal — they are predictions, not lookups.",
+  "Work could not be classified (~12% of works lack sufficient metadata)",
+  
+  "topic_name", "Primary Topic Name", "string", "API via primary_topic",
+  "Human-readable name of the primary topic, generated by an LLM from the topic's citation cluster.",
+  "Work could not be classified",
+  
+  "topic_score", "Primary Topic Score", "numeric", "API via primary_topic",
+  "Confidence score of the primary topic assignment (0.0-1.0).",
+  "Work could not be classified",
+  
+  "topic_subfield", "Subfield", "string", "API via primary_topic.subfield",
+  "The subfield the primary topic maps to — one level up in the 4-level hierarchy (~252 subfields).",
+  "Work could not be classified",
+  
+  "topic_field", "Field (Discipline)", "string", "API via primary_topic.field",
+  "The field (discipline) the primary topic maps to — used for discipline-level OA rate comparisons (~26 fields). Multi-disciplinary works are assigned to one field only via their primary topic; use all_fields for a fuller picture.",
+  "Work could not be classified",
+  
+  "topic_domain", "Domain", "string", "API via primary_topic.domain",
+  "The broadest level of the topic hierarchy: Health Sciences, Life Sciences, Physical Sciences, or Social Sciences.",
+  "Work could not be classified",
+  
+  "all_topics", "All Assigned Topics", "string", "Derived: collapsed from topics list",
+  "Names of all topics assigned (up to 3), semicolon-delimited.",
+  "No topics assigned",
+  
+  "all_fields", "All Assigned Fields", "string", "Derived: collapsed from topics list",
+  "Fields from all assigned topics — useful for identifying multi-disciplinary works.",
+  "No topics assigned",
+  
+  "keywords", "Keywords", "string", "Derived: collapsed from keywords list",
+  "Work-level keywords scored per work, distinct from topic-level keywords.",
+  "No keywords assigned",
+  
+  "concepts", "Concepts (Deprecated)", "string", "Derived: collapsed from concepts list",
+  "Legacy classification inherited from Microsoft Academic Graph. DEPRECATED — no longer maintained; use topics instead.",
+  "No concepts assigned",
+  
+  "sdgs", "Sustainable Development Goals", "string", "Derived: collapsed from SDGs list",
+  "UN Sustainable Development Goals this work is relevant to, assigned by a classification model.",
+  "No SDGs assigned",
+  
+  # ================ IMPACT ================
+  
+  "cited_by_count", "Times Cited", "integer", "API direct",
+  "Total number of works in OpenAlex that cite this work. Where a publisher does not deposit open references with Crossref, those citations are invisible to OpenAlex.",
+  "Should not be null (0 means no citations yet)",
+  
+  "fwci", "Field-Weighted Citation Impact", "numeric", "API direct",
+  "Normalized citation score: citations received divided by expected citations for works of the same type, field, and year. 1.0 = world average. Recalculated inline by OpenAlex.",
+  "Too recent or insufficient data to calculate",
+  
+  "cnp_value", "Citation Normalized Percentile", "numeric", "API via citation_normalized_percentile",
+  "Where this work falls in the citation distribution for its type, field, and year. 0.95 means more cited than 95% of comparable works.",
+  "Too recent or insufficient data to calculate",
+  
+  "referenced_works_count", "References Count", "integer", "API direct",
+  "Number of works this work cites in its reference list.",
+  "Should not be null (0 means no references recorded)",
+  
+  # ================ FLAGS ================
+  
+  "is_retracted", "Is Retracted", "logical", "API direct",
+  "Whether this work has been retracted, per the Retraction Watch database. Distinct from type = 'retraction', which identifies retraction notices.",
+  "Should not be null",
+  
+  "is_paratext", "Is Paratext", "logical", "API direct",
+  "Whether this work is supplementary material (table of contents, editorial board listing, etc.) rather than substantive research. Deprecated — now derived from type.",
+  "Should not be null",
+  
+  # ================ ABSTRACT ================
+  
+  "abstract", "Abstract", "string", "Derived: reconstructed from abstract_inverted_index",
+  "Full abstract text, reconstructed from the inverted index. Only populated when INCLUDE_ABSTRACT = TRUE in the script config (default is FALSE, which roughly triples payload size). Not all works have abstracts — coverage is approximately 60% for recent works.",
+  "INCLUDE_ABSTRACT was FALSE (default), or the work has no abstract in OpenAlex",
+  
+  # ================ TEMPORAL ================
+  
+  "pub_month", "Publication Month", "string", "Derived from publication_date",
+  "Year-month derived from publication_date (YYYY-MM format). Useful for time-series and detecting indexing lag: if volume tails off in recent months, that is lag, not a real publishing decline.",
+  "publication_date is null"
+)
+
+message("Data dictionary built: ", nrow(data_dictionary), " columns documented")
 
 # --- 9a: Column ordering, analysis columns first ---
 front <- c(
@@ -979,19 +1526,43 @@ front <- c(
   "best_oa_exists", "best_oa_venue_class", "best_oa_version",
   "best_oa_license", "best_oa_source_name", "best_oa_source_type",
   "best_oa_pdf_url", "best_oa_landing_page_url",
-  "countries_distinct_count", "institutions_distinct_count",
-  "collab_class",
+  "institutions_with_countries", "institution_names",
+  "institution_country_codes", 
+  
+  "institutions_distinct_count",
+  "countries_distinct_count",
+
   "topic_domain", "topic_field", "topic_subfield", "topic_name",
   "primary_source_name", "primary_publisher", "primary_source_is_in_doaj",
   "cited_by_count", "fwci",
   "ua_author_count", "ua_exact_parent_count", "ua_detect_zero_reason",
   "ua_is_first_author", "ua_is_corresponding",
-  "authors_listed_in_payload", "authorships_maybe_capped",
+  "authors_listed_in_payload", 
   "apc_paid_value_usd", "apc_list_value_usd"
 )
 front <- intersect(front, names(ua))
 
 ua_out <- ua |> select(all_of(front), everything())
+
+# Validate here
+documented <- data_dictionary$column_name
+actual     <- names(ua_out)
+
+missing_from_data <- setdiff(documented, actual)
+undocumented      <- setdiff(actual, documented)
+
+if (length(missing_from_data)) {
+  message("WARNING — documented but not in data: ",
+          paste(missing_from_data, collapse = ", "))
+}
+if (length(undocumented)) {
+  message("WARNING — in data but undocumented: ",
+          paste(undocumented, collapse = ", "))
+}
+if (!length(missing_from_data) && !length(undocumented)) {
+  message("PASS — data dictionary and dataset columns match exactly")
+}
+
 
 # --- 9b: Lossless saves ---
 saveRDS(ua,           paste0(prefix, "_works.rds"))
@@ -1043,6 +1614,7 @@ xlsx_file <- paste0(prefix, ".xlsx")
 
 sheets <- list(
   "README_date_pulled"   = run_metadata,
+  "data_dictionary"      = data_dictionary, 
   "all_works"            = ua_out,
   "oa_summary"           = oa_summary,
   "type_summary"         = type_summary,
@@ -1281,4 +1853,45 @@ message("")
 message("Reload without re-querying:")
 message("  ua <- readRDS(\"", prefix, "_works.rds\")")
 message("  works_raw <- readRDS(\"", prefix, "_raw_json.rds\")")
+
+
+#### Testing 6283 vs 6344 for openalexR
+
+library(openalexR)
+library(jsonlite)
+
+# openalexR count
+oar_count <- oa_fetch(
+  entity = "works",
+  authorships.institutions.id = "I138006243",
+  from_publication_date = "2025-01-01",
+  to_publication_date = "2025-12-31",
+  open_access.is_oa = TRUE,
+  count_only = TRUE
+)
+
+# Direct API count
+url <- paste0(
+  "https://api.openalex.org/works",
+  "?filter=authorships.institutions.id:I138006243",
+  ",from_publication_date:2025-01-01",
+  ",to_publication_date:2025-12-31",
+  ",open_access.is_oa:true",
+  "&per-page=1",
+  "&mailto=", MAILTO
+)
+api_count <- fromJSON(url, simplifyVector = FALSE)$meta$count
+
+message("openalexR : ", oar_count$count)
+message("Direct API: ", api_count)
+message("Difference: ", api_count - oar_count$count)
+
+daily_log <- tibble::tibble(
+  timestamp  = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+  api_total  = api_count,
+  api_oa     = fromJSON(paste0(url), simplifyVector = FALSE)$meta$count
+)
+
+# Append to a running log file
+readr::write_csv(daily_log, "oa_daily_counts.csv", append = TRUE)
 

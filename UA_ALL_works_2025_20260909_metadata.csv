@@ -1,0 +1,37 @@
+field,value
+date_pulled,2026-09-09
+time_pulled_local,2026-09-08 23:25:31
+timezone,America/Phoenix
+data_source,"OpenAlex REST API, direct JSON (openalexR NOT used)"
+api_base_url,https://api.openalex.org/works
+institution_openalex_id,I138006243
+institution_name,University of Arizona
+publication_year,2025
+date_filter,2025-01-01 to 2025-12-31
+full_filter_string,"authorships.institutions.id:I138006243,from_publication_date:2025-01-01,to_publication_date:2025-12-31"
+oa_filter_applied,"NONE - all works returned, OA and closed"
+api_count_only,"9,740"
+records_fetched,"9,740"
+rows_in_final_table,"9,740"
+unique_openalex_ids,"9,740"
+fields_requested,"id, doi, ids, title, display_name, publication_year, publication_date, language, type, type_crossref, open_access, best_oa_location, primary_location, locations_count, has_fulltext, indexed_in, authorships, countries_distinct_count, institutions_distinct_count, corresponding_author_ids, corresponding_institution_ids, apc_list, apc_paid, funders, awards, primary_topic, topics, keywords, concepts, sustainable_development_goals, cited_by_count, counts_by_year, fwci, citation_normalized_percentile, referenced_works_count, is_retracted, is_paratext, abstract_inverted_index"
+fields_rejected_by_api,"authors_count, grants"
+countries_distinct_count_source,OpenAlex countries_distinct_count (NOT calculated locally)
+institutions_distinct_count_source,OpenAlex institutions_distinct_count (NOT calculated locally)
+best_oa_location_source,"OpenAlex best_oa_location, flattened from raw JSON"
+discipline_column,"topic_field / topic_domain, from primary_topic"
+abstracts_included,TRUE
+per_page,200
+pagination_method,cursor paging (cursor=* then meta.next_cursor)
+overall_oa_rate_pct,65.2
+total_articles,"6,453"
+article_oa_rate_pct,67.1
+mailto_used,yhan@arizona.edu
+api_key_used,no (polite pool via mailto)
+R_version,R version 4.6.1 (2026-06-24)
+platform,x86_64-pc-linux-gnu
+script_name,ua_all_works_2025_direct.R
+caveat_author_cap,OpenAlex caps the authorships array at the first 100 authors. This affects authors_listed_in_payload and the ua_* flags only. countries_distinct_count and institutions_distinct_count are computed upstream by OpenAlex and are NOT capped.
+caveat_partial_year,"2025 is recent: indexing and OA status (especially green OA via repositories) continue to accrue after this pull. The OA rate here is a FLOOR, not a final figure."
+caveat_apc_coverage,apc_paid is populated for only a subset of works. Treat APC totals as a lower bound.
+notes,"Full-universe pull. Denominator = all UA-affiliated works, so OA percentages are valid. Raw JSON preserved in UA_ALL_works_2025_20260909_raw_json.rds for re-derivation without re-querying."

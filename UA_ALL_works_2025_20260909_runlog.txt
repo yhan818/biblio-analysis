@@ -2,8 +2,8 @@ UA ALL WORKS 2025 -- RUN LOG
 ==============================================================
 
 PROVENANCE
-  Date pulled        : 2026-09-05
-  Time pulled        : 21:02:33 America/Phoenix
+  Date pulled        : 2026-09-09
+  Time pulled        : 23:25:31 America/Phoenix
   Data source        : OpenAlex REST API, direct JSON
   Institution        : University of Arizona (I138006243)
   Publication window : 2025-01-01 to 2025-12-31
@@ -11,29 +11,29 @@ PROVENANCE
   Pagination         : cursor paging, per-page=200
 
 COUNTS
-  API count_only     : 9,734
-  Records fetched    : 9,734
-  Rows in table      : 9,734
-  Unique OpenAlex ids: 9,734
-  Author-level rows  : 100,341
+  API count_only     : 9,740
+  Records fetched    : 9,740
+  Rows in table      : 9,740
+  Unique OpenAlex ids: 9,740
+  Author-level rows  : 100,378
 
 HEADLINE RESULTS
-  Overall OA rate    : 65.2%  (all work types, n=9,734)
-  Total articles     : 6,448
-  ARTICLE OA RATE    : 67%
+  Overall OA rate    : 65.2%  (all work types, n=9,740)
+  Total articles     : 6,453
+  ARTICLE OA RATE    : 67.1%
 
 TARGET FIELDS -- all three direct from OpenAlex, none calculated
-  countries_distinct_count    : populated on 9734 / 9734 works
-  institutions_distinct_count : populated on 9734 / 9734 works
-  best_oa_location            : non-null on 6344 / 9734 works (null = closed, by design)
+  countries_distinct_count    : populated on 9740 / 9740 works
+  institutions_distinct_count : populated on 9740 / 9740 works
+  best_oa_location            : non-null on 6354 / 9740 works (null = closed, by design)
 
 FILES WRITTEN
-  UA_ALL_works_2025_20260905_raw_json.rds       (raw API response, re-derivable)
-  UA_ALL_works_2025_20260905_works.rds          (flattened works table)
-  UA_ALL_works_2025_20260905_authors_long.rds   (author-level table)
-  UA_ALL_works_2025_20260905.xlsx   (multi-sheet workbook)
-  UA_ALL_works_2025_20260905_*.csv             (23 files)
-  UA_ALL_works_2025_20260905_sessionInfo.txt
+  UA_ALL_works_2025_20260909_raw_json.rds       (raw API response, re-derivable)
+  UA_ALL_works_2025_20260909_works.rds          (flattened works table)
+  UA_ALL_works_2025_20260909_authors_long.rds   (author-level table)
+  UA_ALL_works_2025_20260909.xlsx   (multi-sheet workbook)
+  UA_ALL_works_2025_20260909_*.csv             (23 files)
+  UA_ALL_works_2025_20260909_sessionInfo.txt
 
 CAVEATS
   1. OpenAlex caps the authorships array at the first 100 authors.
@@ -41,7 +41,7 @@ CAVEATS
      Does NOT affect: countries_distinct_count, institutions_distinct_count
      (computed upstream by OpenAlex). Works at the cap are flagged in
      the authorships_maybe_capped column: 
-     162 work(s).
+     0 work(s).
 
   2. 2025 is a recent year. Indexing continues, and green OA accrues
      as accepted manuscripts land in repositories and embargoes lapse.
@@ -59,6 +59,6 @@ CAVEATS
      field only. Use the all_fields column for a fuller picture.
 
 REPRODUCING WITHOUT RE-QUERYING THE API
-  works_raw <- readRDS("UA_ALL_works_2025_20260905_raw_json.rds")
+  works_raw <- readRDS("UA_ALL_works_2025_20260909_raw_json.rds")
   # then re-run Step 4 onward
 
