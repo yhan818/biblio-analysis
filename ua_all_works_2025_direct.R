@@ -1854,44 +1854,108 @@ message("Reload without re-querying:")
 message("  ua <- readRDS(\"", prefix, "_works.rds\")")
 message("  works_raw <- readRDS(\"", prefix, "_raw_json.rds\")")
 
+####
 
-#### Testing 6283 vs 6344 for openalexR
+works_raw <- readRDS(paste0(prefix, "_raw_json.rds"))
 
-library(openalexR)
-library(jsonlite)
+# Identify the 122 works missing I138006243 in institution_ids
+missing_ua <- ua |>
+  dplyr::filter(!grepl("I138006243", institution_ids, fixed = TRUE) |
+                  is.na(institution_ids)) |>
+  dplyr::pull(id)
 
-# openalexR count
-oar_count <- oa_fetch(
-  entity = "works",
-  authorships.institutions.id = "I138006243",
-  from_publication_date = "2025-01-01",
-  to_publication_date = "2025-12-31",
-  open_access.is_oa = TRUE,
-  count_only = TRUE
-)
+message("Works missing I138006243 in institution_ids: ", length(missing_ua))
 
-# Direct API count
-url <- paste0(
-  "https://api.openalex.org/works",
-  "?filter=authorships.institutions.id:I138006243",
-  ",from_publication_date:2025-01-01",
-  ",to_publication_date:2025-12-31",
-  ",open_access.is_oa:true",
-  "&per-page=1",
-  "&mailto=", MAILTO
-)
-api_count <- fromJSON(url, simplifyVector = FALSE)$meta$count
+# Diagnose each one from the raw JSON
+diag <- purrr::map_dfr(works_raw, function(w) {
+  wid <- short_id(w$id)
+  if (!wid %in% missing_ua) return(NULL)
+  
+  au <- w$authorships %||% list()
+  
+  # All institution IDs in the served array
+  all_inst_ids <- unique(unlist(lapply(au, function(a)
+    vapply(a$institutions %||% list(),
+           function(i) short_id(i$id), character(1))),
+    use.names = FALSE))
+  
+  # All lineage IDs in the served array
+  all_lineage_ids <- unique(unlist(lapply(au, function(a)
+    unlist(lapply(a$institutions %||% list(),
+                  function(i) vapply(i$lineage %||% list(),
+                                     short_id, character(1))))),
+    use.names = FALSE))
+  
+  # Check raw affiliation strings for UA
+  raw_strings <- unlist(lapply(au, function(a)
+    unlist(a$raw_affiliation_strings %||% list())), use.names = FALSE)
+  ua_in_raw <- any(grepl("University of Arizona|UArizona|Tucson.*AZ|AZ ?857",
+                         raw_strings, ignore.case = TRUE))
+  
+  # Check affiliations mapping
+  ua_in_affiliations <- any(unlist(lapply(au, function(a)
+    vapply(a$affiliations %||% list(), function(f)
+      "I138006243" %in% vapply(f$institution_ids %||% list(),
+                               short_id, character(1)),
+      logical(1))), use.names = FALSE))
+  
+  tibble::tibble(
+    id                    = wid,
+    n_authorships         = length(au),
+    at_cap                = length(au) >= 100,
+    ua_in_inst_ids        = "I138006243" %in% all_inst_ids,
+    ua_in_lineage         = "I138006243" %in% all_lineage_ids,
+    ua_in_raw_text        = ua_in_raw,
+    ua_in_affiliations    = ua_in_affiliations,
+    n_institutions        = length(all_inst_ids),
+    sample_inst_ids       = paste(head(all_inst_ids, 5), collapse = "; ")
+  )
+})
 
-message("openalexR : ", oar_count$count)
-message("Direct API: ", api_count)
-message("Difference: ", api_count - oar_count$count)
+message("\n--- Cause breakdown ---")
+print(diag |> dplyr::count(ua_in_inst_ids, ua_in_lineage,
+                           ua_in_raw_text, at_cap, sort = TRUE))
 
-daily_log <- tibble::tibble(
-  timestamp  = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
-  api_total  = api_count,
-  api_oa     = fromJSON(paste0(url), simplifyVector = FALSE)$meta$count
-)
+######### Deeper check: fetch the full record 
+cap_ids <- diag |> dplyr::filter(at_cap, !ua_in_lineage) |> dplyr::pull(id)
 
-# Append to a running log file
-readr::write_csv(daily_log, "oa_daily_counts.csv", append = TRUE)
+for (wid in head(cap_ids, 3)) {
+  full <- jsonlite::fromJSON(
+    paste0("https://api.openalex.org/works/", wid,
+           "?select=id,authorships&mailto=", MAILTO),
+    simplifyVector = FALSE
+  )
+  cat("\n==== ", wid, " | served:", length(diag$n_authorships[diag$id == wid]),
+      " | full:", length(full$authorships), " ====\n")
+  
+  # Find UA in the full list
+  for (i in seq_along(full$authorships)) {
+    a <- full$authorships[[i]]
+    for (inst in a$institutions %||% list()) {
+      if (identical(short_id(inst$id), "I138006243")) {
+        cat("  FOUND at position ", i, ": ",
+            a$author$display_name %||% "?", "\n")
+      }
+    }
+  }
+}
+
+
+child_cases <- diag |> dplyr::filter(!ua_in_inst_ids, ua_in_lineage) |>
+  dplyr::pull(id)
+
+for (wid in head(child_cases, 5)) {
+  w <- Filter(function(x) short_id(x$id) == wid, works_raw)[[1]]
+  for (a in w$authorships %||% list()) {
+    for (inst in a$institutions %||% list()) {
+      lin <- vapply(inst$lineage %||% list(), short_id, character(1))
+      if ("I138006243" %in% lin && !identical(short_id(inst$id), "I138006243")) {
+        cat(wid, "| child:", short_id(inst$id), "|",
+            inst$display_name %||% "NA", "\n")
+      }
+    }
+  }
+}
+
+
 

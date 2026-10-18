@@ -16,8 +16,10 @@ install.packages('data.table')
 library(data.table)
 library(writexl)
 
-library(openalexR)
+
 packageVersion("openalexR")
+packageVersion("tibble")
+install.packages("openalexR")
 
 # free unused obj to manage memory
 rm(list=ls())
@@ -29,7 +31,6 @@ PATH <- "/home/yhan/Documents/biblio-analysis"
 setwd(PATH)
 getwd()
 Sys.getenv("OPENALEXR_APIKEY")
-# Sys.getenv("OPENALEXR_APIKEY_Personal")
 
 source("my_functions.R")
 
@@ -83,18 +84,41 @@ works_count <-oa_fetch(
 
   # options = list("data-version" = 2), 
   
-  from_publication_date ="204-01-01",
+  from_publication_date ="2024-01-01",
   to_publication_date = "2024-12-31",
   count_only = TRUE,
 )
 
 ### 1.2 Getting all the works based on the institution ROR and publication date. It takes longer time. 
 
+works_published_2022 <-oa_fetch(
+  entity="works",
+  institutions.ror=c("03m2x1q45"), # U Arizona
+  from_publication_date ="2022-01-01",
+  to_publication_date = "2022-12-31",
+)
+
+
 works_published_2023 <-oa_fetch(
   entity="works",
   institutions.ror=c("03m2x1q45"), # U Arizona
   from_publication_date ="2023-01-01",
   to_publication_date = "2023-12-31",
+)
+
+works_published_2024 <-oa_fetch(
+  entity="works",
+  institutions.ror=c("03m2x1q45"), # U Arizona
+  from_publication_date ="2024-01-01",
+  to_publication_date = "2024-12-31",
+)
+
+
+works_published_2025 <-oa_fetch(
+  entity="works",
+  institutions.ror=c("03m2x1q45"), # U Arizona
+  from_publication_date ="2025-01-01",
+  to_publication_date = "2025-12-31",
 )
     
 # 2026-05: 
@@ -112,6 +136,9 @@ saveRDS(works_published_2023, "../works_published_2023_ver202608.rds")
 # saveRDS(works_published_2024, "../works_published_2024_ver202608.rds")
 
 # saveRDS(works_published_2025, "../works_published_2025_ver202608.rds")
+
+
+works_published_2022 <- readRDS("../works_published_2022_ver202608.rds")
 
 # works_published_2023 <- readRDS("../works_published_2023.rds")
 

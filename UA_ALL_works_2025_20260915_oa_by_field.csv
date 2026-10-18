@@ -1,0 +1,27 @@
+discipline,n_works,n_oa,oa_rate,n_gold,n_diamond,n_hybrid,n_green,n_bronze,n_closed
+Medicine,2721,1734,63.7,639,123,350,449,173,987
+Physics and Astronomy,935,747,79.9,416,76,128,122,5,188
+Engineering,781,325,41.6,140,14,74,75,22,456
+Social Sciences,702,396,56.4,92,55,88,114,47,306
+Environmental Science,674,497,73.7,249,27,106,95,20,177
+"Biochemistry, Genetics and Molecular Biology",604,453,75,173,20,80,155,25,151
+Computer Science,540,298,55.2,134,24,42,75,23,242
+Psychology,358,225,62.8,69,15,57,44,40,133
+Earth and Planetary Sciences,354,247,69.8,146,6,59,28,8,107
+Agricultural and Biological Sciences,314,240,76.4,92,11,39,82,16,74
+Neuroscience,260,182,70,65,8,38,54,17,78
+Health Professions,200,117,58.5,44,7,17,26,23,83
+Arts and Humanities,168,97,57.7,14,22,26,26,9,71
+Decision Sciences,125,103,82.4,27,6,9,21,40,22
+Immunology and Microbiology,114,84,73.7,40,3,16,20,5,30
+Materials Science,103,58,56.3,23,4,13,12,6,45
+"Economics, Econometrics and Finance",99,72,72.7,15,7,6,37,7,27
+"Business, Management and Accounting",96,58,60.4,7,4,17,23,7,38
+Mathematics,70,33,47.1,9,1,7,13,3,37
+Chemistry,69,49,71,17,2,12,14,4,20
+Nursing,38,26,68.4,13,0,4,6,3,12
+"Pharmacology, Toxicology and Pharmaceutics",30,21,70,9,3,1,4,4,9
+Energy,26,14,53.8,7,2,3,2,0,12
+Veterinary,19,15,78.9,8,1,2,4,0,4
+Dentistry,12,2,16.7,2,0,0,0,0,10
+Chemical Engineering,4,1,25,0,0,0,1,0,3

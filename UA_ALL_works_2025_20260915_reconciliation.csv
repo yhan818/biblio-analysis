@@ -1,0 +1,10 @@
+check,value
+API count_only,9740
+Records fetched,9740
+Difference,0
+Rows flattened,9740
+Unique ids,9740
+Duplicate ids,0
+countries_distinct_count present,9740
+institutions_distinct_count present,9740
+best_oa_location present (non-null),6382

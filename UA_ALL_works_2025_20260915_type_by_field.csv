@@ -1,0 +1,265 @@
+discipline,type,n,pct_within_discipline
+Agricultural and Biological Sciences,article,208,66.2
+Agricultural and Biological Sciences,preprint,69,22
+Agricultural and Biological Sciences,conference-paper,8,2.5
+Agricultural and Biological Sciences,peer-review,8,2.5
+Agricultural and Biological Sciences,book-chapter,7,2.2
+Agricultural and Biological Sciences,erratum,4,1.3
+Agricultural and Biological Sciences,other,3,1
+Agricultural and Biological Sciences,review,3,1
+Agricultural and Biological Sciences,conference-abstract,1,0.3
+Agricultural and Biological Sciences,data-paper,1,0.3
+Agricultural and Biological Sciences,dataset,1,0.3
+Agricultural and Biological Sciences,dissertation,1,0.3
+Arts and Humanities,article,93,55.4
+Arts and Humanities,book-chapter,28,16.7
+Arts and Humanities,conference-paper,12,7.1
+Arts and Humanities,book-review,8,4.8
+Arts and Humanities,preprint,7,4.2
+Arts and Humanities,book,6,3.6
+Arts and Humanities,dissertation,3,1.8
+Arts and Humanities,other,3,1.8
+Arts and Humanities,reference-entry,3,1.8
+Arts and Humanities,paratext,2,1.2
+Arts and Humanities,editorial,1,0.6
+Arts and Humanities,erratum,1,0.6
+Arts and Humanities,review,1,0.6
+"Biochemistry, Genetics and Molecular Biology",article,415,68.7
+"Biochemistry, Genetics and Molecular Biology",preprint,98,16.2
+"Biochemistry, Genetics and Molecular Biology",conference-abstract,40,6.6
+"Biochemistry, Genetics and Molecular Biology",book-chapter,12,2
+"Biochemistry, Genetics and Molecular Biology",review,11,1.8
+"Biochemistry, Genetics and Molecular Biology",erratum,7,1.2
+"Biochemistry, Genetics and Molecular Biology",conference-paper,6,1
+"Biochemistry, Genetics and Molecular Biology",peer-review,3,0.5
+"Biochemistry, Genetics and Molecular Biology",dissertation,2,0.3
+"Biochemistry, Genetics and Molecular Biology",editorial,2,0.3
+"Biochemistry, Genetics and Molecular Biology",other,2,0.3
+"Biochemistry, Genetics and Molecular Biology",book,1,0.2
+"Biochemistry, Genetics and Molecular Biology",data-paper,1,0.2
+"Biochemistry, Genetics and Molecular Biology",letter,1,0.2
+"Biochemistry, Genetics and Molecular Biology",reference-entry,1,0.2
+"Biochemistry, Genetics and Molecular Biology",report,1,0.2
+"Biochemistry, Genetics and Molecular Biology",retraction,1,0.2
+"Business, Management and Accounting",article,52,54.2
+"Business, Management and Accounting",preprint,22,22.9
+"Business, Management and Accounting",conference-paper,10,10.4
+"Business, Management and Accounting",conference-abstract,6,6.2
+"Business, Management and Accounting",book-chapter,2,2.1
+"Business, Management and Accounting",other,2,2.1
+"Business, Management and Accounting",reference-entry,1,1
+"Business, Management and Accounting",review,1,1
+Chemical Engineering,article,3,75
+Chemical Engineering,conference-paper,1,25
+Chemistry,article,56,81.2
+Chemistry,preprint,8,11.6
+Chemistry,conference-paper,2,2.9
+Chemistry,dissertation,1,1.4
+Chemistry,erratum,1,1.4
+Chemistry,other,1,1.4
+Computer Science,article,232,43
+Computer Science,conference-paper,196,36.3
+Computer Science,preprint,60,11.1
+Computer Science,book-chapter,24,4.4
+Computer Science,conference-abstract,12,2.2
+Computer Science,erratum,4,0.7
+Computer Science,peer-review,3,0.6
+Computer Science,review,3,0.6
+Computer Science,editorial,2,0.4
+Computer Science,data-paper,1,0.2
+Computer Science,other,1,0.2
+Computer Science,paratext,1,0.2
+Computer Science,retraction,1,0.2
+Decision Sciences,article,50,40
+Decision Sciences,conference-paper,48,38.4
+Decision Sciences,preprint,15,12
+Decision Sciences,review,4,3.2
+Decision Sciences,conference-abstract,2,1.6
+Decision Sciences,erratum,2,1.6
+Decision Sciences,book-chapter,1,0.8
+Decision Sciences,data-paper,1,0.8
+Decision Sciences,peer-review,1,0.8
+Decision Sciences,reference-entry,1,0.8
+Dentistry,article,7,58.3
+Dentistry,book-chapter,2,16.7
+Dentistry,conference-abstract,1,8.3
+Dentistry,conference-paper,1,8.3
+Dentistry,review,1,8.3
+Earth and Planetary Sciences,article,245,69.2
+Earth and Planetary Sciences,preprint,41,11.6
+Earth and Planetary Sciences,conference-abstract,22,6.2
+Earth and Planetary Sciences,book-chapter,11,3.1
+Earth and Planetary Sciences,peer-review,11,3.1
+Earth and Planetary Sciences,conference-paper,8,2.3
+Earth and Planetary Sciences,dataset,3,0.8
+Earth and Planetary Sciences,other,3,0.8
+Earth and Planetary Sciences,review,3,0.8
+Earth and Planetary Sciences,letter,2,0.6
+Earth and Planetary Sciences,supplementary-materials,2,0.6
+Earth and Planetary Sciences,book,1,0.3
+Earth and Planetary Sciences,data-paper,1,0.3
+Earth and Planetary Sciences,erratum,1,0.3
+"Economics, Econometrics and Finance",article,42,42.4
+"Economics, Econometrics and Finance",preprint,36,36.4
+"Economics, Econometrics and Finance",conference-abstract,8,8.1
+"Economics, Econometrics and Finance",paratext,3,3
+"Economics, Econometrics and Finance",editorial,2,2
+"Economics, Econometrics and Finance",report,2,2
+"Economics, Econometrics and Finance",book-chapter,1,1
+"Economics, Econometrics and Finance",conference-paper,1,1
+"Economics, Econometrics and Finance",other,1,1
+"Economics, Econometrics and Finance",peer-review,1,1
+"Economics, Econometrics and Finance",reference-entry,1,1
+"Economics, Econometrics and Finance",supplementary-materials,1,1
+Energy,article,21,80.8
+Energy,conference-paper,2,7.7
+Energy,preprint,2,7.7
+Energy,book-chapter,1,3.8
+Engineering,article,456,58.4
+Engineering,conference-paper,199,25.5
+Engineering,preprint,53,6.8
+Engineering,conference-abstract,35,4.5
+Engineering,book-chapter,19,2.4
+Engineering,editorial,6,0.8
+Engineering,erratum,2,0.3
+Engineering,other,2,0.3
+Engineering,paratext,2,0.3
+Engineering,review,2,0.3
+Engineering,book,1,0.1
+Engineering,book-review,1,0.1
+Engineering,dissertation,1,0.1
+Engineering,retraction,1,0.1
+Engineering,software-paper,1,0.1
+Environmental Science,article,490,72.7
+Environmental Science,preprint,89,13.2
+Environmental Science,conference-paper,23,3.4
+Environmental Science,conference-abstract,20,3
+Environmental Science,review,11,1.6
+Environmental Science,book-chapter,6,0.9
+Environmental Science,data-paper,5,0.7
+Environmental Science,other,5,0.7
+Environmental Science,erratum,4,0.6
+Environmental Science,peer-review,4,0.6
+Environmental Science,report,4,0.6
+Environmental Science,dissertation,3,0.4
+Environmental Science,editorial,3,0.4
+Environmental Science,letter,2,0.3
+Environmental Science,supplementary-materials,2,0.3
+Environmental Science,book,1,0.1
+Environmental Science,dataset,1,0.1
+Environmental Science,reference-entry,1,0.1
+Health Professions,article,156,78
+Health Professions,preprint,16,8
+Health Professions,conference-abstract,13,6.5
+Health Professions,conference-paper,6,3
+Health Professions,review,3,1.5
+Health Professions,book-chapter,2,1
+Health Professions,letter,2,1
+Health Professions,other,1,0.5
+Health Professions,peer-review,1,0.5
+Immunology and Microbiology,article,84,73.7
+Immunology and Microbiology,preprint,15,13.2
+Immunology and Microbiology,conference-abstract,5,4.4
+Immunology and Microbiology,peer-review,3,2.6
+Immunology and Microbiology,book-chapter,2,1.8
+Immunology and Microbiology,editorial,2,1.8
+Immunology and Microbiology,review,2,1.8
+Immunology and Microbiology,dissertation,1,0.9
+Materials Science,article,74,71.8
+Materials Science,conference-paper,10,9.7
+Materials Science,preprint,10,9.7
+Materials Science,conference-abstract,6,5.8
+Materials Science,book-chapter,1,1
+Materials Science,report,1,1
+Materials Science,review,1,1
+Mathematics,article,45,64.3
+Mathematics,conference-paper,8,11.4
+Mathematics,other,4,5.7
+Mathematics,book-chapter,3,4.3
+Mathematics,preprint,3,4.3
+Mathematics,reference-entry,2,2.9
+Mathematics,book,1,1.4
+Mathematics,conference-abstract,1,1.4
+Mathematics,dataset,1,1.4
+Mathematics,editorial,1,1.4
+Mathematics,report,1,1.4
+Medicine,article,2073,76.2
+Medicine,conference-abstract,230,8.5
+Medicine,preprint,159,5.8
+Medicine,review,112,4.1
+Medicine,book-chapter,46,1.7
+Medicine,editorial,30,1.1
+Medicine,conference-paper,25,0.9
+Medicine,erratum,14,0.5
+Medicine,dissertation,13,0.5
+Medicine,letter,11,0.4
+Medicine,peer-review,4,0.1
+Medicine,other,3,0.1
+Medicine,paratext,1,0
+Neuroscience,article,173,66.5
+Neuroscience,preprint,43,16.5
+Neuroscience,conference-abstract,13,5
+Neuroscience,book-chapter,9,3.5
+Neuroscience,conference-paper,9,3.5
+Neuroscience,review,7,2.7
+Neuroscience,editorial,2,0.8
+Neuroscience,book,1,0.4
+Neuroscience,book-review,1,0.4
+Neuroscience,erratum,1,0.4
+Neuroscience,peer-review,1,0.4
+Nursing,article,29,76.3
+Nursing,peer-review,4,10.5
+Nursing,preprint,4,10.5
+Nursing,book-chapter,1,2.6
+"Pharmacology, Toxicology and Pharmaceutics",article,22,73.3
+"Pharmacology, Toxicology and Pharmaceutics",book-chapter,2,6.7
+"Pharmacology, Toxicology and Pharmaceutics",preprint,2,6.7
+"Pharmacology, Toxicology and Pharmaceutics",conference-abstract,1,3.3
+"Pharmacology, Toxicology and Pharmaceutics",erratum,1,3.3
+"Pharmacology, Toxicology and Pharmaceutics",retraction,1,3.3
+"Pharmacology, Toxicology and Pharmaceutics",review,1,3.3
+Physics and Astronomy,article,721,77.1
+Physics and Astronomy,conference-paper,72,7.7
+Physics and Astronomy,conference-abstract,61,6.5
+Physics and Astronomy,preprint,32,3.4
+Physics and Astronomy,peer-review,14,1.5
+Physics and Astronomy,book-chapter,11,1.2
+Physics and Astronomy,erratum,8,0.9
+Physics and Astronomy,book,4,0.4
+Physics and Astronomy,other,4,0.4
+Physics and Astronomy,reference-entry,4,0.4
+Physics and Astronomy,review,2,0.2
+Physics and Astronomy,software-paper,2,0.2
+Psychology,article,233,65.1
+Psychology,preprint,36,10.1
+Psychology,conference-abstract,26,7.3
+Psychology,book-chapter,25,7
+Psychology,conference-paper,11,3.1
+Psychology,review,10,2.8
+Psychology,erratum,5,1.4
+Psychology,editorial,3,0.8
+Psychology,peer-review,3,0.8
+Psychology,other,2,0.6
+Psychology,book,1,0.3
+Psychology,data-paper,1,0.3
+Psychology,dissertation,1,0.3
+Psychology,reference-entry,1,0.3
+Social Sciences,article,435,62
+Social Sciences,preprint,90,12.8
+Social Sciences,book-chapter,49,7
+Social Sciences,conference-paper,43,6.1
+Social Sciences,book-review,16,2.3
+Social Sciences,peer-review,14,2
+Social Sciences,conference-abstract,13,1.9
+Social Sciences,other,12,1.7
+Social Sciences,editorial,10,1.4
+Social Sciences,reference-entry,6,0.9
+Social Sciences,book,5,0.7
+Social Sciences,dissertation,3,0.4
+Social Sciences,erratum,3,0.4
+Social Sciences,review,2,0.3
+Social Sciences,report,1,0.1
+Veterinary,article,8,42.1
+Veterinary,other,7,36.8
+Veterinary,preprint,3,15.8
+Veterinary,conference-abstract,1,5.3

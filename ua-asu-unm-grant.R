@@ -34,7 +34,7 @@ library(dplyr)
 library(stringr)
 
 # Read the Excel file
-data <- read_excel("FY27_SWDRC.xlsx")
+data <- read_excel("DRC_list.xlsx")
 
 # Process the Name column
 data_processed <- data %>%
@@ -53,16 +53,16 @@ data_processed <- data %>%
     First_Name = str_trim(First_Name),
     Last_Name = str_trim(Last_Name)
   ) %>%
-  select(First_Name, Last_Name, Institution, College, everything())
+  select(First_Name, Last_Name, Institution)  #, College, everything())
 
 # Fix the Institution mapping to handle "NIDDK" with variations
-authors_df <- data_processed %>%
-  mutate(full_name = paste(trimws(First_Name), trimws(Last_Name))) %>%
+#authors_df <- data_processed %>%
+#  mutate(full_name = paste(trimws(First_Name), trimws(Last_Name))) %>%
   # Standardize Institution - treat any NIDDK variant as "NIDDK"
-  mutate(Institution = case_when(
-    str_detect(Institution, regex("NIDDK", ignore_case = TRUE)) ~ "NIDDK",
-    TRUE ~ Institution
-  ))
+#  mutate(Institution = case_when(
+#    str_detect(Institution, regex("NIDDK", ignore_case = TRUE)) ~ "NIDDK",
+#    TRUE ~ Institution
+#  ))
 
 
 # Quick test with sample values
@@ -79,6 +79,53 @@ primary_ror <- case_when(
 print(data.frame(inst, primary_ror))
 
 #authors_df <- authors_raw %>% mutate(full_name = paste(trimws(First_Name), trimws(Last_Name)))
+
+authors_df <- data_processed %>%
+  mutate(
+    First_Name = str_squish(as.character(First_Name)),
+    Last_Name  = str_squish(as.character(Last_Name)),
+    Institution_raw = str_squish(as.character(Institution)),
+    
+    full_name = str_squish(paste(First_Name, Last_Name)),
+    
+    # Convert the full institution names in Excel to the abbreviations
+    # expected by the OpenAlex loop.
+    Institution = case_when(
+      str_detect(
+        Institution_raw,
+        regex("UNIVERSITY OF ARIZONA", ignore_case = TRUE)
+      ) ~ "UA",
+      
+      str_detect(
+        Institution_raw,
+        regex("ARIZONA STATE UNIVERSITY", ignore_case = TRUE)
+      ) ~ "ASU",
+      
+      str_detect(
+        Institution_raw,
+        regex("UNIVERSITY OF NEW MEXICO|\\bUNM\\b", ignore_case = TRUE)
+      ) ~ "UNM",
+      
+      str_detect(
+        Institution_raw,
+        regex(
+          "NIDDK|Phoenix Epidemiology.*Clinical Research Branch",
+          ignore_case = TRUE
+        )
+      ) ~ "NIDDK",
+      
+      TRUE ~ Institution_raw
+    )
+  ) %>%
+  filter(
+    !is.na(First_Name),
+    !is.na(Last_Name),
+    First_Name != "",
+    Last_Name != "",
+    full_name != ""
+  ) %>%
+  distinct(full_name, Institution, .keep_all = TRUE)
+
 
 # --- 4. Step 1: Resolve IDs and Categorize ---
 message("\n>>> RESOLVING AUTHORS ON OPENALEX...")
