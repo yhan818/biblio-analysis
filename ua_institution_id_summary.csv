@@ -1,0 +1,9 @@
+"measure","count","percent"
+"Total works",9855,100
+"Exact UA ID present in returned authorships",9736,98.79
+"Exact UA ID absent from returned authorships",119,1.21
+"Absent and authorships at 100-author cap",119,1.21
+"Absent but UA appears in institution lineage",0,0
+"Absent but UA appears in raw affiliation text",4,0.04
+"Absent but UA appears in corresponding institutions",0,0
+"Absent with no returned UA signal",0,0

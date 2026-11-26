@@ -1,0 +1,9 @@
+"measure","count","percent"
+"Total works",9855,100
+"open_access object present",9855,100
+"any_repository_has_fulltext key present",9855,100
+"TRUE: repository full text reported",5145,52.21
+"FALSE: no repository full text reported",4710,47.79
+"Missing logical value",0,0
+"Key present but value could not be parsed",0,0
+"Key absent",0,0

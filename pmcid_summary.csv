@@ -1,0 +1,7 @@
+"measure","count","percent"
+"Total works",9855,100
+"Works with an ids object",9855,100
+"Works with a pmcid key",2179,22.11
+"Successfully normalized PMCIDs",0,0
+"PMCID keys that could not be parsed",2179,22.11
+"Works with no PMCID reported",9855,100

@@ -487,3 +487,4 @@ if (nrow(flagged) > 0) {
   cat("\n✅ All authors verified cleanly — no mismatches detected.\n")
 }
 
+all_works_export %>% count(publication_year)

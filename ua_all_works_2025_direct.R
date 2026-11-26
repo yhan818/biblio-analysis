@@ -34,6 +34,7 @@ if (length(miss)) {
        paste0('"', miss, '"', collapse = ", "), "))")
 }
 
+library(openalexR)
 library(httr2)
 library(jsonlite)
 library(purrr)
@@ -43,6 +44,7 @@ library(tidyr)
 library(readr)
 library(stringr)
 
+
 `%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
 
 # ---- Configuration -------------------------------------------
@@ -50,10 +52,98 @@ UA_ID       <- "I138006243"          # University of Arizona
 UA_ROR      <- "https://ror.org/03m2x1q45"
 YR          <- 2025
 MAILTO      <- "yhan@arizona.edu"     # <-- EDIT: polite pool
-API_KEY     <- Sys.getenv("OPENALEX_KEY", unset = "")  # optional
-PER_PAGE    <- 200                   # API maximum
+PER_PAGE    <- 100                   # API maximum
 INCLUDE_ABSTRACT <- TRUE            # TRUE roughly triples payload size
 BASE        <- "https://api.openalex.org/works"
+
+
+# Preferred environment-variable name
+API_KEY <- Sys.getenv("OPENALEX_API_KEY", unset = "")
+
+# Backward-compatible fallbacks for names used in older scripts
+if (!nzchar(API_KEY)) {
+  API_KEY <- Sys.getenv("OPENALEXR_APIKEY", unset = "")
+}
+
+if (!nzchar(API_KEY)) {
+  API_KEY <- Sys.getenv("OPENALEX_KEY", unset = "")
+}
+
+if (!nzchar(API_KEY)) {
+  stop(
+    "No OpenAlex API key was found.\n",
+    "Add OPENALEX_API_KEY=your_key to ~/.Renviron, ",
+    "then restart R."
+  )
+}
+
+message(
+  "OpenAlex API key loaded: ",
+  substr(API_KEY, 1, 4),
+  "...",
+  substr(API_KEY, nchar(API_KEY) - 3, nchar(API_KEY))
+)
+
+# ============================================================
+# OPENALEX API KEY AND CURSOR-PAGINATION TEST
+# ============================================================
+
+if (!exists("API_KEY") || !nzchar(API_KEY)) {
+  stop("API_KEY is missing or empty.")
+}
+
+if (!exists("FILTER") || !nzchar(FILTER)) {
+  stop("FILTER is missing or empty.")
+}
+
+if (!exists("oa_get") || !is.function(oa_get)) {
+  stop("Function oa_get() has not been defined.")
+}
+
+message("Testing cursor page 1...")
+
+cursor_test_1 <- oa_get(list(
+  filter     = FILTER,
+  select     = "id",
+  `per-page` = 1,
+  cursor     = "*"
+))
+
+if (cursor_test_1$status != 200) {
+  stop(
+    "Cursor test page 1 failed: HTTP ",
+    cursor_test_1$status,
+    " — ",
+    cursor_test_1$body$message %||% "No API message returned"
+  )
+}
+
+next_cursor <- cursor_test_1$body$meta$next_cursor
+
+if (is.null(next_cursor) || !nzchar(next_cursor)) {
+  stop("Page 1 did not return a next_cursor.")
+}
+
+message("Page 1 passed. Testing cursor page 2...")
+
+cursor_test_2 <- oa_get(list(
+  filter     = FILTER,
+  select     = "id",
+  `per-page` = 1,
+  cursor     = next_cursor
+))
+
+if (cursor_test_2$status != 200) {
+  stop(
+    "Cursor test page 2 failed: HTTP ",
+    cursor_test_2$status,
+    " — ",
+    cursor_test_2$body$message %||% "No API message returned"
+  )
+}
+
+message("PASS: API key is valid and cursor page 2 is accessible.")
+
 
 
 PATH <- "/home/yhan/Documents/biblio-analysis"
@@ -248,6 +338,266 @@ message("Raw JSON list saved: ", prefix, "_raw_json.rds")
 #works_raw <- readRDS(paste0(prefix, "_raw_json.rds"))
  
 # ============================================================
+# PMCID NORMALIZATION FIX
+#
+# Required existing object:
+#   pmcid_check
+#
+# Required column:
+#   pmcid_raw
+#
+# No packages required.
+# ============================================================
+
+if (!exists("pmcid_check", inherits = TRUE)) {
+  stop("Object `pmcid_check` was not found.")
+}
+
+if (!is.data.frame(pmcid_check)) {
+  stop("`pmcid_check` must be a data frame.")
+}
+
+if (!"pmcid_raw" %in% names(pmcid_check)) {
+  stop("`pmcid_check` does not contain `pmcid_raw`.")
+}
+
+# ------------------------------------------------------------
+# Normalize one PMCID value
+# ------------------------------------------------------------
+
+normalize_pmcid <- function(x) {
+  
+  if (is.null(x) || length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x <- as.character(x[[1L]])
+  
+  if (is.na(x)) {
+    return(NA_character_)
+  }
+  
+  x <- trimws(x)
+  
+  if (!nzchar(x)) {
+    return(NA_character_)
+  }
+  
+  # Case 1:
+  # Already contains the canonical form PMC followed by digits.
+  #
+  # Examples:
+  #   PMC12011386
+  #   https://.../PMC12011386/
+  canonical_match <- regexpr(
+    "PMC[0-9]+",
+    x,
+    ignore.case = TRUE,
+    perl = TRUE
+  )
+  
+  if (canonical_match[[1L]] != -1L) {
+    return(toupper(regmatches(x, canonical_match)))
+  }
+  
+  # Case 2:
+  # Current OpenAlex value is an NCBI PMC URL whose article
+  # component contains digits without the PMC prefix.
+  #
+  # Example:
+  # https://www.ncbi.nlm.nih.gov/pmc/articles/12011386
+  numeric_url_match <- regexec(
+    paste0(
+      "^https?://",
+      "(?:www\\.)?",
+      "(?:",
+      "ncbi\\.nlm\\.nih\\.gov/pmc",
+      "|",
+      "pmc\\.ncbi\\.nlm\\.nih\\.gov",
+      ")",
+      "/articles/([0-9]+)",
+      "/?",
+      "(?:[?#].*)?",
+      "$"
+    ),
+    x,
+    ignore.case = TRUE,
+    perl = TRUE
+  )
+  
+  matched_parts <- regmatches(x, numeric_url_match)[[1L]]
+  
+  if (length(matched_parts) >= 2L) {
+    return(paste0("PMC", matched_parts[[2L]]))
+  }
+  
+  # The value exists but is not a recognized PMCID format.
+  NA_character_
+}
+
+# ------------------------------------------------------------
+# Controlled tests
+# ------------------------------------------------------------
+
+test_input <- c(
+  "PMC12011386",
+  "pmc12535840",
+  "https://www.ncbi.nlm.nih.gov/pmc/articles/12011386",
+  "https://www.ncbi.nlm.nih.gov/pmc/articles/12535840/",
+  "https://pmc.ncbi.nlm.nih.gov/articles/12687902/",
+  "https://pmc.ncbi.nlm.nih.gov/articles/PMC12016788/",
+  NA_character_,
+  "",
+  "not-a-pmcid"
+)
+
+test_expected <- c(
+  "PMC12011386",
+  "PMC12535840",
+  "PMC12011386",
+  "PMC12535840",
+  "PMC12687902",
+  "PMC12016788",
+  NA_character_,
+  NA_character_,
+  NA_character_
+)
+
+test_observed <- vapply(
+  test_input,
+  normalize_pmcid,
+  character(1)
+)
+
+test_results <- data.frame(
+  input = test_input,
+  expected = test_expected,
+  observed = test_observed,
+  stringsAsFactors = FALSE
+)
+
+print(test_results, row.names = FALSE)
+
+if (!identical(test_observed, test_expected)) {
+  stop("PMCID normalization test failed.")
+}
+
+message("PASS: PMCID normalization test succeeded.")
+
+# ------------------------------------------------------------
+# Apply the corrected normalizer
+# ------------------------------------------------------------
+
+pmcid_check$pmcid <- vapply(
+  pmcid_check$pmcid_raw,
+  normalize_pmcid,
+  character(1)
+)
+
+# A PMCID key was present, but the value was not recognized.
+pmcid_check$pmcid_parse_problem <-
+  pmcid_check$pmcid_key_present &
+  is.na(pmcid_check$pmcid)
+
+# ------------------------------------------------------------
+# Corrected summary
+#
+# Important:
+# "No PMCID reported" means no pmcid key was supplied.
+# It is not the same as a PMCID that failed parsing.
+# ------------------------------------------------------------
+
+pmcid_summary <- data.frame(
+  measure = c(
+    "Total works",
+    "Works with an ids object",
+    "Works with a pmcid key",
+    "Successfully normalized PMCIDs",
+    "PMCID keys that could not be parsed",
+    "Works with no PMCID reported"
+  ),
+  
+  count = c(
+    nrow(pmcid_check),
+    sum(pmcid_check$ids_object_present, na.rm = TRUE),
+    sum(pmcid_check$pmcid_key_present, na.rm = TRUE),
+    sum(!is.na(pmcid_check$pmcid)),
+    sum(pmcid_check$pmcid_parse_problem, na.rm = TRUE),
+    sum(!pmcid_check$pmcid_key_present, na.rm = TRUE)
+  ),
+  
+  stringsAsFactors = FALSE
+)
+
+pmcid_summary$percent <- round(
+  100 * pmcid_summary$count / nrow(pmcid_check),
+  2
+)
+
+cat("\n================ CORRECTED PMCID SUMMARY ================\n")
+print(pmcid_summary, row.names = FALSE)
+
+# ------------------------------------------------------------
+# Show examples
+# ------------------------------------------------------------
+
+pmcid_found <- pmcid_check[
+  !is.na(pmcid_check$pmcid),
+  intersect(
+    c("openalex_id", "pmcid", "pmcid_raw", "title"),
+    names(pmcid_check)
+  ),
+  drop = FALSE
+]
+
+cat("\nFirst 20 successfully normalized PMCIDs:\n")
+
+if (nrow(pmcid_found) > 0L) {
+  print(
+    utils::head(pmcid_found, 20L),
+    row.names = FALSE
+  )
+} else {
+  cat("No PMCIDs were successfully normalized.\n")
+}
+
+pmcid_problems <- pmcid_check[
+  pmcid_check$pmcid_parse_problem,
+  intersect(
+    c("openalex_id", "pmcid_raw", "title"),
+    names(pmcid_check)
+  ),
+  drop = FALSE
+]
+
+cat("\nUnrecognized PMCID values:\n")
+
+if (nrow(pmcid_problems) > 0L) {
+  print(
+    utils::head(pmcid_problems, 50L),
+    row.names = FALSE
+  )
+} else {
+  cat("None. Every PMCID value was normalized successfully.\n")
+}
+
+# ------------------------------------------------------------
+# Save the corrected diagnostic file
+# ------------------------------------------------------------
+
+utils::write.csv(
+  pmcid_check,
+  "pmcid_check_corrected.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+message("Saved: pmcid_check_corrected.csv")
+
+
+
+
+# ============================================================
 # STEP 4 -- Flatten each work to a single row
 #
 # Null-tolerant throughout. The two cases that bite:
@@ -390,14 +740,18 @@ flatten_work <- function(w) {
     doi               = sub("^https?://doi\\.org/", "", s_chr(w, "doi")),
     pmid              = sub("^https?://pubmed\\.ncbi\\.nlm\\.nih\\.gov/", "",
                             s_chr(w, "ids", "pmid")),
-    pmcid             = s_chr(w, "ids", "pmcid"),
+    #pmcid             = s_chr(w, "ids", "pmcid"),
+    pmcid = normalize_pmcid(s_chr(w, "ids", "pmcid")),
     title             = s_chr(w, "title"),
     publication_year  = s_int(w, "publication_year"),
     publication_date  = s_chr(w, "publication_date"),
     language          = s_chr(w, "language"),
     type              = s_chr(w, "type"),
-    raw_type          = dplyr::coalesce(s_chr(w, "raw_type"),
-                                        s_chr(w, "type_crossref")),
+    raw_type = dplyr::coalesce(
+      s_chr(w, "raw_type"),
+      s_chr(w, "type_crossref"),
+      s_chr(pl, "raw_type")
+    ),
     
     # ---------- open access ----------
     is_oa                       = s_lgl(oa, "is_oa"),
@@ -1958,4 +2312,1578 @@ for (wid in head(child_cases, 5)) {
 }
 
 
+# ============================================================
+# SELF-CONTAINED RAW_TYPE CHECK
+# Required existing object: works_raw
+# No packages required
+# ============================================================
+
+if (!exists("works_raw", inherits = TRUE)) {
+  stop("Object `works_raw` was not found.")
+}
+
+if (!is.list(works_raw) || length(works_raw) == 0L) {
+  stop("`works_raw` must be a nonempty list of OpenAlex works.")
+}
+
+# Return the first nonblank character value.
+first_text <- function(x) {
+  if (is.null(x) || length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x <- as.character(unlist(
+    x,
+    recursive = TRUE,
+    use.names = FALSE
+  ))
+  
+  x <- trimws(x)
+  x <- x[!is.na(x) & nzchar(x)]
+  
+  if (length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x[[1L]]
+}
+
+# Safely obtain a named list element.
+list_value <- function(x, field) {
+  if (
+    is.null(x) ||
+    !is.list(x) ||
+    is.null(names(x)) ||
+    !(field %in% names(x))
+  ) {
+    return(NULL)
+  }
+  
+  x[[field]]
+}
+
+get_work_id <- function(work) {
+  first_text(list_value(work, "id"))
+}
+
+get_title <- function(work) {
+  value <- first_text(list_value(work, "title"))
+  
+  if (is.na(value)) {
+    value <- first_text(list_value(work, "display_name"))
+  }
+  
+  value
+}
+
+get_type <- function(work) {
+  first_text(list_value(work, "type"))
+}
+
+get_root_raw_type <- function(work) {
+  first_text(list_value(work, "raw_type"))
+}
+
+get_type_crossref <- function(work) {
+  first_text(list_value(work, "type_crossref"))
+}
+
+get_primary_raw_type <- function(work) {
+  primary_location <- list_value(work, "primary_location")
+  
+  if (is.null(primary_location) || !is.list(primary_location)) {
+    return(NA_character_)
+  }
+  
+  first_text(list_value(primary_location, "raw_type"))
+}
+
+get_location_raw_types <- function(work) {
+  locations <- list_value(work, "locations")
+  
+  if (is.null(locations) || length(locations) == 0L) {
+    return(NA_character_)
+  }
+  
+  values <- vapply(
+    locations,
+    function(location) {
+      if (is.null(location) || !is.list(location)) {
+        return(NA_character_)
+      }
+      
+      first_text(list_value(location, "raw_type"))
+    },
+    character(1)
+  )
+  
+  values <- unique(values[!is.na(values) & nzchar(values)])
+  
+  if (length(values) == 0L) {
+    return(NA_character_)
+  }
+  
+  paste(values, collapse = "; ")
+}
+
+# Use one raw_type for the work export.
+#
+# Preference:
+# 1. Work-level raw_type
+# 2. type_crossref
+# 3. Primary-location raw_type
+#
+# All-location values remain diagnostic only because one work can
+# have locations from multiple sources with different raw types.
+get_export_raw_type <- function(work) {
+  candidates <- c(
+    get_root_raw_type(work),
+    get_type_crossref(work),
+    get_primary_raw_type(work)
+  )
+  
+  candidates <- candidates[!is.na(candidates) & nzchar(candidates)]
+  
+  if (length(candidates) == 0L) {
+    return(NA_character_)
+  }
+  
+  candidates[[1L]]
+}
+
+# Build diagnostic data.
+raw_type_check <- data.frame(
+  row_number = seq_along(works_raw),
+  
+  openalex_id = vapply(
+    works_raw,
+    get_work_id,
+    character(1)
+  ),
+  
+  title = vapply(
+    works_raw,
+    get_title,
+    character(1)
+  ),
+  
+  type = vapply(
+    works_raw,
+    get_type,
+    character(1)
+  ),
+  
+  root_raw_type = vapply(
+    works_raw,
+    get_root_raw_type,
+    character(1)
+  ),
+  
+  type_crossref = vapply(
+    works_raw,
+    get_type_crossref,
+    character(1)
+  ),
+  
+  primary_location_raw_type = vapply(
+    works_raw,
+    get_primary_raw_type,
+    character(1)
+  ),
+  
+  all_location_raw_types = vapply(
+    works_raw,
+    get_location_raw_types,
+    character(1)
+  ),
+  
+  export_raw_type = vapply(
+    works_raw,
+    get_export_raw_type,
+    character(1)
+  ),
+  
+  stringsAsFactors = FALSE
+)
+
+# Summarize where raw_type was found.
+raw_type_summary <- data.frame(
+  measure = c(
+    "Total works",
+    "Root raw_type populated",
+    "type_crossref populated",
+    "Primary-location raw_type populated",
+    "Any location raw_type populated",
+    "Export raw_type populated",
+    "Export raw_type missing"
+  ),
+  
+  count = c(
+    nrow(raw_type_check),
+    sum(!is.na(raw_type_check$root_raw_type)),
+    sum(!is.na(raw_type_check$type_crossref)),
+    sum(!is.na(raw_type_check$primary_location_raw_type)),
+    sum(!is.na(raw_type_check$all_location_raw_types)),
+    sum(!is.na(raw_type_check$export_raw_type)),
+    sum(is.na(raw_type_check$export_raw_type))
+  ),
+  
+  stringsAsFactors = FALSE
+)
+
+raw_type_summary$percent <- round(
+  100 * raw_type_summary$count / nrow(raw_type_check),
+  2
+)
+
+cat("\n================ RAW_TYPE SUMMARY ================\n")
+print(raw_type_summary, row.names = FALSE)
+
+# Display sample values.
+raw_type_found <- raw_type_check[
+  !is.na(raw_type_check$export_raw_type),
+  c(
+    "openalex_id",
+    "type",
+    "export_raw_type",
+    "root_raw_type",
+    "type_crossref",
+    "primary_location_raw_type",
+    "all_location_raw_types",
+    "title"
+  ),
+  drop = FALSE
+]
+
+cat("\nFirst 20 works with raw_type:\n")
+
+if (nrow(raw_type_found) == 0L) {
+  cat("No raw_type values were found.\n")
+} else {
+  print(utils::head(raw_type_found, 20L), row.names = FALSE)
+}
+
+# Frequency table.
+raw_type_frequency <- as.data.frame(
+  sort(
+    table(
+      raw_type_check$export_raw_type,
+      useNA = "no"
+    ),
+    decreasing = TRUE
+  ),
+  stringsAsFactors = FALSE
+)
+
+names(raw_type_frequency) <- c("raw_type", "count")
+
+cat("\nMost frequent raw_type values:\n")
+
+if (nrow(raw_type_frequency) == 0L) {
+  cat("No raw_type values were available to count.\n")
+} else {
+  print(
+    utils::head(raw_type_frequency, 30L),
+    row.names = FALSE
+  )
+}
+
+# Save diagnostics.
+utils::write.csv(
+  raw_type_check,
+  "raw_type_check.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  raw_type_summary,
+  "raw_type_summary.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+message("Saved raw_type_check.csv and raw_type_summary.csv")
+
+# ============================================================
+# CHECK WHY any_repository_has_fulltext IS BLANK
+# Required existing object: works_raw
+# No packages required
+# ============================================================
+
+if (!exists("works_raw", inherits = TRUE)) {
+  stop("Object `works_raw` was not found.")
+}
+
+if (!is.list(works_raw) || length(works_raw) == 0L) {
+  stop("`works_raw` must be a nonempty list.")
+}
+
+check_repository_value <- function(work) {
+  
+  # Is open_access present?
+  if (
+    is.null(work) ||
+    !is.list(work) ||
+    is.null(work$open_access) ||
+    !is.list(work$open_access)
+  ) {
+    return(list(
+      oa_present = FALSE,
+      key_present = FALSE,
+      raw_value = NA_character_,
+      value = NA
+    ))
+  }
+  
+  oa <- work$open_access
+  
+  # Is the specific key present?
+  key_present <-
+    !is.null(names(oa)) &&
+    "any_repository_has_fulltext" %in% names(oa)
+  
+  if (!key_present) {
+    return(list(
+      oa_present = TRUE,
+      key_present = FALSE,
+      raw_value = NA_character_,
+      value = NA
+    ))
+  }
+  
+  raw <- oa[["any_repository_has_fulltext"]]
+  
+  # Is the key present but null?
+  if (is.null(raw) || length(raw) == 0L) {
+    return(list(
+      oa_present = TRUE,
+      key_present = TRUE,
+      raw_value = NA_character_,
+      value = NA
+    ))
+  }
+  
+  raw_first <- raw[[1L]]
+  raw_text <- as.character(raw_first)
+  
+  # Convert only recognized Boolean representations.
+  if (is.logical(raw_first)) {
+    logical_value <- raw_first
+  } else if (
+    tolower(trimws(raw_text)) %in% c("true", "1")
+  ) {
+    logical_value <- TRUE
+  } else if (
+    tolower(trimws(raw_text)) %in% c("false", "0")
+  ) {
+    logical_value <- FALSE
+  } else {
+    logical_value <- NA
+  }
+  
+  list(
+    oa_present = TRUE,
+    key_present = TRUE,
+    raw_value = raw_text,
+    value = logical_value
+  )
+}
+
+checked <- lapply(works_raw, check_repository_value)
+
+repository_check <- data.frame(
+  row_number = seq_along(works_raw),
+  
+  openalex_id = vapply(
+    works_raw,
+    function(w) {
+      if (is.null(w$id) || length(w$id) == 0L) {
+        NA_character_
+      } else {
+        as.character(w$id[[1L]])
+      }
+    },
+    character(1)
+  ),
+  
+  open_access_present = vapply(
+    checked,
+    function(x) x$oa_present,
+    logical(1)
+  ),
+  
+  key_present = vapply(
+    checked,
+    function(x) x$key_present,
+    logical(1)
+  ),
+  
+  raw_value = vapply(
+    checked,
+    function(x) x$raw_value,
+    character(1)
+  ),
+  
+  any_repository_has_fulltext = vapply(
+    checked,
+    function(x) x$value,
+    logical(1)
+  ),
+  
+  stringsAsFactors = FALSE
+)
+
+repository_summary <- data.frame(
+  measure = c(
+    "Total works",
+    "open_access object present",
+    "Field key present",
+    "TRUE values",
+    "FALSE values",
+    "Missing values",
+    "Key absent",
+    "Key present but value missing/unrecognized"
+  ),
+  
+  count = c(
+    nrow(repository_check),
+    
+    sum(
+      repository_check$open_access_present,
+      na.rm = TRUE
+    ),
+    
+    sum(
+      repository_check$key_present,
+      na.rm = TRUE
+    ),
+    
+    sum(
+      repository_check$any_repository_has_fulltext %in% TRUE
+    ),
+    
+    sum(
+      repository_check$any_repository_has_fulltext %in% FALSE
+    ),
+    
+    sum(
+      is.na(repository_check$any_repository_has_fulltext)
+    ),
+    
+    sum(
+      !repository_check$key_present
+    ),
+    
+    sum(
+      repository_check$key_present &
+        is.na(repository_check$any_repository_has_fulltext)
+    )
+  ),
+  
+  stringsAsFactors = FALSE
+)
+
+repository_summary$percent <- round(
+  100 * repository_summary$count / nrow(repository_check),
+  2
+)
+
+cat(
+  "\n===== ANY_REPOSITORY_HAS_FULLTEXT SUMMARY =====\n"
+)
+
+print(repository_summary, row.names = FALSE)
+
+cat("\nRaw-value frequency:\n")
+
+print(
+  table(
+    repository_check$raw_value,
+    useNA = "always"
+  )
+)
+
+cat("\nFirst 20 records producing blanks:\n")
+
+print(
+  utils::head(
+    repository_check[
+      is.na(repository_check$any_repository_has_fulltext),
+      ,
+      drop = FALSE
+    ],
+    20L
+  ),
+  row.names = FALSE
+)
+
+
+# Rebuild flattened data from the current raw records
+ua <- purrr::map_dfr(works_raw, flatten_work)
+
+# Verify immediately
+table(
+  ua$any_repository_has_fulltext,
+  useNA = "always"
+)
+
+
+
+# ============================================================
+# BEST_OA_LICENSE CHECK
+# Required existing object: ua
+# No helper functions required
+# ============================================================
+
+if (!exists("ua", inherits = TRUE)) {
+  stop("Object `ua` was not found.")
+}
+
+if (!is.data.frame(ua)) {
+  stop("`ua` must be a data frame or tibble.")
+}
+
+required <- c(
+  "id",
+  "title",
+  "oa_status",
+  "best_oa_exists",
+  "best_oa_license",
+  "best_oa_source_type",
+  "best_oa_version",
+  "best_oa_landing_page_url"
+)
+
+missing_columns <- setdiff(required, names(ua))
+
+if (length(missing_columns) > 0L) {
+  stop(
+    "`ua` is missing: ",
+    paste(missing_columns, collapse = ", ")
+  )
+}
+
+# Normalize blank licenses to NA for analysis.
+license_check <- ua
+
+license_check$license_normalized <- tolower(
+  trimws(as.character(license_check$best_oa_license))
+)
+
+license_check$license_normalized[
+  is.na(license_check$license_normalized) |
+    license_check$license_normalized == ""
+] <- NA_character_
+
+# Exact CC BY family, such as cc-by or cc-by-4.0.
+# This deliberately excludes cc-by-nc, cc-by-nd, etc.
+license_check$is_cc_by <- !is.na(
+  license_check$license_normalized
+) & grepl(
+  "^cc-by(?:-[0-9.]+)?$",
+  license_check$license_normalized,
+  perl = TRUE
+)
+
+# ------------------------------------------------------------
+# 1. License counts by OA status
+# ------------------------------------------------------------
+
+license_by_status <- as.data.frame(
+  with(
+    license_check,
+    table(
+      oa_status,
+      license_normalized,
+      useNA = "ifany"
+    )
+  ),
+  stringsAsFactors = FALSE
+)
+
+names(license_by_status) <- c(
+  "oa_status",
+  "best_oa_license",
+  "count"
+)
+
+license_by_status <- license_by_status[
+  license_by_status$count > 0L,
+  ,
+  drop = FALSE
+]
+
+license_by_status <- license_by_status[
+  order(
+    license_by_status$oa_status,
+    -license_by_status$count
+  ),
+  ,
+  drop = FALSE
+]
+
+cat("\n===== BEST OA LICENSE BY OA STATUS =====\n")
+print(license_by_status, row.names = FALSE)
+
+# ------------------------------------------------------------
+# 2. Focused bronze and green summary
+# ------------------------------------------------------------
+
+focused_summary <- do.call(
+  rbind,
+  lapply(
+    c("bronze", "green"),
+    function(status_value) {
+      x <- license_check[
+        license_check$oa_status == status_value &
+          !is.na(license_check$oa_status),
+        ,
+        drop = FALSE
+      ]
+      
+      data.frame(
+        oa_status = status_value,
+        total_works = nrow(x),
+        license_present = sum(
+          !is.na(x$license_normalized)
+        ),
+        license_missing = sum(
+          is.na(x$license_normalized)
+        ),
+        exact_cc_by = sum(
+          x$is_cc_by,
+          na.rm = TRUE
+        ),
+        repository_best_location = sum(
+          x$best_oa_source_type == "repository",
+          na.rm = TRUE
+        ),
+        non_repository_best_location = sum(
+          !is.na(x$best_oa_source_type) &
+            x$best_oa_source_type != "repository"
+        ),
+        stringsAsFactors = FALSE
+      )
+    }
+  )
+)
+
+focused_summary$pct_with_license <- round(
+  100 *
+    focused_summary$license_present /
+    pmax(focused_summary$total_works, 1L),
+  2
+)
+
+focused_summary$pct_exact_cc_by <- round(
+  100 *
+    focused_summary$exact_cc_by /
+    pmax(focused_summary$total_works, 1L),
+  2
+)
+
+cat("\n===== BRONZE AND GREEN LICENSE SUMMARY =====\n")
+print(focused_summary, row.names = FALSE)
+
+# ------------------------------------------------------------
+# 3. Green works reported as exact CC BY
+# ------------------------------------------------------------
+
+green_cc_by <- license_check[
+  license_check$oa_status == "green" &
+    license_check$is_cc_by,
+  c(
+    "id",
+    "title",
+    "best_oa_license",
+    "best_oa_source_type",
+    "best_oa_version",
+    "best_oa_landing_page_url"
+  ),
+  drop = FALSE
+]
+
+cat("\n===== GREEN WORKS WITH EXACT CC BY =====\n")
+cat("Count:", nrow(green_cc_by), "\n")
+
+if (nrow(green_cc_by) > 0L) {
+  print(
+    utils::head(green_cc_by, 30L),
+    row.names = FALSE
+  )
+}
+
+# ------------------------------------------------------------
+# 4. Potential consistency issues
+# ------------------------------------------------------------
+
+# Bronze normally has no identified open license.
+bronze_with_license <- license_check[
+  license_check$oa_status == "bronze" &
+    !is.na(license_check$license_normalized),
+  c(
+    "id",
+    "title",
+    "best_oa_license",
+    "best_oa_source_type",
+    "best_oa_version",
+    "best_oa_landing_page_url"
+  ),
+  drop = FALSE
+]
+
+# Green OA should normally have a repository OA location.
+green_non_repository <- license_check[
+  license_check$oa_status == "green" &
+    (
+      is.na(license_check$best_oa_source_type) |
+        license_check$best_oa_source_type != "repository"
+    ),
+  c(
+    "id",
+    "title",
+    "best_oa_license",
+    "best_oa_source_type",
+    "best_oa_version",
+    "best_oa_landing_page_url"
+  ),
+  drop = FALSE
+]
+
+cat("\nBronze works with a recorded license:",
+    nrow(bronze_with_license), "\n")
+
+cat("Green works whose best OA source is not identified as a repository:",
+    nrow(green_non_repository), "\n")
+
+# ------------------------------------------------------------
+# 5. Save review files
+# ------------------------------------------------------------
+
+utils::write.csv(
+  license_by_status,
+  "best_oa_license_by_status.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  focused_summary,
+  "best_oa_license_bronze_green_summary.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  green_cc_by,
+  "green_oa_cc_by_review.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  bronze_with_license,
+  "bronze_with_license_review.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  green_non_repository,
+  "green_non_repository_review.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+message("Best OA license check completed.")
+
+
+# ============================================================
+# UA INSTITUTION-ID DISCREPANCY CHECK
+#
+# Required existing object:
+#   works_raw
+#
+# No packages or external helper functions required.
+# ============================================================
+
+if (!exists("works_raw", inherits = TRUE)) {
+  stop("Object `works_raw` was not found.")
+}
+
+if (!is.list(works_raw) || length(works_raw) == 0L) {
+  stop("`works_raw` must be a nonempty list of OpenAlex works.")
+}
+
+UA_ID <- "I138006243"
+
+short_openalex_id <- function(x) {
+  if (is.null(x) || length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x <- as.character(x[[1L]])
+  
+  if (is.na(x) || !nzchar(x)) {
+    return(NA_character_)
+  }
+  
+  sub(
+    "^https?://openalex\\.org/",
+    "",
+    x,
+    ignore.case = TRUE
+  )
+}
+
+first_text <- function(x) {
+  if (is.null(x) || length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  values <- as.character(
+    unlist(x, recursive = TRUE, use.names = FALSE)
+  )
+  
+  values <- trimws(values)
+  values <- values[!is.na(values) & nzchar(values)]
+  
+  if (length(values) == 0L) {
+    return(NA_character_)
+  }
+  
+  values[[1L]]
+}
+
+get_authorships <- function(work) {
+  if (
+    is.null(work) ||
+    !is.list(work) ||
+    is.null(work$authorships)
+  ) {
+    return(list())
+  }
+  
+  work$authorships
+}
+
+get_institution_ids <- function(work) {
+  authorships <- get_authorships(work)
+  
+  values <- unlist(
+    lapply(
+      authorships,
+      function(authorship) {
+        institutions <- authorship$institutions
+        
+        if (is.null(institutions) || length(institutions) == 0L) {
+          return(character(0))
+        }
+        
+        vapply(
+          institutions,
+          function(institution) {
+            short_openalex_id(institution$id)
+          },
+          character(1)
+        )
+      }
+    ),
+    use.names = FALSE
+  )
+  
+  unique(values[!is.na(values) & nzchar(values)])
+}
+
+get_lineage_ids <- function(work) {
+  authorships <- get_authorships(work)
+  
+  values <- unlist(
+    lapply(
+      authorships,
+      function(authorship) {
+        institutions <- authorship$institutions
+        
+        if (is.null(institutions) || length(institutions) == 0L) {
+          return(character(0))
+        }
+        
+        unlist(
+          lapply(
+            institutions,
+            function(institution) {
+              lineage <- institution$lineage
+              
+              if (is.null(lineage) || length(lineage) == 0L) {
+                return(character(0))
+              }
+              
+              vapply(
+                lineage,
+                short_openalex_id,
+                character(1)
+              )
+            }
+          ),
+          use.names = FALSE
+        )
+      }
+    ),
+    use.names = FALSE
+  )
+  
+  unique(values[!is.na(values) & nzchar(values)])
+}
+
+get_raw_affiliations <- function(work) {
+  authorships <- get_authorships(work)
+  
+  values <- unlist(
+    lapply(
+      authorships,
+      function(authorship) {
+        authorship$raw_affiliation_strings
+      }
+    ),
+    recursive = TRUE,
+    use.names = FALSE
+  )
+  
+  values <- as.character(values)
+  values <- values[!is.na(values) & nzchar(trimws(values))]
+  
+  unique(values)
+}
+
+get_corresponding_institution_ids <- function(work) {
+  values <- work$corresponding_institution_ids
+  
+  if (is.null(values) || length(values) == 0L) {
+    return(character(0))
+  }
+  
+  values <- vapply(
+    values,
+    short_openalex_id,
+    character(1)
+  )
+  
+  unique(values[!is.na(values) & nzchar(values)])
+}
+
+ua_raw_pattern <- paste(
+  c(
+    "University of Arizona",
+    "UArizona",
+    "Univ\\.? of Arizona",
+    "Arizona, Tucson",
+    "Tucson, Arizona",
+    "Tucson, AZ",
+    "AZ[[:space:]]*857"
+  ),
+  collapse = "|"
+)
+
+diagnose_ua_work <- function(work) {
+  authorships <- get_authorships(work)
+  institution_ids <- get_institution_ids(work)
+  lineage_ids <- get_lineage_ids(work)
+  raw_affiliations <- get_raw_affiliations(work)
+  
+  ua_in_raw_text <- length(raw_affiliations) > 0L &&
+    any(
+      grepl(
+        ua_raw_pattern,
+        raw_affiliations,
+        ignore.case = TRUE,
+        perl = TRUE
+      )
+    )
+  
+  exact_ua <- UA_ID %in% institution_ids
+  lineage_ua <- UA_ID %in% lineage_ids
+  corresponding_ua <- UA_ID %in%
+    get_corresponding_institution_ids(work)
+  
+  n_authorships <- length(authorships)
+  
+  reason <- if (exact_ua) {
+    "Exact UA institution ID present"
+  } else if (n_authorships >= 100L) {
+    "UA absent; authorships payload is at the 100-author cap"
+  } else if (lineage_ua) {
+    "UA absent as exact ID; present only in institution lineage"
+  } else if (ua_in_raw_text) {
+    "UA appears in raw affiliation text but was not linked to UA ID"
+  } else if (corresponding_ua) {
+    "UA appears only in corresponding_institution_ids"
+  } else {
+    "No UA signal in returned payload"
+  }
+  
+  data.frame(
+    openalex_id = short_openalex_id(work$id),
+    title = first_text(work$title),
+    n_authorships = n_authorships,
+    at_100_author_cap = n_authorships >= 100L,
+    n_returned_institutions = length(institution_ids),
+    exact_ua_id_present = exact_ua,
+    ua_in_lineage = lineage_ua,
+    ua_in_raw_affiliation = ua_in_raw_text,
+    ua_in_corresponding_institutions = corresponding_ua,
+    reason = reason,
+    stringsAsFactors = FALSE
+  )
+}
+
+ua_institution_check <- do.call(
+  rbind,
+  lapply(works_raw, diagnose_ua_work)
+)
+
+# ------------------------------------------------------------
+# Overall summary
+# ------------------------------------------------------------
+
+ua_institution_summary <- data.frame(
+  measure = c(
+    "Total works",
+    "Exact UA ID present in returned authorships",
+    "Exact UA ID absent from returned authorships",
+    "Absent and authorships at 100-author cap",
+    "Absent but UA appears in institution lineage",
+    "Absent but UA appears in raw affiliation text",
+    "Absent but UA appears in corresponding institutions",
+    "Absent with no returned UA signal"
+  ),
+  
+  count = c(
+    nrow(ua_institution_check),
+    
+    sum(
+      ua_institution_check$exact_ua_id_present
+    ),
+    
+    sum(
+      !ua_institution_check$exact_ua_id_present
+    ),
+    
+    sum(
+      !ua_institution_check$exact_ua_id_present &
+        ua_institution_check$at_100_author_cap
+    ),
+    
+    sum(
+      !ua_institution_check$exact_ua_id_present &
+        ua_institution_check$ua_in_lineage
+    ),
+    
+    sum(
+      !ua_institution_check$exact_ua_id_present &
+        ua_institution_check$ua_in_raw_affiliation
+    ),
+    
+    sum(
+      !ua_institution_check$exact_ua_id_present &
+        ua_institution_check$
+        ua_in_corresponding_institutions
+    ),
+    
+    sum(
+      !ua_institution_check$exact_ua_id_present &
+        !ua_institution_check$at_100_author_cap &
+        !ua_institution_check$ua_in_lineage &
+        !ua_institution_check$ua_in_raw_affiliation &
+        !ua_institution_check$
+        ua_in_corresponding_institutions
+    )
+  ),
+  
+  stringsAsFactors = FALSE
+)
+
+ua_institution_summary$percent <- round(
+  100 *
+    ua_institution_summary$count /
+    nrow(ua_institution_check),
+  2
+)
+
+cat("\n================ UA INSTITUTION-ID SUMMARY ================\n")
+print(ua_institution_summary, row.names = FALSE)
+
+cat("\n================ REASON BREAKDOWN ================\n")
+print(
+  sort(
+    table(ua_institution_check$reason),
+    decreasing = TRUE
+  )
+)
+
+# ------------------------------------------------------------
+# Records needing explanation
+# ------------------------------------------------------------
+
+ua_id_missing <- ua_institution_check[
+  !ua_institution_check$exact_ua_id_present,
+  ,
+  drop = FALSE
+]
+
+cat("\nFirst 30 works without exact I138006243:\n")
+
+print(
+  utils::head(ua_id_missing, 30L),
+  row.names = FALSE
+)
+
+utils::write.csv(
+  ua_institution_check,
+  "ua_institution_id_check.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  ua_institution_summary,
+  "ua_institution_id_summary.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  ua_id_missing,
+  "ua_institution_id_missing_review.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+message("Saved UA institution-ID diagnostic files.")
+
+# ============================================================
+# SELF-CONTAINED UA ROR DISCREPANCY CHECK
+#
+# Required existing object:
+#   works_raw
+#
+# No packages or external helper functions required
+# ============================================================
+
+if (!exists("works_raw", inherits = TRUE)) {
+  stop("Object `works_raw` was not found.")
+}
+
+if (!is.list(works_raw) || length(works_raw) == 0L) {
+  stop("`works_raw` must be a nonempty list of OpenAlex works.")
+}
+
+UA_ID  <- "I138006243"
+UA_ROR <- "03m2x1q45"
+
+# Normalize OpenAlex IDs to I-prefixed form.
+normalize_openalex_id <- function(x) {
+  if (is.null(x) || length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x <- as.character(x[[1L]])
+  
+  if (is.na(x) || !nzchar(trimws(x))) {
+    return(NA_character_)
+  }
+  
+  sub(
+    "^https?://openalex\\.org/",
+    "",
+    trimws(x),
+    ignore.case = TRUE
+  )
+}
+
+# Normalize ROR URLs to the short ROR identifier.
+normalize_ror <- function(x) {
+  if (is.null(x) || length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x <- as.character(x[[1L]])
+  
+  if (is.na(x) || !nzchar(trimws(x))) {
+    return(NA_character_)
+  }
+  
+  x <- sub(
+    "^https?://(?:www\\.)?ror\\.org/",
+    "",
+    trimws(x),
+    ignore.case = TRUE,
+    perl = TRUE
+  )
+  
+  sub("/$", "", x)
+}
+
+first_text <- function(x) {
+  if (is.null(x) || length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x <- as.character(unlist(
+    x,
+    recursive = TRUE,
+    use.names = FALSE
+  ))
+  
+  x <- trimws(x)
+  x <- x[!is.na(x) & nzchar(x)]
+  
+  if (length(x) == 0L) {
+    return(NA_character_)
+  }
+  
+  x[[1L]]
+}
+
+get_authorships <- function(work) {
+  if (
+    is.null(work) ||
+    !is.list(work) ||
+    is.null(work$authorships)
+  ) {
+    return(list())
+  }
+  
+  work$authorships
+}
+
+# Collect the institution objects served in authorships.
+get_institutions <- function(work) {
+  authorships <- get_authorships(work)
+  
+  institutions <- unlist(
+    lapply(
+      authorships,
+      function(authorship) {
+        authorship$institutions %||% list()
+      }
+    ),
+    recursive = FALSE
+  )
+  
+  institutions
+}
+
+# Local null helper used only by this module.
+`%||%` <- function(x, replacement) {
+  if (is.null(x) || length(x) == 0L) {
+    replacement
+  } else {
+    x
+  }
+}
+
+get_institution_ids <- function(work) {
+  institutions <- get_institutions(work)
+  
+  if (length(institutions) == 0L) {
+    return(character(0))
+  }
+  
+  values <- vapply(
+    institutions,
+    function(institution) {
+      normalize_openalex_id(institution$id)
+    },
+    character(1)
+  )
+  
+  unique(values[!is.na(values) & nzchar(values)])
+}
+
+get_institution_rors <- function(work) {
+  institutions <- get_institutions(work)
+  
+  if (length(institutions) == 0L) {
+    return(character(0))
+  }
+  
+  values <- vapply(
+    institutions,
+    function(institution) {
+      normalize_ror(institution$ror)
+    },
+    character(1)
+  )
+  
+  unique(values[!is.na(values) & nzchar(values)])
+}
+
+get_lineage_ids <- function(work) {
+  institutions <- get_institutions(work)
+  
+  values <- unlist(
+    lapply(
+      institutions,
+      function(institution) {
+        lineage <- institution$lineage %||% list()
+        
+        if (length(lineage) == 0L) {
+          return(character(0))
+        }
+        
+        vapply(
+          lineage,
+          normalize_openalex_id,
+          character(1)
+        )
+      }
+    ),
+    use.names = FALSE
+  )
+  
+  unique(values[!is.na(values) & nzchar(values)])
+}
+
+# Some OpenAlex authorships have a separate affiliations mapping.
+get_affiliation_institution_ids <- function(work) {
+  authorships <- get_authorships(work)
+  
+  values <- unlist(
+    lapply(
+      authorships,
+      function(authorship) {
+        affiliations <- authorship$affiliations %||% list()
+        
+        unlist(
+          lapply(
+            affiliations,
+            function(affiliation) {
+              ids <- affiliation$institution_ids %||% list()
+              
+              if (length(ids) == 0L) {
+                return(character(0))
+              }
+              
+              vapply(
+                ids,
+                normalize_openalex_id,
+                character(1)
+              )
+            }
+          ),
+          use.names = FALSE
+        )
+      }
+    ),
+    use.names = FALSE
+  )
+  
+  unique(values[!is.na(values) & nzchar(values)])
+}
+
+get_raw_affiliations <- function(work) {
+  authorships <- get_authorships(work)
+  
+  values <- unlist(
+    lapply(
+      authorships,
+      function(authorship) {
+        authorship$raw_affiliation_strings %||% list()
+      }
+    ),
+    recursive = TRUE,
+    use.names = FALSE
+  )
+  
+  values <- as.character(values)
+  unique(values[!is.na(values) & nzchar(trimws(values))])
+}
+
+has_ua_raw_text <- function(work) {
+  values <- get_raw_affiliations(work)
+  
+  if (length(values) == 0L) {
+    return(FALSE)
+  }
+  
+  any(
+    grepl(
+      paste(
+        "University of Arizona",
+        "UArizona",
+        "Univ(?:ersity)?\\.? of Ariz",
+        "Tucson.*(?:Arizona|AZ)",
+        "AZ\\s*857",
+        sep = "|"
+      ),
+      values,
+      ignore.case = TRUE,
+      perl = TRUE
+    )
+  )
+}
+
+diagnose_ua_ror <- function(work) {
+  authorships <- get_authorships(work)
+  
+  institution_ids <- get_institution_ids(work)
+  institution_rors <- get_institution_rors(work)
+  lineage_ids <- get_lineage_ids(work)
+  affiliation_ids <- get_affiliation_institution_ids(work)
+  
+  exact_ua_id <- UA_ID %in% institution_ids
+  exact_ua_ror <- UA_ROR %in% institution_rors
+  ua_in_lineage <- UA_ID %in% lineage_ids
+  ua_in_affiliations <- UA_ID %in% affiliation_ids
+  ua_in_raw <- has_ua_raw_text(work)
+  at_cap <- length(authorships) >= 100L
+  
+  reason <- if (exact_ua_ror) {
+    "Exact UA ROR present"
+  } else if (exact_ua_id) {
+    "UA ID present, but UA ROR missing from institution object"
+  } else if (ua_in_lineage) {
+    "Child institution present; UA appears only in lineage"
+  } else if (ua_in_affiliations) {
+    "UA appears only in authorship affiliations mapping"
+  } else if (ua_in_raw) {
+    "UA appears in raw affiliation text but not linked to UA institution"
+  } else if (at_cap) {
+    "No returned UA object; authorships payload is at 100-author cap"
+  } else {
+    "No UA signal in returned authorship payload"
+  }
+  
+  data.frame(
+    openalex_id = normalize_openalex_id(work$id),
+    title = first_text(work$title),
+    n_authorships = length(authorships),
+    at_100_author_cap = at_cap,
+    exact_ua_id_present = exact_ua_id,
+    exact_ua_ror_present = exact_ua_ror,
+    ua_in_lineage = ua_in_lineage,
+    ua_in_affiliations = ua_in_affiliations,
+    ua_in_raw_text = ua_in_raw,
+    any_institution_ror_present = length(institution_rors) > 0L,
+    reason = reason,
+    institution_rors = if (length(institution_rors)) {
+      paste(institution_rors, collapse = "; ")
+    } else {
+      NA_character_
+    },
+    stringsAsFactors = FALSE
+  )
+}
+
+ua_ror_check <- do.call(
+  rbind,
+  lapply(works_raw, diagnose_ua_ror)
+)
+
+# Overall summary
+ua_ror_summary <- data.frame(
+  measure = c(
+    "Total works",
+    "Exact UA ROR present",
+    "Exact UA ROR absent",
+    "Any institutional ROR present",
+    "No institutional ROR present",
+    "UA ID present but UA ROR absent",
+    "UA absent as exact ID but present in lineage",
+    "UA absent as exact ID but present in affiliations",
+    "UA absent as exact ID but present in raw text",
+    "UA ROR absent and authorships at 100-author cap"
+  ),
+  count = c(
+    nrow(ua_ror_check),
+    sum(ua_ror_check$exact_ua_ror_present),
+    sum(!ua_ror_check$exact_ua_ror_present),
+    sum(ua_ror_check$any_institution_ror_present),
+    sum(!ua_ror_check$any_institution_ror_present),
+    sum(
+      ua_ror_check$exact_ua_id_present &
+        !ua_ror_check$exact_ua_ror_present
+    ),
+    sum(
+      !ua_ror_check$exact_ua_id_present &
+        ua_ror_check$ua_in_lineage
+    ),
+    sum(
+      !ua_ror_check$exact_ua_id_present &
+        ua_ror_check$ua_in_affiliations
+    ),
+    sum(
+      !ua_ror_check$exact_ua_id_present &
+        ua_ror_check$ua_in_raw_text
+    ),
+    sum(
+      !ua_ror_check$exact_ua_ror_present &
+        ua_ror_check$at_100_author_cap
+    )
+  ),
+  stringsAsFactors = FALSE
+)
+
+ua_ror_summary$percent <- round(
+  100 * ua_ror_summary$count / nrow(ua_ror_check),
+  2
+)
+
+cat("\n================ UA ROR SUMMARY ================\n")
+print(ua_ror_summary, row.names = FALSE)
+
+cat("\n================ CAUSE BREAKDOWN ================\n")
+print(
+  sort(
+    table(
+      ua_ror_check$reason[
+        !ua_ror_check$exact_ua_ror_present
+      ]
+    ),
+    decreasing = TRUE
+  )
+)
+
+# Check whether the UA ID and UA ROR always occur together.
+id_ror_comparison <- with(
+  ua_ror_check,
+  table(
+    exact_ua_id_present,
+    exact_ua_ror_present,
+    useNA = "always"
+  )
+)
+
+cat("\n================ UA ID vs UA ROR ================\n")
+print(id_ror_comparison)
+
+ua_ror_missing <- ua_ror_check[
+  !ua_ror_check$exact_ua_ror_present,
+  ,
+  drop = FALSE
+]
+
+utils::write.csv(
+  ua_ror_check,
+  "ua_ror_check.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  ua_ror_summary,
+  "ua_ror_summary.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+utils::write.csv(
+  ua_ror_missing,
+  "ua_ror_missing_review.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+message("Saved UA ROR diagnostic files.")
 

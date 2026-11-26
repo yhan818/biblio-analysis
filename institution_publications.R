@@ -138,15 +138,15 @@ saveRDS(works_published_2023, "../works_published_2023_ver202608.rds")
 # saveRDS(works_published_2025, "../works_published_2025_ver202608.rds")
 
 
-works_published_2022 <- readRDS("../works_published_2022_ver202608.rds")
+# works_published_2022 <- readRDS("../works_published_2022_ver202608.rds")
 
 # works_published_2023 <- readRDS("../works_published_2023.rds")
 
-# works_published_2024 <- readRDS("../works_published_2024.rds")
+works_published_2024 <- readRDS("../works_published_2024.rds")
 
 #works_published_2025 <- readRDS("../works_published_2025_ver202608.rds")
 
-works_published <- works_published_2022
+works_published <- works_published_2025
 
 # Filter dataframe for non articles
 works_articles <- works_published %>%
@@ -158,6 +158,227 @@ works_non_articles <- works_published %>%
 
 # works_published_2022_2024 <- bind_rows(works_published_2022, works_published_2023, works_published_2024)
 # works_published <- works_published_2022_2024
+
+works <- works_articles
+names(works)
+str(works$ids[[1]])
+
+get_nested_id <- function(x, field) {
+  
+  # Missing or empty ids object
+  if (is.null(x) || length(x) == 0) {
+    return(NA_character_)
+  }
+  
+  # The requested identifier is not present
+  if (is.null(names(x)) || !(field %in% names(x))) {
+    return(NA_character_)
+  }
+  
+  value <- x[[field]]
+  
+  # Identifier exists but contains no value
+  if (is.null(value) || length(value) == 0) {
+    return(NA_character_)
+  }
+  
+  # Safely handle nested values
+  value <- unlist(value, use.names = FALSE)
+  value <- as.character(value)
+  
+  # Remove missing and blank values
+  value <- value[!is.na(value) & nzchar(trimws(value))]
+  
+  if (length(value) == 0) {
+    return(NA_character_)
+  }
+  
+  value[[1]]
+}
+
+# ============================================================
+# SELF-CONTAINED PMCID TEST MODULE
+# Requires an existing object named: final_report
+# ============================================================
+
+library(dplyr)
+library(purrr)
+library(stringr)
+
+# ---- 1. Validate the input ----------------------------------
+
+if (!exists("final_report")) {
+  stop("Object `final_report` does not exist.")
+}
+
+if (!is.data.frame(final_report)) {
+  stop("`final_report` must be a data frame or tibble.")
+}
+
+required_columns <- c("id", "ids")
+missing_columns <- setdiff(required_columns, names(final_report))
+
+if (length(missing_columns) > 0) {
+  stop(
+    "`final_report` is missing required column(s): ",
+    paste(missing_columns, collapse = ", ")
+  )
+}
+
+if (!is.list(final_report$ids)) {
+  stop(
+    "`final_report$ids` is not a list-column. ",
+    "It may already have been flattened."
+  )
+}
+
+# ---- 2. Safe PMCID extractor -------------------------------
+
+extract_pmcid <- function(x) {
+  
+  # The complete ids object is absent or empty.
+  if (is.null(x) || length(x) == 0) {
+    return(NA_character_)
+  }
+  
+  # OpenAlex omits the pmcid key when it is unknown.
+  if (is.null(names(x)) || !("pmcid" %in% names(x))) {
+    return(NA_character_)
+  }
+  
+  value <- x[["pmcid"]]
+  
+  if (is.null(value) || length(value) == 0) {
+    return(NA_character_)
+  }
+  
+  # Handle a scalar, vector, or one-column nested object.
+  value <- unlist(value, use.names = FALSE)
+  value <- as.character(value)
+  
+  # Remove blank and missing values.
+  value <- value[
+    !is.na(value) &
+      nzchar(trimws(value))
+  ]
+  
+  if (length(value) == 0) {
+    return(NA_character_)
+  }
+  
+  # Extract the standard PMCID from either a raw identifier
+  # or an NCBI/PMC URL.
+  pmcid <- str_extract(
+    value,
+    regex("PMC[0-9]+", ignore_case = TRUE)
+  )
+  
+  pmcid <- pmcid[!is.na(pmcid)]
+  
+  if (length(pmcid) == 0) {
+    return(NA_character_)
+  }
+  
+  str_to_upper(pmcid[[1]])
+}
+
+# ---- 3. Test the function with controlled examples ----------
+
+test_ids <- list(
+  list(
+    openalex = "https://openalex.org/W1",
+    pmcid = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1234567/"
+  ),
+  c(
+    openalex = "https://openalex.org/W2",
+    pmcid = "https://pmc.ncbi.nlm.nih.gov/articles/PMC7654321/"
+  ),
+  list(
+    openalex = "https://openalex.org/W3",
+    pmcid = "PMC1112223"
+  ),
+  list(
+    openalex = "https://openalex.org/W4"
+  ),
+  NULL
+)
+
+test_result <- map_chr(test_ids, extract_pmcid)
+
+expected_result <- c(
+  "PMC1234567",
+  "PMC7654321",
+  "PMC1112223",
+  NA_character_,
+  NA_character_
+)
+
+if (!identical(test_result, expected_result)) {
+  stop(
+    "The PMCID extraction test failed.\n",
+    "Obtained: ",
+    paste(test_result, collapse = ", ")
+  )
+}
+
+message("PMCID extractor test passed.")
+
+# ---- 4. Apply it to the real final_report -------------------
+
+pmcid_check <- final_report %>%
+  transmute(
+    work_id = id,
+    pmcid_key_present = map_lgl(
+      ids,
+      function(x) {
+        !is.null(x) &&
+          length(x) > 0 &&
+          !is.null(names(x)) &&
+          "pmcid" %in% names(x)
+      }
+    ),
+    pmcid = map_chr(ids, extract_pmcid)
+  )
+
+# ---- 5. Print diagnostic summary ----------------------------
+
+pmcid_summary <- pmcid_check %>%
+  summarise(
+    total_works = n(),
+    records_with_pmcid_key = sum(pmcid_key_present),
+    successfully_extracted = sum(!is.na(pmcid)),
+    missing_pmcid = sum(is.na(pmcid))
+  )
+
+print(pmcid_summary)
+
+cat("\nWorks with an extracted PMCID:\n")
+
+print(
+  pmcid_check %>%
+    filter(!is.na(pmcid))
+)
+
+cat("\nRecords with a PMCID key that could not be parsed:\n")
+
+print(
+  pmcid_check %>%
+    filter(pmcid_key_present, is.na(pmcid))
+)
+
+# ---- 6. Add PMCID to the export data ------------------------
+
+final_report_export <- final_report %>%
+  mutate(
+    pmcid = map_chr(ids, extract_pmcid)
+  )
+
+message("PMCID test and extraction completed.")
+
+
+
+
+
 
 ####################################################
 ##### 2. Checking and verifying data
@@ -2704,5 +2925,7 @@ tryCatch({
   message("Combination failed: ", e)
   print(e)
 })
+
+
 
 
